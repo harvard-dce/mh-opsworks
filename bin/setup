@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+if ! ruby -v | grep -qiE 'ruby 2.1|ruby 2.0' ; then
+  echo 'You must have ruby 2.0 or 2.1 installed'
+  exit 1
+fi
+
+# Set up Ruby dependencies via Bundler
+if ! command -v bundle > /dev/null; then
+  gem install bundler --no-document
+fi
+
+bundle install
+
+if [ ! -f "./cluster_config.json" ]; then
+  cp templates/cluster_config_example.json ./cluster_config.json
+  echo 'Creating a new ./cluster_config.json file, be sure to fill it in with your values'
+else
+  echo 'Using existing ./cluster_config.json'
+fi
+
+if grep -qiE 'FILL_ME_IN' ./cluster_config.json; then
+  echo 'Be sure to complete configuring your ./cluster_config.json file'
+  exit 1;
+fi
+
+
+echo 'Preflight checks out. Run `rake cluster::init` to create a matterhorn cluster'

@@ -1,0 +1,11 @@
+{
+  "region": "us-east-1",
+  "credentials": {
+    "access_key_id": "FILL_ME_IN",
+    "secret_access_key": "FILL_ME_IN"
+  },
+  "vpc": {
+    "name": "FILL_ME_IN",
+    "cidr_block": "FILL_ME_IN"
+  }
+}
