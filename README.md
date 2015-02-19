@@ -43,7 +43,8 @@ matterhorn cluster.
 
 ## License
 
-This project is licensed under the same terms as Rails itself.
+This project is licensed under the same terms as [the ruby aws-sdk
+itself](https://github.com/aws/aws-sdk-ruby/tree/master#license).
 
 ## Copyright
 

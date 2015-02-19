@@ -11,23 +11,16 @@ module EnvironmentHelpers
 
   def with_valid_json_config
     with_modified_env(
-      CLUSTER_CONFIG_FILE: 'spec/support/files/valid_configuration.json'
+      CLUSTER_CONFIG_FILE: 'templates/cluster_config_example.json'
     ) do
       yield
     end
   end
 
   def base_config
-    @base_config ||= {
-      region: "us-east-1",
-      credentials: {
-        access_key_id: "fake_access_key_id",
-        secret_access_key: "fake_secret_access_key"
-      },
-      vpc: {
-        name: "FILL_ME_IN",
-        cidr_block: "FILL_ME_IN"
-      }
-    }
+    @base_config ||= JSON.parse(
+      File.read('templates/cluster_config_example.json'),
+      symbolize_names: true
+    )
   end
 end
