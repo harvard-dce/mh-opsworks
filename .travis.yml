@@ -1,0 +1,15 @@
+before_install:
+  - "echo '--colour' > ~/.rspec"
+  - "echo 'gem: --no-document' > ~/.gemrc"
+before_script:
+cache:
+  - bundler
+language:
+  - ruby
+notifications:
+  email:
+    - false
+rvm:
+  - 2.1.5
+sudo: false
+script: bundle exec rspec spec/

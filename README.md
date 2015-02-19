@@ -1,4 +1,4 @@
-# mh-opsworks
+# mh-opsworks [![Build Status](https://secure.travis-ci.org/harvard-dce/mh-opsworks.png?branch=master)](https://travis-ci.org/harvard-dce/mh-opsworks) [![Code Climate](https://codeclimate.com/github/harvard-dce/mh-opsworks/badges/gpa.svg)](https://codeclimate.com/github/harvard-dce/mh-opsworks)
 
 An amazon [opsworks](https://aws.amazon.com/opsworks/) implementation of a
 matterhorn cluster.
