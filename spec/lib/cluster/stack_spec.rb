@@ -20,11 +20,14 @@ describe Cluster::Stack do
 
       expect(all.map { |stack| stack.stack_id}).to include('a-stack-id')
       expect(all.map { |stack| stack.vpc_id}).to include('a-vpc-id')
+      expect(all.first).to be_instance_of(Aws::OpsWorks::Stack)
     end
   end
 
   context '.find_or_create' do
     it 'is successful' do
+      stub_vpc_instance_with_subnet_id
+
       stub_ec2_client do |ec2|
         ec2.stub_responses(
           :create_vpc,
@@ -33,7 +36,15 @@ describe Cluster::Stack do
       end
       stack = described_class.find_or_create
 
-      expect(stack.stack_id).to be
+      expect(stack).to be_instance_of(Aws::OpsWorks::Stack)
+    end
+
+    it 'auto creates the relevant service role if it does not exist' do
+      stub_ec2_client_with_a_vpc
+      stub_config_to_include(
+        stack: {name: 'an-amazing-stack'}
+      )
+
     end
 
     it 'finds an existing stack based on the vpc id and name' do
@@ -62,67 +73,15 @@ describe Cluster::Stack do
 
       expect(described_class.find_or_create.stack_id).to eq stack_id
     end
+  end
 
-    it 'finds a VPC and uses it to create the stack' do
-      vpc_id = 'a-vpc-id'
-      vpc_name = 'a-vpc'
-      cidr_block = 'a-block'
-      stub_config_to_include(vpc: { name: vpc_name, cidr_block: cidr_block } )
-
-      stub_ec2_client_with_a_vpc(
-        vpc_id: vpc_id, name: vpc_name, cidr_block: cidr_block
-      )
-
-      opsworks = stub_opsworks_client do |opsworks|
-        opsworks.stub_responses(
-          :create_stack,
-          { stack_id: 'a-stack-id' }
-        )
-        allow(opsworks).to receive(:create_stack)
-      end
-
-      described_class.find_or_create
-
-      expect(opsworks).to have_received(:create_stack).with(
-        a_hash_including(vpc_id: vpc_id)
-      )
-    end
-
-    it 'uses values from the configuration to create the stack' do
-      region = 'a-region'
-      name = 'test-stack'
-      stub_config_to_include(
-        region: region,
-        stack: {
-          name: name
-        }
-      )
-      vpc_id = 'a-vpc-id'
-      vpc_name = 'a-vpc'
-      cidr_block = 'a-block'
-      stub_config_to_include(vpc: { name: vpc_name, cidr_block: cidr_block } )
-
-      stub_ec2_client_with_a_vpc(
-        vpc_id: vpc_id, name: vpc_name, cidr_block: cidr_block
-      )
-
-      opsworks = stub_opsworks_client do |opsworks|
-        opsworks.stub_responses(
-          :create_stack,
-          { stack_id: 'a-stack-id' }
-        )
-        allow(opsworks).to receive(:create_stack)
-      end
-
-      described_class.find_or_create
-
-      expect(opsworks).to have_received(:create_stack).with(
-        a_hash_including(
-          region: region,
-          name: name
-        )
-      )
-    end
+  def stub_vpc_instance_with_subnet_id(subnet_id = 'subnet-id')
+      vpc_instance = double('vpc instance').as_null_object
+      allow(vpc_instance).to receive(:vpc_id).and_return('a-vpc-id')
+      allow(vpc_instance).to receive_message_chain(
+        :subnets, :first, :id
+      ).and_return(subnet_id)
+      allow(Aws::EC2::Vpc).to receive(:new).and_return(vpc_instance)
   end
 
   def stub_ec2_client_with_a_vpc(

@@ -7,18 +7,18 @@ module Cluster
 
     def credentials
       Aws::Credentials.new(
-        json[:credentials][:access_key_id],
-        json[:credentials][:secret_access_key]
+        parsed[:credentials][:access_key_id],
+        parsed[:credentials][:secret_access_key]
       )
     end
 
-    def json
+    def parsed
       JSON.parse(@json_content, symbolize_names: true)
     end
 
     def sane?
       begin
-        json
+        parsed
       rescue => e
         raise JSONFormatError.new(e)
       end

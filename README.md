@@ -37,6 +37,12 @@ matterhorn cluster.
 1. Make sure tests pass: `bundle exec rake`
 1. Submit a pull request.
 
+## See Also
+
+* [Opsworks API reference](http://docs.aws.amazon.com/opsworks/latest/APIReference/Welcome.html)
+* [Aws ruby sdk](http://docs.aws.amazon.com/sdkforruby/api/Aws.html)
+* [Opsworks docs](http://docs.aws.amazon.com/opsworks/latest/userguide/welcome.html)
+
 ## Contributors
 
 * Dan Collis-Puro - [djcp](https://github.com/djcp)

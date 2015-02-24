@@ -9,6 +9,15 @@
     "cidr_block": "FILL_ME_IN"
   },
   "stack": {
-    "name": "FILL_ME_IN"
+    "name": "FILL_ME_IN",
+    "service_role": {
+      "name": "mh-opsworks-cluster-service-role"
+    },
+    "developers": [
+      {
+        "username": "FILL_ME_IN",
+        "permission": "deny|show|deploy|manage|iam_only"
+      }
+    ]
   }
 }

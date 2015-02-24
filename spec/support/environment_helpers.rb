@@ -1,6 +1,6 @@
 module EnvironmentHelpers
   def stub_config_to_include(config_variables)
-    allow_any_instance_of(Cluster::Config).to receive(:json).and_return(
+    allow_any_instance_of(Cluster::Config).to receive(:parsed).and_return(
       base_config.merge!(config_variables)
     )
   end

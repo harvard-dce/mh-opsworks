@@ -56,6 +56,7 @@ describe Cluster::VPC do
     end
 
     it "creates a vpc if it doesn't exist, while tagging it" do
+      vpc_id = 'a-new-vpc-id'
       stub_ec2_client do |ec2|
         ec2.stub_responses(
           :describe_vpcs,
@@ -65,13 +66,14 @@ describe Cluster::VPC do
           :create_vpc,
           {
             vpc: {
-              vpc_id: 'a-new-vpc-id',
+              vpc_id: vpc_id,
             }
           }
         )
       end
 
       vpc_double = double('vpc client').as_null_object
+      allow(vpc_double).to receive(:vpc_id).and_return(vpc_id)
       new_cidr_block = '192.168.1.1/16'
       stub_config_to_include(
         vpc: { name: 'a-sweet-new-vpc', cidr_block: new_cidr_block }
@@ -79,29 +81,29 @@ describe Cluster::VPC do
       allow(Aws::EC2::Vpc).to receive(:new).and_return(vpc_double)
 
       vpc = described_class.find_or_create
-      expect(vpc.vpc_id).to eq 'a-new-vpc-id'
+      expect(vpc.vpc_id).to eq vpc_id
       expect(vpc_double).to have_received(:create_tags)
-      expect(Aws::EC2::Vpc).to have_received(:new)
+      expect(Aws::EC2::Vpc).to have_received(:new).at_least(2).times
     end
-    end
-
-    def existing_vpc
-      {
-        vpc_id: 'a-vpc-id',
-        cidr_block: existing_cidr_block,
-        tags: [
-          key: 'Name',
-          value: existing_vpc_name
-        ]
-      }
-    end
-
-    def existing_vpc_name
-      'test_vpc'
-    end
-
-    def existing_cidr_block
-      '10.0.0.10/16'
-    end
-
   end
+
+  def existing_vpc
+    {
+      vpc_id: 'a-vpc-id',
+      cidr_block: existing_cidr_block,
+      tags: [
+        key: 'Name',
+        value: existing_vpc_name
+      ]
+    }
+  end
+
+  def existing_vpc_name
+    'test_vpc'
+  end
+
+  def existing_cidr_block
+    '10.0.0.10/16'
+  end
+
+end

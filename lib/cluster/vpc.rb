@@ -5,7 +5,7 @@ module Cluster
       vpcs = []
       ec2_client.describe_vpcs.each do |page|
         page.vpcs.each do |vpc|
-          vpcs << vpc
+          vpcs << construct_instance(vpc.vpc_id)
         end
       end
       vpcs
@@ -13,24 +13,41 @@ module Cluster
 
     def self.find_or_create
       vpc = find_vpc
-      return vpc if vpc
+      if ! vpc
+        if requested_vpc_has_conflicts_with_existing_one?
+          raise VpcConflictsWithAnother
+        end
+        vpc = ec2_client.create_vpc(
+          cidr_block: vpc_config[:cidr_block]
+        ).first.vpc
 
-      if requested_vpc_has_conflicts_with_existing_one?
-        raise VpcConflictsWithAnother
+        # TODO: wait semantics
+        construct_instance(vpc.vpc_id).tap do |vpc_instance|
+          create_vpc_tags(vpc_instance)
+          create_subnets(vpc_instance)
+        end
       end
 
-      vpc = ec2_client.create_vpc(
-        cidr_block: vpc_config[:cidr_block]
-      ).first.vpc
-      vpc_instance = Aws::EC2::Vpc.new(vpc.vpc_id, client: ec2_client)
-      vpc_instance.create_tags(
-        tags: [{ key: 'Name', value: vpc_config[:name] }]
-      )
-
-      vpc
+      construct_instance(vpc.vpc_id)
     end
 
     private
+
+    def self.create_vpc_tags(vpc_instance)
+      vpc_instance.create_tags(
+        tags: [{ key: 'Name', value: vpc_config[:name] }]
+      )
+    end
+
+    def self.create_subnets(vpc_instance)
+      vpc_instance.create_subnet(
+        cidr_block: vpc_config[:cidr_block]
+      )
+    end
+
+    def self.construct_instance(vpc_id)
+      Aws::EC2::Vpc.new(vpc_id, client: ec2_client)
+    end
 
     def self.requested_vpc_has_conflicts_with_existing_one?
       self.configured_vpc_matches_another_on_name? ||
@@ -50,7 +67,7 @@ module Cluster
     end
 
     def self.vpc_config
-      config.json[:vpc]
+      config.parsed[:vpc]
     end
 
     def self.find_vpc

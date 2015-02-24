@@ -1,50 +1,55 @@
 module Cluster
   class Stack < Base
+    # Returns a list of all stacks in the credentialled AWS account.
+    # The list is composed of Aws::OpsWorks::Stack instances.
     def self.all
       stacks = []
       opsworks_client.describe_stacks.each do |page|
         page.stacks.each do |stack|
-          stacks << stack
+          stacks << construct_instance(stack.stack_id)
         end
       end
       stacks
     end
 
+    # Returns a Aws::OpsWorks::Stack instance according to the active cluster
+    # configuration If it does not exist, it creates it within your configured
+    # VPC.
     def self.find_or_create
       vpc = VPC.find_or_create
 
       stack = find_stack_in(vpc)
-      return stack if stack
+      return construct_instance(stack.stack_id) if stack
+
+      service_role = ServiceRole.find_or_create
+      instance_profile = InstanceProfile.find_or_create
 
       parameters = {
         name: stack_config[:name],
         region: root_config[:region],
         vpc_id: vpc.vpc_id,
 
-        service_role_arn: '',
-        default_instance_profile_arn: ''
+        service_role_arn: service_role.arn,
+        default_instance_profile_arn: instance_profile.arn,
+        default_subnet_id: vpc.subnets.first.id
       }
       stack = opsworks_client.create_stack(
         parameters
       )
-      stack
+      construct_instance(stack.stack_id)
     end
 
     private
+
+    def self.construct_instance(stack_id)
+      Aws::OpsWorks::Stack.new(stack_id, client: opsworks_client)
+    end
 
     def self.find_stack_in(vpc)
       all.find do |stack|
         (stack.name == stack_config[:name]) &&
           (stack.vpc_id == vpc.vpc_id)
       end
-    end
-
-    def self.root_config
-      config.json
-    end
-
-    def self.stack_config
-      config.json[:stack]
     end
   end
 end
