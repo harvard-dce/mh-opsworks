@@ -2,6 +2,22 @@ require './lib/cluster'
 
 namespace :admin do
   namespace :cluster do
+    namespace :users do
+      desc 'init the users and rights in the configured cluster'
+      task init: ['cluster:configtest'] do
+        Cluster::User.reset_stack_user_permissions_for(
+          Cluster::Stack.find_or_create.stack_id
+        )
+      end
+
+      desc 'list the users with rights in the configured cluster'
+      task list: ['cluster:configtest'] do
+        Cluster::User.all.each do |user|
+          puts %Q|#{user.iam_user_arn} => #{user.level}|
+        end
+      end
+    end
+
     desc 'Initialize a matterhorn cluster using the policies in your defined cluster_config.json'
     task init: ['cluster:configtest', 'stack:init'] do
 
@@ -32,17 +48,13 @@ namespace :admin do
   end
 
   namespace :users do
-    desc 'list users. Requires an elevated privilege account'
+    desc 'list all IAM users'
     task list: ['cluster:configtest'] do
-      Cluster::User.all.each do |user|
-        puts user.inspect
+      Cluster::IAMUser.all.each do |user|
+        puts %Q|#{user.user_name} => #{user.arn}|
       end
     end
 
-    desc 'init the users and rights for this cluster'
-    task init: ['cluster:configtest'] do
-      Cluster::User.create_developer_group
-    end
   end
 end
 
@@ -84,5 +96,14 @@ namespace :cluster do
   desc 'a ruby console'
   task console: [:configtest] do
     Cluster::Console.run
+  end
+
+  namespace :users do
+    desc 'list users in the configured cluster'
+    task list: ['cluster:configtest'] do
+      Cluster::User.all.each do |permission|
+        puts %Q|#{permission.iam_user_arn}|
+      end
+    end
   end
 end

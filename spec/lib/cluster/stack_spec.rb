@@ -27,6 +27,7 @@ describe Cluster::Stack do
   context '.find_or_create' do
     it 'is successful' do
       stub_vpc_instance_with_subnet_id
+      allow(Cluster::User).to receive(:reset_stack_user_permissions_for)
 
       stub_ec2_client do |ec2|
         ec2.stub_responses(
@@ -37,6 +38,7 @@ describe Cluster::Stack do
       stack = described_class.find_or_create
 
       expect(stack).to be_instance_of(Aws::OpsWorks::Stack)
+      expect(Cluster::User).to have_received(:reset_stack_user_permissions_for)
     end
 
     it 'auto creates the relevant service role if it does not exist' do

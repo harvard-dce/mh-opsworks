@@ -36,6 +36,8 @@ module Cluster
       stack = opsworks_client.create_stack(
         parameters
       )
+      User.reset_stack_user_permissions_for(stack.stack_id)
+
       construct_instance(stack.stack_id)
     end
 

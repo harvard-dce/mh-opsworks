@@ -13,10 +13,12 @@
     "service_role": {
       "name": "mh-opsworks-cluster-service-role"
     },
-    "developers": [
+    "users": [
       {
-        "username": "FILL_ME_IN",
-        "permission": "deny|show|deploy|manage|iam_only"
+        "user_name": "FILL_ME_IN",
+        "level": "deny|show|deploy|manage|iam_only",
+        "allow_ssh": true,
+        "allow_sudo": true
       }
     ]
   }
