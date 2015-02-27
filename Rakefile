@@ -22,6 +22,14 @@ namespace :admin do
     task init: ['cluster:configtest', 'stack:init'] do
 
     end
+
+    desc 'Delete a matterhorn cluster using the policies defined in your cluster_config.json'
+    task delete: ['cluster:configtest'] do
+      Cluster::Stack.delete
+      Cluster::InstanceProfile.delete
+      Cluster::ServiceRole.delete
+      Cluster::VPC.delete
+    end
   end
 
   namespace :instance_profiles do

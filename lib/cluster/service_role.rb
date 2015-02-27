@@ -6,6 +6,15 @@ module Cluster
       end
     end
 
+    def self.delete
+      service_role = find_service_role
+      if service_role
+        service_role_client = construct_instance(service_role.name)
+        service_role_client.policies.map(&:delete)
+        service_role_client.delete
+      end
+    end
+
     # A ServiceRole defines the rights a service wants in relation to other aws resources.
     def self.find_or_create
       if ! exists?
@@ -30,10 +39,14 @@ module Cluster
       Aws::IAM::Role.new(name, client: iam_client)
     end
 
-    def self.exists?
+    def self.find_service_role
       all.find do |role|
         role.role_name == service_role_name
       end
+    end
+
+    def self.exists?
+      find_service_role
     end
 
     def self.all_roles

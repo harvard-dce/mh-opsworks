@@ -12,6 +12,14 @@ module Cluster
       stacks
     end
 
+    def self.delete
+      vpc = VPC.find_or_create
+      stack = find_stack_in(vpc)
+      if stack
+        stack.delete
+      end
+    end
+
     # Returns a Aws::OpsWorks::Stack instance according to the active cluster
     # configuration If it does not exist, it creates it within your configured
     # VPC.
@@ -33,6 +41,7 @@ module Cluster
         default_instance_profile_arn: instance_profile.arn,
         default_subnet_id: vpc.subnets.first.id
       }
+      # TODO - wait semantics, especially for the service role
       stack = opsworks_client.create_stack(
         parameters
       )

@@ -6,6 +6,13 @@ module Cluster
       end
     end
 
+    def self.delete
+      instance_profile = find_instance_profile
+      if instance_profile
+        construct_instance(instance_profile.instance_profile_name).delete
+      end
+    end
+
     def self.find_or_create
       if ! exists?
         service_role = ServiceRole.find_or_create
@@ -34,10 +41,14 @@ module Cluster
       Aws::IAM::InstanceProfile.new(name, client: iam_client)
     end
 
-    def self.exists?
+    def self.find_instance_profile
       iam_client.list_instance_profiles.instance_profiles.find do |instance_profile|
         instance_profile.instance_profile_name == instance_profile_name
       end
+    end
+
+    def self.exists?
+      find_instance_profile
     end
   end
 end

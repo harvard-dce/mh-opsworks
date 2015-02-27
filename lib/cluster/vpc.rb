@@ -11,6 +11,18 @@ module Cluster
       vpcs
     end
 
+    def self.delete
+      vpc = find_vpc
+      if vpc
+        vpc_client = construct_instance(vpc.vpc_id)
+        sub_resources.each do |method|
+          vpc_client.send(method).map(&:delete)
+        end
+        delete_security_groups(vpc_client)
+        vpc_client.delete
+      end
+    end
+
     def self.find_or_create
       vpc = find_vpc
       if ! vpc
@@ -32,6 +44,22 @@ module Cluster
     end
 
     private
+
+    def self.sub_resources
+      %i|subnets internet_gateways network_interfaces requested_vpc_peering_connections|
+    end
+
+    def self.delete_security_groups(vpc_client)
+      begin
+        vpc_client.security_groups.each do |security_group|
+          if security_group.group_name != 'default'
+            security_group.delete
+          end
+        end
+      rescue Aws::EC2::Errors::InvalidGroupNotFound => e
+        puts 'ignoring Aws::EC2::Errors::InvalidGroupNotFound error'
+      end
+    end
 
     def self.create_vpc_tags(vpc_instance)
       vpc_instance.create_tags(
