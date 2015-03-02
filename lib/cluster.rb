@@ -1,5 +1,6 @@
 require 'aws-sdk'
 require 'json'
+require './lib/cluster/waiters'
 require './lib/cluster/base'
 require './lib/cluster/permissions_syncer'
 require './lib/cluster/config'

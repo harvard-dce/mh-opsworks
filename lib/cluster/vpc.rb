@@ -1,6 +1,8 @@
 require 'pry'
 module Cluster
   class VPC < Base
+    include Cluster::Waiters
+
     def self.all
       vpcs = []
       ec2_client.describe_vpcs.each do |page|
@@ -33,10 +35,11 @@ module Cluster
           cidr_block: vpc_config[:cidr_block]
         ).first.vpc
 
-        # TODO: wait semantics
-        construct_instance(vpc.vpc_id).tap do |vpc_instance|
-          create_vpc_tags(vpc_instance)
-          create_subnets(vpc_instance)
+        when_vpc_available(vpc.vpc_id) do
+          construct_instance(vpc.vpc_id).tap do |vpc_instance|
+            create_vpc_tags(vpc_instance)
+            create_subnets(vpc_instance)
+          end
         end
       end
 

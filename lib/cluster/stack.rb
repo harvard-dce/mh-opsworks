@@ -41,16 +41,34 @@ module Cluster
         default_instance_profile_arn: instance_profile.arn,
         default_subnet_id: vpc.subnets.first.id
       }
-      # TODO - wait semantics, especially for the service role
-      stack = opsworks_client.create_stack(
-        parameters
-      )
+
+      stack = create_stack(parameters)
+
       User.reset_stack_user_permissions_for(stack.stack_id)
 
       construct_instance(stack.stack_id)
     end
 
     private
+
+    def self.create_stack(parameters)
+      stack = nil
+      loop do
+        stack =
+          begin
+            opsworks_client.create_stack(
+              parameters
+            )
+          rescue => e
+            puts e.inspect
+            sleep 10
+            puts 'retrying stack creation'
+            nil
+          end
+        break if stack != nil
+      end
+      stack
+    end
 
     def self.construct_instance(stack_id)
       Aws::OpsWorks::Stack.new(stack_id, client: opsworks_client)

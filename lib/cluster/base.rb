@@ -92,21 +92,21 @@ module Cluster
     end
 
     def self.iam_client
-      @@iam ||= Aws::IAM::Client.new(
+      Aws::IAM::Client.new(
         region: config.parsed[:region],
         credentials: config.credentials
       )
     end
 
     def self.ec2_client
-      @@ec2 ||= Aws::EC2::Client.new(
+      Aws::EC2::Client.new(
         region: config.parsed[:region],
         credentials: config.credentials
       )
     end
 
     def self.opsworks_client
-      @@opsworks ||= Aws::OpsWorks::Client.new(
+      Aws::OpsWorks::Client.new(
         region: config.parsed[:region],
         credentials: config.credentials
       )

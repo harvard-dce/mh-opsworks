@@ -23,6 +23,7 @@ describe Cluster::InstanceProfile do
       )
       instance_profile_double = double('instance_profile')
       allow(instance_profile_double).to receive(:delete)
+      allow(instance_profile_double).to receive(:roles).and_return([])
       allow(Aws::IAM::InstanceProfile).to receive(:new).and_return(instance_profile_double)
 
       described_class.delete
