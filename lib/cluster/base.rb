@@ -9,6 +9,11 @@ module Cluster
       )
     end
 
+    # Allows the construction of client interfaces at the instance level
+    def construct_instance(instance_id)
+      self.class.construct_instance(instance_id)
+    end
+
     def self.instance_profile_name
       %Q|#{service_role_name}-instance-profile|
     end

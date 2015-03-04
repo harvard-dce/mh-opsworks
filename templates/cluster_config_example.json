@@ -13,10 +13,48 @@
     "service_role": {
       "name": "mh-opsworks-cluster-service-role"
     },
+    "layers": [
+      {
+        "name": "All in one",
+        "shortname": "all-in-one",
+        "type": "custom",
+        "enable_auto_healing": false,
+        "auto_assign_elastic_ips": true,
+        "install_updates_on_boot": true,
+        "auto_assign_public_ips": true,
+        "packages": [
+          "maven2",
+          "openjdk-7-jdk",
+          "openjdk-7-jre",
+          "gstreamer0.10-plugins-base",
+          "gstreamer0.10-plugins-good",
+          "gstreamer0.10-tools",
+          "gstreamer0.10-plugins-bad",
+          "gstreamer0.10-plugins-ugly",
+          "gstreamer0.10-ffmpeg",
+          "libglib2.0-dev",
+          "ffmpeg",
+          "mysql-client",
+          "gzip",
+          "tesseract-ocr",
+          "ocropus"
+        ]
+      },
+      {
+        "name": "MySQL db",
+        "shortname": "mysql-db",
+        "enable_auto_healing": true,
+        "install_updates_on_boot": true,
+        "type": "db-master",
+        "attributes": {
+          "MysqlRootPasswordUbiquitous": "true"
+        }
+      }
+    ],
     "users": [
       {
         "user_name": "FILL_ME_IN",
-        "level": "deny|show|deploy|manage|iam_only",
+        "level": "FILL_ME_IN: one of: deny show deploy manage iam_only",
         "allow_ssh": true,
         "allow_sudo": true
       }

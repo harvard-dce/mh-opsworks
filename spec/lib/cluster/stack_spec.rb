@@ -53,15 +53,6 @@ describe Cluster::Stack do
     end
   end
 
-  def stub_vpc_instance_with_subnet_id(subnet_id = 'subnet-id')
-      vpc_instance = double('vpc instance').as_null_object
-      allow(vpc_instance).to receive(:vpc_id).and_return('a-vpc-id')
-      allow(vpc_instance).to receive_message_chain(
-        :subnets, :first, :id
-      ).and_return(subnet_id)
-      allow(Aws::EC2::Vpc).to receive(:new).and_return(vpc_instance)
-  end
-
   def stub_ec2_client_with_a_vpc(
     name: 'a-vpc-name',
     cidr_block: 'a-block',

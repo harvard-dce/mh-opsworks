@@ -31,6 +31,8 @@ namespace :stack do
   namespace :layers do
     desc 'list layers in configured stack'
     task list: ['cluster:configtest'] do
+      # find the layers from the stack object to ensure we're seeing
+      # what's actually there.
       Cluster::Stack.find_or_create.layers.each do |layer|
         puts layer.name
       end
@@ -38,8 +40,9 @@ namespace :stack do
 
     desc 'init layers'
     task init: ['cluster:configtest', 'stack:init'] do
-      Cluster::Layers.as_configured do |layer|
-        layer.find_or_create
+      layers = Cluster::Layers.find_or_create
+      layers.each do |layer|
+        puts %Q|Layer: "#{layer.name}" ready to serve!|
       end
     end
   end

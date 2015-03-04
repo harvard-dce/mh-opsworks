@@ -4,7 +4,7 @@ Dir['./lib/tasks/*.rake'].each { |file| load file }
 namespace :admin do
   namespace :cluster do
     desc 'Initialize a matterhorn cluster using the policies in your defined cluster_config.json'
-    task init: ['cluster:configtest', 'stack:init'] do
+    task init: ['cluster:configtest', 'stack:init', 'stack:layers:init'] do
     end
 
     desc 'Delete a matterhorn cluster using the policies defined in your cluster_config.json'

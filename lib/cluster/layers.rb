@@ -4,9 +4,9 @@ module Cluster
       Stack.find_or_create.layers
     end
 
-    def self.as_configured
+    def self.find_or_create
       stack_config[:layers].map do |layer|
-        Layer.new(layer)
+        Layer.find_or_create(layer)
       end
     end
   end
