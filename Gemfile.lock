@@ -1,17 +1,17 @@
 GIT
   remote: https://github.com/harvard-dce/aws-sdk-ruby
-  revision: 56d526906e12520e65dff4ab91bdfc95dbb52cfe
+  revision: d2b3d1e8f31969c37fa491b34dddf2538115f915
   branch: master
   specs:
-    aws-sdk (2.0.28)
-      aws-sdk-resources (= 2.0.28)
-    aws-sdk-core (2.0.28)
+    aws-sdk (2.0.29)
+      aws-sdk-resources (= 2.0.29)
+    aws-sdk-core (2.0.29)
       builder (~> 3.0)
       jmespath (~> 1.0)
       multi_json (~> 1.0)
       multi_xml (~> 0.5)
-    aws-sdk-resources (2.0.28)
-      aws-sdk-core (= 2.0.28)
+    aws-sdk-resources (2.0.29)
+      aws-sdk-core (= 2.0.29)
 
 GEM
   remote: https://rubygems.org/

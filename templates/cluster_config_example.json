@@ -48,6 +48,11 @@
         "type": "db-master",
         "attributes": {
           "MysqlRootPasswordUbiquitous": "true"
+        },
+        "instances": {
+          "count": 1,
+          "instance_type": "t2.micro",
+          "root_device_type": "ebs"
         }
       }
     ],

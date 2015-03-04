@@ -28,6 +28,24 @@ namespace :stack do
     end
   end
 
+  namespace :instances do
+    desc 'init instances in each layer'
+    task init: ['cluster:configtest', 'stack:layers:init'] do
+      Cluster::Instances.find_or_create
+    end
+
+    desc 'list instances in each layer'
+    task list: ['cluster:configtest', 'stack:layers:init'] do
+      layers = Cluster::Layers.find_or_create
+      layers.each do |layer|
+        puts %Q|Layer: "#{layer.name}" => #{layer.layer_id}|
+        Cluster::Instances.find_in_layer(layer).each do |instance|
+          puts %Q|	Instance: #{instance.hostname} => status: #{instance.status}, ec2_instance_id: #{instance.ec2_instance_id}|
+        end
+      end
+    end
+  end
+
   namespace :layers do
     desc 'list layers in configured stack'
     task list: ['cluster:configtest'] do
