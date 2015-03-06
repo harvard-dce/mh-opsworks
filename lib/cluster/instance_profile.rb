@@ -28,20 +28,19 @@ module Cluster
       if ! exists?
         service_role = ServiceRole.find_or_create
 
-        when_instance_profile_available(instance_profile_name) do
-          iam_client.create_role(
-            role_name: instance_profile_name,
-            assume_role_policy_document: instance_profile_policy_document
-          )
+        iam_client.create_role(
+          role_name: instance_profile_name,
+          assume_role_policy_document: instance_profile_policy_document
+        )
+        iam_client.create_instance_profile(
+          instance_profile_name: instance_profile_name
+        )
+        iam_client.add_role_to_instance_profile(
+          role_name: service_role.role_name,
+          instance_profile_name: instance_profile_name
+        )
 
-          iam_client.create_instance_profile(
-            instance_profile_name: instance_profile_name
-          )
-          iam_client.add_role_to_instance_profile(
-            role_name: service_role.role_name,
-            instance_profile_name: instance_profile_name
-          )
-        end
+        wait_until_instance_profile_available(instance_profile_name)
       end
       construct_instance(instance_profile_name)
     end

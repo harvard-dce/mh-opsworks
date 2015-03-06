@@ -14,7 +14,7 @@ module Cluster
     end
 
     def self.delete
-      vpc = find_vpc
+      vpc = find_existing
       if vpc
         vpc_client = construct_instance(vpc.vpc_id)
         sub_resources.each do |method|
@@ -26,7 +26,7 @@ module Cluster
     end
 
     def self.find_or_create
-      vpc = find_vpc
+      vpc = find_existing
       if ! vpc
         if requested_vpc_has_conflicts_with_existing_one?
           raise VpcConflictsWithAnother
@@ -44,6 +44,13 @@ module Cluster
       end
 
       construct_instance(vpc.vpc_id)
+    end
+
+    def self.find_existing
+      all.find do |vpc|
+        (vpc.cidr_block == vpc_config[:cidr_block]) &&
+          (extract_name_from(vpc) == vpc_config[:name])
+      end
     end
 
     private
@@ -99,13 +106,6 @@ module Cluster
 
     def self.vpc_config
       config.parsed[:vpc]
-    end
-
-    def self.find_vpc
-      all.find do |vpc|
-        (vpc.cidr_block == vpc_config[:cidr_block]) &&
-          (extract_name_from(vpc) == vpc_config[:name])
-      end
     end
 
     def self.extract_name_from(vpc)

@@ -14,7 +14,7 @@ module Cluster
 
     def self.delete
       vpc = VPC.find_or_create
-      stack = find_stack_in(vpc)
+      stack = find_existing_in(vpc)
       if stack
         stack.delete
       end
@@ -26,7 +26,7 @@ module Cluster
     def self.find_or_create
       vpc = VPC.find_or_create
 
-      stack = find_stack_in(vpc)
+      stack = find_existing_in(vpc)
       return construct_instance(stack.stack_id) if stack
 
       service_role = ServiceRole.find_or_create
@@ -47,6 +47,13 @@ module Cluster
       User.reset_stack_user_permissions_for(stack.stack_id)
 
       construct_instance(stack.stack_id)
+    end
+
+    def self.find_existing_in(vpc)
+      all.find do |stack|
+        (stack.name == stack_config[:name]) &&
+          (stack.vpc_id == vpc.vpc_id)
+      end
     end
 
     private
@@ -74,11 +81,5 @@ module Cluster
       Aws::OpsWorks::Stack.new(stack_id, client: opsworks_client)
     end
 
-    def self.find_stack_in(vpc)
-      all.find do |stack|
-        (stack.name == stack_config[:name]) &&
-          (stack.vpc_id == vpc.vpc_id)
-      end
-    end
   end
 end

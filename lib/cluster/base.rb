@@ -22,7 +22,7 @@ module Cluster
       config.parsed
     end
 
-    def self.instances_in_layer(layer_name)
+    def self.instances_config_in_layer(layer_name)
       stack_config[:layers].find do |layer|
         layer[:name] == layer_name
       end.fetch(:instances, {})

@@ -15,16 +15,11 @@ module Cluster
       if instance_count_delta_memo < 0
         instance_count_delta_memo.abs.times do
           to_remove = get_oldest_instance
-          stop_instance(to_remove)
 
-          if to_remove.ec2_instance_id != nil
-            self.class.when_instance_stopped(to_remove.instance_id) do
-              remove_instance(to_remove)
-            end
-          else
-            # It's not been spun up. Get rid of it.
-            remove_instance(to_remove)
-          end
+          instance = Cluster::Instance.new(to_remove.instance_id)
+          instance.stop
+          instance.wait_for_instance_to_stop
+          instance.delete
         end
       end
     end
@@ -38,19 +33,13 @@ module Cluster
     private
 
     def instances_in_layer
-      Instances.get_instances_in(layer)
+      Instances.get_instances_in(layer) || []
     end
 
     def get_oldest_instance
       instances_in_layer.sort_by do |instance|
         DateTime.parse(instance.created_at)
       end.first
-    end
-
-    def stop_instance(instance)
-      self.class.opsworks_client.stop_instance(
-        instance_id: instance.instance_id
-      )
     end
 
     def remove_instance(instance)
