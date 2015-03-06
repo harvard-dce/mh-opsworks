@@ -32,25 +32,13 @@ describe Cluster::Config do
   end
 
   context '#sane?' do
-    it 'raises Cluster::JSONFormatError on invalid JSON' do
-      with_modified_env(
-        CLUSTER_CONFIG_FILE: 'spec/support/files/invalid_json.json'
-      ) do
+    it 'uses the check_registry' do
+      with_valid_json_config do
+        allow(described_class).to receive(:check_registry).and_return([])
 
-        config = described_class.new
+        described_class.new.sane?
 
-        expect{ config.sane? }.to raise_error(Cluster::JSONFormatError)
-      end
-    end
-
-    it 'is true for valid JSON' do
-      with_modified_env(
-        CLUSTER_CONFIG_FILE: 'spec/support/files/valid_json.json'
-      ) do
-
-        config = described_class.new
-
-        expect(config).to be_sane
+        expect(described_class).to have_received(:check_registry)
       end
     end
   end
