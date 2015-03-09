@@ -14,14 +14,25 @@ matterhorn cluster.
     git clone git@github.com:harvard-dce/mh-opsworks.git mh-opsworks/
     cd mh-opsworks
     ./bin/setup # checks for dependencies and sets up template env files
-    # edit clusterconfig.json with your specific values, or get a copy and fill in your access keys
+    # edit clusterconfig.json with your specific values
     vim cluster_config.json
+
+    # Edit credentials to include the correct AWS credentials. Handily, we've
+    # included a comment field to allow you to keep track of what credentials are
+    # what.
+
+    vim credentials.json
 
     # sanity check your cluster_config.json
     rake cluster:configtest
 
     # Use an alternate cluster configuration file
     CLUSTER_CONFIG_FILE="./some_other_config.json" rake cluster:configtest
+
+    # Use an alternate credentials file
+    CREDENTIALS_FILE="./some_other_credentials_file.json" rake cluster:configtest
+
+    # You can mix-and-match credentials and configuration files in the same invocation
 
     # List the cluster-specific tasks available
     rake -T

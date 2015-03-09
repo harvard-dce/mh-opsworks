@@ -2,18 +2,24 @@ module Cluster
   class Config
     def initialize
       json_file = ENV.fetch('CLUSTER_CONFIG_FILE', 'cluster_config.json')
+      credentials_file = ENV.fetch('CREDENTIALS_FILE', 'credentials.json')
+      @credentials_content = File.read(credentials_file)
       @json_content = File.read(json_file)
     end
 
     def credentials
       Aws::Credentials.new(
-        parsed[:credentials][:access_key_id],
-        parsed[:credentials][:secret_access_key]
+        parsed_credentials[:access_key_id],
+        parsed_credentials[:secret_access_key]
       )
     end
 
     def parsed
       JSON.parse(@json_content, symbolize_names: true)
+    end
+
+    def parsed_credentials
+      JSON.parse(@credentials_content, symbolize_names: true)
     end
 
     def sane?
@@ -27,7 +33,7 @@ module Cluster
       end
 
       if errors.any?
-        puts "\n#{ENV['CLUSTER_CONFIG_FILE']} configuration is invalid:\n\n"
+        puts "\nConfiguration is invalid:\n\n"
         puts errors.join("\n")
         exit 1
       else

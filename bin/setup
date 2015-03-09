@@ -19,8 +19,20 @@ else
   echo 'Using existing ./cluster_config.json'
 fi
 
+if [ ! -f "./credentials.json" ]; then
+  cp templates/credentials_example.json ./credentials.json
+  echo 'Creating a new ./credentials.json file, be sure to fill it in with your credentials'
+else
+  echo 'Using existing ./credentials.json file'
+fi
+
 if grep -qiE 'FILL_ME_IN' ./cluster_config.json; then
   echo 'Be sure to complete configuring your ./cluster_config.json file'
+  exit 1;
+fi
+
+if grep -qiE 'FILL_ME_IN' ./credentials.json; then
+  echo 'Be sure to complete configuring your ./credentials.json file'
   exit 1;
 fi
 
