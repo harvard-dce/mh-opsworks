@@ -36,7 +36,20 @@ module Cluster
         name: stack_config[:name],
         region: root_config[:region],
         vpc_id: vpc.vpc_id,
-
+        configuration_manager: {
+          name: 'Chef',
+          version: '11.10'
+        },
+        use_custom_cookbooks: true,
+        custom_cookbooks_source: stack_chef_config.fetch(:custom_cookbooks_source, {}),
+        chef_configuration: {
+          manage_berkshelf: true,
+          berkshelf_version: '3.2.0'
+        },
+        custom_json: json_encode(
+          stack_chef_config.fetch(:custom_json, {})
+        ),
+        default_os: 'Ubuntu 14.04 LTS',
         service_role_arn: service_role.arn,
         default_instance_profile_arn: instance_profile.arn,
         default_subnet_id: vpc.subnets.first.id

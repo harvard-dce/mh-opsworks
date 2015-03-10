@@ -9,6 +9,10 @@ module Cluster
       )
     end
 
+    def self.json_encode(string)
+      JSON.dump(string)
+    end
+
     # Allows the construction of client interfaces at the instance level
     def construct_instance(instance_id)
       self.class.construct_instance(instance_id)
@@ -30,6 +34,10 @@ module Cluster
 
     def self.stack_config
       config.parsed[:stack]
+    end
+
+    def self.stack_chef_config
+      stack_config.fetch(:chef, {})
     end
 
     def self.service_role_config

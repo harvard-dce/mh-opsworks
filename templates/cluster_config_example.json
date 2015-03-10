@@ -9,6 +9,13 @@
     "service_role": {
       "name": "mh-opsworks-cluster-service-role"
     },
+    "chef": {
+      "custom_json": {},
+      "custom_cookbooks_source": {
+        "type": "git",
+        "url": "https://github.com/harvard-dce/mh-opsworks-berkshelf"
+      }
+    },
     "layers": [
       {
         "name": "All in one",

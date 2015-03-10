@@ -1,6 +1,6 @@
 # mh-opsworks [![Build Status](https://secure.travis-ci.org/harvard-dce/mh-opsworks.png?branch=master)](https://travis-ci.org/harvard-dce/mh-opsworks) [![Code Climate](https://codeclimate.com/github/harvard-dce/mh-opsworks/badges/gpa.svg)](https://codeclimate.com/github/harvard-dce/mh-opsworks)
 
-An amazon [opsworks](https://aws.amazon.com/opsworks/) implementation of a
+An amazon [OpsWorks](https://aws.amazon.com/opsworks/) implementation of a
 matterhorn cluster.
 
 ## Requirements
@@ -40,6 +40,32 @@ matterhorn cluster.
     # Initialize a VPC based on the variables defined in your default cluster_config.json
     rake vpc:init
     # Time passes, output is given
+
+## Chef
+
+OpsWorks uses [chef](https://chef.io).  You configure the repository that
+contains custom recipes in the stack section of your active
+`cluster_config.json` file.  These options are pretty much passed through to
+the `opsworks` ruby client. [Details
+here](http://docs.aws.amazon.com/sdkforruby/api/Aws/OpsWorks/Client.html#create_stack-instance_method)
+about what options you can pass through to, say, control security or the
+revision of the custom cookbook that you'd like to use.
+
+
+```
+{
+  "stack": {
+    "chef": {
+      "custom_json": {},
+      "custom_cookbooks_source": {
+        "type": "git",
+        "url": "https://github.com/harvard-dce/mh-opsworks-berkshelf"
+      }
+    }
+  }
+}
+```
+
 
 ## Contributing or reporting problems
 
