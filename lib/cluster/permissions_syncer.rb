@@ -49,7 +49,8 @@ module Cluster
         if ! user_profiles.find { |user_profile| user_profile.name == user_name }
           # TODO  - wait semantics
           self.class.opsworks_client.create_user_profile(
-            iam_user_arn: arns_by_username[user_name]
+            iam_user_arn: arns_by_username[user_name],
+            ssh_public_key: configured_user.fetch(:ssh_public_key, '')
           )
         end
       end

@@ -26,8 +26,6 @@ module Cluster
 
     def self.find_or_create
       if ! exists?
-        service_role = ServiceRole.find_or_create
-
         iam_client.create_role(
           role_name: instance_profile_name,
           assume_role_policy_document: instance_profile_policy_document
@@ -36,7 +34,7 @@ module Cluster
           instance_profile_name: instance_profile_name
         )
         iam_client.add_role_to_instance_profile(
-          role_name: service_role.role_name,
+          role_name: instance_profile_name,
           instance_profile_name: instance_profile_name
         )
 
