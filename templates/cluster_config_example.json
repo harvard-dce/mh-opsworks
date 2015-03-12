@@ -2,7 +2,8 @@
   "region": "us-east-1",
   "vpc": {
     "name": "FILL_ME_IN",
-    "cidr_block": "FILL_ME_IN"
+    "cidr_block": "FILL_ME_IN",
+    "_cidr_block_comment": "10.1.1.0/24 gives you 10.1.1.0-255"
   },
   "stack": {
     "name": "FILL_ME_IN",

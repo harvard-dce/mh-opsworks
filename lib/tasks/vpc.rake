@@ -10,4 +10,9 @@ namespace :vpc do
   task init: ['cluster:configtest'] do
     Cluster::VPC.find_or_create
   end
+
+  desc 'Remove the configured VPC'
+  task delete: ['cluster:configtest'] do
+    Cluster::VPC.delete
+  end
 end

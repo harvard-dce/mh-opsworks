@@ -32,21 +32,6 @@ describe Cluster::InstanceProfile do
     end
   end
 
-  context '.find_or_create' do
-    it 'collaborates with a ServiceRole' do
-      stub_iam_client
-      service_role_double = double('service role')
-      allow(service_role_double).to receive(:role_name).and_return('something')
-      allow(Cluster::ServiceRole).to receive(:find_or_create).and_return(service_role_double)
-
-      described_class.find_or_create
-
-      expect(service_role_double).to have_received(:role_name)
-      expect(Cluster::ServiceRole).to have_received(:find_or_create)
-    end
-
-  end
-
   def stub_with_instance_profile_named(name)
     stub_iam_client do |iam_client|
       iam_client.stub_responses(

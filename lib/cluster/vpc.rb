@@ -17,6 +17,14 @@ module Cluster
       vpc = find_existing
       if vpc
         vpc_client = construct_instance(vpc.vpc_id)
+        vpc_client.internet_gateways.each do |internet_gateway|
+          vpc_client.detach_internet_gateway(
+            internet_gateway_id: internet_gateway.internet_gateway_id
+          )
+          ec2_client.delete_internet_gateway(
+            internet_gateway_id: internet_gateway.internet_gateway_id
+          )
+        end
         sub_resources.each do |method|
           vpc_client.send(method).map(&:delete)
         end
@@ -37,6 +45,8 @@ module Cluster
 
         when_vpc_available(vpc.vpc_id) do
           construct_instance(vpc.vpc_id).tap do |vpc_instance|
+            enable_dns_options(vpc_instance)
+            create_and_associate_internet_gateway_for(vpc_instance)
             create_vpc_tags(vpc_instance)
             create_subnets(vpc_instance)
           end
@@ -55,16 +65,33 @@ module Cluster
 
     private
 
+    def self.create_and_associate_internet_gateway_for(vpc_instance)
+      gateway = ec2_client.create_internet_gateway.internet_gateway
+      vpc_instance.attach_internet_gateway(internet_gateway_id: gateway.internet_gateway_id)
+      route_table = vpc_instance.route_tables.first
+      ec2_client.create_route(
+        route_table_id: route_table.route_table_id,
+        destination_cidr_block: '0.0.0.0/0',
+        gateway_id: gateway.internet_gateway_id
+      )
+    end
+
+    def self.enable_dns_options(vpc_instance)
+      %i|enable_dns_support enable_dns_hostnames|.each do |attribute|
+        vpc_instance.modify_attribute(
+          attribute => { value: true }
+        )
+      end
+    end
+
     def self.sub_resources
-      %i|subnets internet_gateways network_interfaces requested_vpc_peering_connections|
+      %i|subnets network_interfaces requested_vpc_peering_connections|
     end
 
     def self.delete_security_groups(vpc_client)
       begin
-        vpc_client.security_groups.each do |security_group|
-          if security_group.group_name != 'default'
-            security_group.delete
-          end
+        vpc_client.security_groups.reject{|sg| sg.group_name == 'default'}.each do |security_group|
+          security_group.delete
         end
       rescue Aws::EC2::Errors::InvalidGroupNotFound => e
         puts 'ignoring Aws::EC2::Errors::InvalidGroupNotFound error'

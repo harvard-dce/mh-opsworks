@@ -72,6 +72,8 @@ describe Cluster::VPC do
         )
       end
 
+      allow(described_class).to receive(:create_and_associate_internet_gateway_for)
+
       vpc_double = double('vpc client').as_null_object
       allow(vpc_double).to receive(:vpc_id).and_return(vpc_id)
       new_cidr_block = '192.168.1.1/16'
@@ -84,6 +86,7 @@ describe Cluster::VPC do
       expect(vpc.vpc_id).to eq vpc_id
       expect(vpc_double).to have_received(:create_tags)
       expect(Aws::EC2::Vpc).to have_received(:new).at_least(2).times
+      expect(described_class).to have_received(:create_and_associate_internet_gateway_for).with(vpc_double)
     end
   end
 
