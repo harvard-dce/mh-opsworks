@@ -38,8 +38,16 @@
           "libglib2.0-dev",
           "mysql-client",
           "gzip",
-          "tesseract-ocr"
-        ]
+          "tesseract-ocr",
+          "htop",
+          "nmap",
+          "traceroute"
+        ],
+        "instances": {
+          "number_of_instances": 2,
+          "instance_type": "t2.micro",
+          "root_device_type": "ebs"
+        }
       },
       {
         "name": "MySQL db",
@@ -51,6 +59,11 @@
         "attributes": {
           "MysqlRootPasswordUbiquitous": "true"
         },
+        "packages": [
+          "htop",
+          "nmap",
+          "traceroute"
+        ],
         "instances": {
           "count": 1,
           "instance_type": "t2.micro",
