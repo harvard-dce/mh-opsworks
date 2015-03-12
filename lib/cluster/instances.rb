@@ -8,6 +8,20 @@ module Cluster
       opsworks_client.describe_instances(layer_id: layer.layer_id).instances
     end
 
+    def self.stop_all
+      stack = Cluster::Stack.find_or_create
+      opsworks_client.stop_stack(
+        stack_id: stack.stack_id
+      )
+    end
+
+    def self.start_all
+      stack = Cluster::Stack.find_or_create
+      opsworks_client.start_stack(
+        stack_id: stack.stack_id
+      )
+    end
+
     # Returns a list of instances that were deleted.
     def self.delete
       instances = []

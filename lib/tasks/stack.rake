@@ -44,6 +44,16 @@ namespace :stack do
         end
       end
     end
+
+    desc 'stop all instances in the configured stack'
+    task stop: ['cluster:configtest', 'stack:layers:init', 'stack:instances:init'] do
+      Cluster::Instances.stop_all
+    end
+
+    desc 'start all instances in the configured stack'
+    task start: ['cluster:configtest', 'stack:layers:init', 'stack:instances:init'] do
+      Cluster::Instances.start_all
+    end
   end
 
   namespace :layers do

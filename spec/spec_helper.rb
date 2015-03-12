@@ -11,6 +11,7 @@ RSpec.configure do |config|
   config.before(:all) do
     Aws.config[:stub_responses] = true
     ENV['CLUSTER_CONFIG_FILE'] = 'templates/cluster_config_example.json'
+    ENV['CREDENTIALS_FILE'] = 'templates/credentials_example.json'
   end
 
   # Seed global randomization in this process using the `--seed` CLI option.
