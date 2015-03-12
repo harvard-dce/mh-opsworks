@@ -70,7 +70,7 @@ namespace :stack do
       layers = Cluster::Layers.find_or_create
       layers.each do |layer|
         puts %Q|Layer: "#{layer.name}" => #{layer.layer_id}|
-          Cluster::Instances.find_in_layer(layer).each do |instance|
+        Cluster::Instances.find_in_layer(layer).each do |instance|
           puts %Q|	Instance: #{instance.hostname} => status: #{instance.status}, ec2_instance_id: #{instance.ec2_instance_id}|
         end
       end

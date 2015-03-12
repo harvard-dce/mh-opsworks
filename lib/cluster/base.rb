@@ -32,6 +32,10 @@ module Cluster
       end.fetch(:instances, {})
     end
 
+    def self.app_config
+      stack_config[:app]
+    end
+
     def self.stack_config
       config.parsed[:stack]
     end

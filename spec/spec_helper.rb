@@ -5,7 +5,6 @@ require 'pry'
 Dir['./spec/support/**/*.rb'].each { |file| require file }
 
 RSpec.configure do |config|
-  config.profile_examples = 10
   config.order = :random
 
   config.before(:all) do

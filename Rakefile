@@ -9,6 +9,7 @@ namespace :admin do
       puts %Q|Stack "#{stack.name}" initialized, id: #{stack.stack_id}|
       layers = Cluster::Layers.find_or_create
       Cluster::Instances.find_or_create
+      Cluster::App.find_or_create
       layers.each do |layer|
         puts %Q|Layer: "#{layer.name}" => #{layer.layer_id}|
         Cluster::Instances.find_in_layer(layer).each do |instance|
@@ -21,6 +22,8 @@ namespace :admin do
 
     desc 'Delete a matterhorn cluster using the policies defined in your cluster_config.json'
     task delete: ['cluster:configtest'] do
+      puts 'deleting app'
+      Cluster::App.delete
       puts 'deleting instances'
       Cluster::Instances.delete
       puts 'deleting stack'

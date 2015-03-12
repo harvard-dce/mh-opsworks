@@ -71,6 +71,19 @@
         }
       }
     ],
+    "app": {
+      "shortname": "matterhorn",
+      "name": "Matterhorn",
+      "type": "other",
+      "app_source": {
+        "type": "git",
+        "url": "FILL_ME_IN",
+        "username": "FILL_ME_IN",
+        "password": "FILL_ME_IN",
+        "ssh_key": "FILL_ME_IN - You either use an SSH key or a user/pass combo",
+        "revision": "FILL_ME_IN"
+      }
+    },
     "users": [
       {
         "user_name": "FILL_ME_IN",

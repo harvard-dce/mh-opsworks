@@ -1,6 +1,18 @@
 module Cluster
   module Waiters
     module ClassMethods
+      def wait_until_app_available(app_id)
+        opsworks_client.wait_until(
+          :app_available, app_ids: [app_id]
+        ) do |w|
+          w.before_wait do |attempts, response|
+            puts "Waiting for app to be available: #{app_id}, attempt ##{attempts}"
+          end
+        end
+
+        yield if block_given?
+      end
+
       def wait_until_opsworks_instance_stopped(instance_id)
         opsworks_client.wait_until(
           :instance_stopped, instance_ids: [instance_id]
