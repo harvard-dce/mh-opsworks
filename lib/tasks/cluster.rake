@@ -2,9 +2,7 @@ namespace :cluster do
   desc 'Sanity check cluster_config.json'
   task :configtest do
     config = Cluster::Config.new
-    if config.sane?
-      puts 'Pre-flight looks good.'
-    end
+    config.sane?
   end
 
   desc 'a ruby console'

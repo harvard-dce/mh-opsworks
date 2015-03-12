@@ -8,6 +8,12 @@ module Cluster
       opsworks_client.describe_instances(layer_id: layer.layer_id).instances
     end
 
+    def self.find_by_hostname(hostname)
+      find_existing.find do |instance|
+        instance.hostname == hostname
+      end
+    end
+
     def self.stop_all
       stack = Cluster::Stack.find_or_create
       opsworks_client.stop_stack(
@@ -57,6 +63,12 @@ module Cluster
     end
 
     private
+
+    def self.find_existing
+      stack = Stack.find_or_create
+      instances = opsworks_client.describe_instances(stack_id: stack.stack_id)
+      (instances) ? instances.instances : []
+    end
 
     def self.get_instances_in(layer)
       opsworks_client.describe_instances(layer_id: layer.layer_id).instances

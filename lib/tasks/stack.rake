@@ -34,12 +34,43 @@ namespace :stack do
       Cluster::Instances.find_or_create
     end
 
+    desc 'ssh connection string'
+    task ssh_to: ['cluster:configtest'] do
+      hostname = ENV['hostname'].to_s.strip
+
+      if hostname != ''
+        instance = Cluster::Instances.find_by_hostname(hostname)
+        if instance == nil
+          puts "#{hostname} does not exist"
+          exit 1
+        end
+
+        if instance.status != 'online'
+          puts "#{hostname} is not online"
+        elsif instance.public_dns == nil
+          puts "To be implemented - ssh'ing to private instances"
+        else
+          puts "ssh #{instance.public_dns}"
+        end
+      else
+        layers = Cluster::Layers.find_or_create
+        layers.each do |layer|
+          puts %Q|Instances running in "#{layer.name}":|
+          Cluster::Instances.find_in_layer(layer).each do |instance|
+            puts %Q|	#{instance.hostname}|
+          end
+        end
+        puts 'Please specify an instance name to connect to, thusly:'
+        puts 'rake stack:instances:ssh_to hostname=<an instance name>'
+      end
+    end
+
     desc 'list instances in each layer'
     task list: ['cluster:configtest', 'stack:layers:init'] do
       layers = Cluster::Layers.find_or_create
       layers.each do |layer|
         puts %Q|Layer: "#{layer.name}" => #{layer.layer_id}|
-        Cluster::Instances.find_in_layer(layer).each do |instance|
+          Cluster::Instances.find_in_layer(layer).each do |instance|
           puts %Q|	Instance: #{instance.hostname} => status: #{instance.status}, ec2_instance_id: #{instance.ec2_instance_id}|
         end
       end
