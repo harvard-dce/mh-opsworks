@@ -15,9 +15,9 @@ module Cluster
         name: params[:name],
         attributes: params.fetch(:attributes, {}),
         shortname: params[:shortname],
-        packages: params.fetch(:packages, []),
         auto_assign_elastic_ips: params.fetch(:auto_assign_elastic_ips, false),
-        auto_assign_public_ips: params.fetch(:auto_assign_public_ips, false)
+        auto_assign_public_ips: params.fetch(:auto_assign_public_ips, false),
+        custom_recipes: params.fetch(:custom_recipes, {})
       }
       layer = opsworks_client.create_layer(layer_parameters)
       construct_instance(layer.layer_id)

@@ -14,7 +14,8 @@
       "custom_json": {},
       "custom_cookbooks_source": {
         "type": "git",
-        "url": "https://github.com/harvard-dce/mh-opsworks-berkshelf"
+        "url": "https://github.com/harvard-dce/mh-opsworks-recipes",
+        "revision": "master"
       }
     },
     "layers": [
@@ -26,23 +27,12 @@
         "auto_assign_elastic_ips": true,
         "install_updates_on_boot": true,
         "auto_assign_public_ips": true,
-        "packages": [
-          "maven2",
-          "openjdk-7-jdk",
-          "openjdk-7-jre",
-          "gstreamer0.10-plugins-base",
-          "gstreamer0.10-plugins-good",
-          "gstreamer0.10-tools",
-          "gstreamer0.10-plugins-bad",
-          "gstreamer0.10-plugins-ugly",
-          "libglib2.0-dev",
-          "mysql-client",
-          "gzip",
-          "tesseract-ocr",
-          "htop",
-          "nmap",
-          "traceroute"
-        ],
+        "custom_recipes": {
+          "setup": [
+            "mh-opsworks-recipes::install-utils",
+            "mh-opsworks-recipes::install-mh-base-packages"
+          ]
+        },
         "instances": {
           "number_of_instances": 2,
           "instance_type": "t2.micro",
@@ -59,11 +49,11 @@
         "attributes": {
           "MysqlRootPasswordUbiquitous": "true"
         },
-        "packages": [
-          "htop",
-          "nmap",
-          "traceroute"
-        ],
+        "custom_recipes": {
+          "setup": [
+            "mh-opsworks-recipes::install-utils"
+          ]
+        },
         "instances": {
           "count": 1,
           "instance_type": "t2.micro",
