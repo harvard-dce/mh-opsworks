@@ -46,3 +46,12 @@ namespace :admin do
     end
   end
 end
+
+task :default do
+  Rake.application.tasks.each do |task|
+    puts "rake #{task.name}"
+  end
+  puts
+  puts 'Run "rake -T" for full task output'
+end
+
