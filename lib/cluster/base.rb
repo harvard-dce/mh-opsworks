@@ -36,6 +36,10 @@ module Cluster
       stack_config[:app]
     end
 
+    def self.deployment_config
+      app_config[:deployment]
+    end
+
     def self.stack_config
       config.parsed[:stack]
     end

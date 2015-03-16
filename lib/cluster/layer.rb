@@ -24,11 +24,17 @@ module Cluster
     end
 
     def self.find_or_create(params)
-      layer = find_layer(params)
+      layer = find_existing_by_name(params[:name])
       return construct_instance(layer.layer_id) if layer
 
       layer = new(Stack.find_or_create, params)
       layer.create
+    end
+
+    def self.find_existing_by_name(name)
+      Stack.find_or_create.layers.find do |layer|
+        layer.name == name
+      end
     end
 
     private
@@ -39,12 +45,6 @@ module Cluster
 
     def self.construct_instance(layer_id)
       Aws::OpsWorks::Layer.new(layer_id, client: opsworks_client)
-    end
-
-    def self.find_layer(params)
-      Stack.find_or_create.layers.find do |layer|
-        layer.name == params[:name]
-      end
     end
   end
 end

@@ -65,6 +65,11 @@
       "shortname": "matterhorn",
       "name": "Matterhorn",
       "type": "other",
+      "deployment": {
+        "to_layers": ["All in one"],
+        "custom_json": {
+        }
+      },
       "app_source": {
         "type": "git",
         "url": "FILL_ME_IN",
