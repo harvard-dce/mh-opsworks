@@ -4,7 +4,7 @@ describe Cluster::Layers do
     it 'uses the Stack to find layers' do
       find_double = double('find_or_create')
       allow(find_double).to receive(:layers).and_return([])
-      allow(Cluster::Stack).to receive(:find_or_create).and_return(find_double)
+      allow(Cluster::Stack).to receive(:with_existing_stack).and_return(find_double)
 
       described_class.all
 

@@ -32,7 +32,8 @@ module Cluster
     end
 
     def self.find_existing_by_name(name)
-      Stack.find_or_create.layers.find do |layer|
+      stack = Stack.with_existing_stack
+      stack.layers.find do |layer|
         layer.name == name
       end
     end

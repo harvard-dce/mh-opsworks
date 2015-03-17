@@ -28,4 +28,6 @@ module Cluster
   class JSONFormatError < StandardError; end
   class VpcConflictsWithAnother < StandardError; end
   class StackConflictsWithAnother < StandardError; end
+  class StackNotInitialized < StandardError; end
+  class NoInstancesOnline < StandardError; end
 end

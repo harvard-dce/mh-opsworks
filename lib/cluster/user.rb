@@ -1,10 +1,11 @@
 module Cluster
   class User < Base
     def self.all
-      iam_users = IAMUser.all
-      stack_id = Stack.find_or_create.stack_id
+      stack = Stack.with_existing_stack
 
-      opsworks_client.describe_permissions(stack_id: stack_id).permissions
+      opsworks_client.describe_permissions(
+        stack_id: stack.stack_id
+      ).permissions
     end
 
     def self.reset_stack_user_permissions_for(stack_id)

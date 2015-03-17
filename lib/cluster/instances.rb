@@ -14,26 +14,10 @@ module Cluster
       end
     end
 
-    def self.stop_all
-      stack = Cluster::Stack.find_or_create
-      opsworks_client.stop_stack(
-        stack_id: stack.stack_id
-      )
-    end
-
-    def self.start_all
-      stack = Cluster::Stack.find_or_create
-      opsworks_client.start_stack(
-        stack_id: stack.stack_id
-      )
-    end
-
     # Returns a list of instances that were deleted.
     def self.delete
       instances = []
-      vpc = Cluster::VPC.find_existing
-      stack = Cluster::Stack.find_existing_in(vpc)
-      if vpc && stack
+      Cluster::Stack.with_existing_stack do |stack|
         opsworks_client.describe_instances(stack_id: stack.stack_id).instances.each do |instance|
           opsworks_instance = Cluster::Instance.new(instance.instance_id)
           opsworks_instance.stop
@@ -62,13 +46,17 @@ module Cluster
       instances
     end
 
-    private
-
     def self.find_existing
-      stack = Stack.find_or_create
+      stack = Stack.find_existing
       instances = opsworks_client.describe_instances(stack_id: stack.stack_id)
       (instances) ? instances.instances : []
     end
+
+    def self.online
+      find_existing.reject{|instance| instance.status != 'online'}
+    end
+
+    private
 
     def self.get_instances_in(layer)
       opsworks_client.describe_instances(layer_id: layer.layer_id).instances

@@ -3,7 +3,7 @@ module Cluster
     include Waiters
 
     def self.delete
-      app = find_existing_app
+      app = find_existing
       if app
         opsworks_client.delete_app(app_id: app.app_id)
       end
@@ -12,7 +12,7 @@ module Cluster
     def self.find_or_create
       stack = Stack.find_or_create
 
-      app = find_existing_app
+      app = find_existing
       return app if app
 
       app = opsworks_client.create_app(
@@ -26,12 +26,11 @@ module Cluster
         app_source: app_config[:app_source]
       )
       wait_until_app_available(app.app_id)
-      find_existing_app
+      find_existing
     end
 
-    def self.find_existing_app
-      vpc = Cluster::VPC.find_existing
-      stack = Cluster::Stack.find_existing_in(vpc)
+    def self.find_existing
+      stack = Cluster::Stack.find_existing
       stack && opsworks_client.describe_apps(stack_id: stack.stack_id).apps.find do |app|
         app.name == app_config[:name]
       end

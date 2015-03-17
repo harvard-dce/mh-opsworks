@@ -1,13 +1,17 @@
 module Cluster
   class Deployment < Base
+    def self.all
+
+    end
+
     def self.deploy_app
-      stack = Stack.find_or_create
+      stack = Cluster::Stack.with_existing_stack
       app = App.find_or_create
       custom_json = deployment_config[:custom_json]
-      opsworks_client.create_deployment(
+      app && opsworks_client.create_deployment(
         stack_id: stack.stack_id,
         app_id: app.app_id,
-        instance_ids: instance_ids,
+        instance_ids: deployable_instance_ids,
         command: {
           name: 'deploy'
         },
@@ -17,11 +21,13 @@ module Cluster
 
     private
 
-    def self.instance_ids
+    def self.deployable_instance_ids
       instances = []
+      online_instances = Cluster::Instances.online
+
       deployment_config[:to_layers].each do |name|
         layer = Layer.find_existing_by_name(name)
-        instances += Cluster::Instances.find_in_layer(layer)
+        instances += online_instances.find_all{|instance| instance.layer_ids.include?(layer.layer_id) }
       end
       instances.map(&:instance_id)
     end

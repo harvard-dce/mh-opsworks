@@ -1,7 +1,8 @@
 module Cluster
   class Layers < Base
     def self.all
-      Stack.find_or_create.layers
+      stack = Stack.with_existing_stack
+      stack.layers
     end
 
     def self.find_or_create
