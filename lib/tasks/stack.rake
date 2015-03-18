@@ -115,9 +115,29 @@ namespace :stack do
   end
 
   namespace :commands do
+    desc 'run custom chef recipes'
+    task execute_recipes: ['cluster:configtest'] do
+      Cluster::Stack.with_existing_stack do |stack|
+        layers = ENV['layers'].to_s.strip.split(',')
+        recipes = ENV['recipes'].to_s.strip.split(',')
+
+        if recipes.none?
+          puts %Q|Please indicate the recipes you'd like to run.|
+          puts %Q|If you don't specify any layers, the recipes will be run on all layers.|
+          puts
+          puts 'rake stack:commands:execute_recipes recipes="recipe1,recipe1" layers="Full Name,Full Name2"'
+        else
+          Cluster::Deployment.execute_chef_recipes_on_layers(
+            recipes: recipes,
+            layers: layers
+          )
+        end
+      end
+    end
+
     desc 'update all chef recipes'
     task update_chef_recipes: ['cluster:configtest'] do
-      Cluster::Stack.update_chef_recipes
+      Cluster::Deployment.update_chef_recipes
 
       Cluster::Stack.with_existing_stack do |stack|
         puts "Updating all recipes in: "
@@ -128,13 +148,8 @@ namespace :stack do
 
     desc 'install updated OS packages'
     task update_packages: ['cluster:configtest'] do
-      Cluster::Stack.update_dependencies
+      Cluster::Deployment.update_dependencies
       puts 'Updating OS packages'
-    end
-
-    desc 'execute recipe'
-    task execute_recipe: ['cluster:configtest'] do
-
     end
   end
 end

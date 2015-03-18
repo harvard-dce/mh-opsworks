@@ -18,29 +18,6 @@ module Cluster
       end
     end
 
-    def self.run_command_on_all_online_instances(command)
-      with_existing_stack do |stack|
-        instance_ids = Cluster::Instances.online.map(&:instance_id)
-        if instance_ids.length > 0
-          opsworks_client.create_deployment(
-            stack_id: stack.stack_id,
-            instance_ids: instance_ids,
-            command: { name: command }
-          )
-        else
-          raise Cluster::NoInstancesOnline
-        end
-      end
-    end
-
-    def self.update_dependencies
-      run_command_on_all_online_instances('update_dependencies')
-    end
-
-    def self.update_chef_recipes
-      run_command_on_all_online_instances('update_custom_cookbooks')
-    end
-
     def self.stop_all
       with_existing_stack do |stack|
         opsworks_client.stop_stack(
@@ -143,6 +120,5 @@ module Cluster
     def self.construct_instance(stack_id)
       Aws::OpsWorks::Stack.new(stack_id, client: opsworks_client)
     end
-
   end
 end
