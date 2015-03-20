@@ -1,9 +1,9 @@
-describe Cluster::ConfigChecks::Database do
+describe Cluster::ConfigChecks::Storage do
   include EnvironmentHelpers
 
   it "does not raise when all is well with the world" do
     stub_config_to_include(
-      { stack: { layers: [database_layer_with_instances_numbering(1)] } }
+      { stack: { layers: [storage_layer_with_instances_numbering(1)] } }
     )
 
     expect{ described_class.sane? }.not_to raise_error
@@ -17,11 +17,11 @@ describe Cluster::ConfigChecks::Database do
     )
   end
 
-  it "raises when more than one database layer is defined" do
-    database_layer = database_layer_with_instances_numbering(1)
+  it "raises when more than one storage layer is defined" do
+    storage_layer = storage_layer_with_instances_numbering(1)
 
     stub_config_to_include(
-      { stack: { layers: [database_layer, database_layer] } }
+      { stack: { layers: [storage_layer, storage_layer] } }
     )
 
     expect{ described_class.sane? }.to raise_error(
@@ -29,9 +29,9 @@ describe Cluster::ConfigChecks::Database do
     )
   end
 
-  it "raises when more than one database instance is defined" do
+  it "raises when more than one storage instance is defined" do
     stub_config_to_include(
-      { stack: { layers: [database_layer_with_instances_numbering(2)] } }
+      { stack: { layers: [storage_layer_with_instances_numbering(2)] } }
     )
 
     expect{ described_class.sane? }.to raise_error(
@@ -45,8 +45,7 @@ describe Cluster::ConfigChecks::Database do
         stack: {
           layers: [
             {
-              name: 'DB Layer',
-              type: 'db-master',
+              shortname: 'storage',
               instances: {},
               volume_configurations: []
             }
@@ -60,11 +59,9 @@ describe Cluster::ConfigChecks::Database do
     )
   end
 
-
-  def database_layer_with_instances_numbering(number_of_instances)
+  def storage_layer_with_instances_numbering(number_of_instances)
     {
-      name: 'DB layer',
-      type: 'db-master',
+      shortname: 'storage',
       instances: {
         number_of_instances: number_of_instances
       },
@@ -79,4 +76,4 @@ describe Cluster::ConfigChecks::Database do
       ]
     }
   end
-end
+  end

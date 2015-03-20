@@ -1,41 +1,28 @@
 module Cluster
   module ConfigChecks
-    class DatabaseMasterLayerNotDefined < StandardError; end
-    class TooManyInstancesInDatabaseMasterLayer < StandardError; end
-    class TooManyDatabaseLayers < StandardError; end
-
-    class Database < Cluster::Base
+    class Database < NumberedLayer
       def self.sane?
-        if ! database_master_layer_defined?
-          raise DatabaseMasterLayerNotDefined
+        if ! layer_defined?
+          raise LayerNotDefined.new('Database layer is missing')
         end
 
         if too_many_instances?
-          raise TooManyInstancesInDatabaseMasterLayer
+          raise TooManyInstancesInLayer.new('There are too many database instances')
         end
 
-        if too_many_database_layers?
-          raise TooManyDatabaseLayers
+        if too_many_layers?
+          raise TooManyLayers.new('There are too many database layers')
+        end
+
+        if no_volumes_defined?
+          raise NoStorageVolumesDefined.new('The database layer has no volume_configurations and cannot store data persistently.')
         end
       end
 
       private
 
-      def self.find_db_layer
-        stack_config[:layers].find { |layer| layer[:type] == 'db-master' }
-      end
-
-      def self.too_many_database_layers?
-        db_layers = stack_config[:layers].find_all { |layer| layer[:type] == 'db-master' }
-        db_layers.count != 1
-      end
-
-      def self.database_master_layer_defined?
-        find_db_layer
-      end
-
-      def self.too_many_instances?
-        find_db_layer[:instances][:number_of_instances].to_i != 1
+      def self.find_all_layers
+        stack_config[:layers].find_all { |layer| layer[:type] == 'db-master' }
       end
 
     end

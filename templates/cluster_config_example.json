@@ -8,11 +8,16 @@
   "stack": {
     "name": "FILL_ME_IN",
     "service_role": {
-      "name": "mh-opsworks-cluster-service-role"
+      "name": "mh-opsworks-cluster"
     },
     "chef": {
       "custom_json": {
-        "matterhorn_repo_root": "/opt/matterhorn"
+        "matterhorn_repo_root": "/opt/matterhorn",
+        "storage": {
+          "export_root": "/var/matterhorn",
+          "network": "10.1.1.0/24",
+          "layer_shortname": "storage"
+        }
       },
       "custom_cookbooks_source": {
         "type": "git",
@@ -21,6 +26,37 @@
       }
     },
     "layers": [
+      {
+        "name": "Storage",
+        "shortname": "storage",
+        "type": "custom",
+        "enable_auto_healing": false,
+        "auto_assign_elastic_ips": false,
+        "install_updates_on_boot": true,
+        "auto_assign_public_ips": true,
+        "use_ebs_optimized_instances": true,
+        "custom_recipes": {
+          "setup": [
+            "mh-opsworks-recipes::install-utils",
+            "mh-opsworks-recipes::create-matterhorn-user",
+            "mh-opsworks-recipes::nfs-export"
+          ]
+        },
+        "volume_configurations": [
+          {
+            "mount_point": "/var/matterhorn",
+            "raid_level": 0,
+            "number_of_disks": 2,
+            "size": "20",
+            "volume_type": "gp2"
+          }
+        ],
+        "instances": {
+          "number_of_instances": 1,
+          "instance_type": "t2.micro",
+          "root_device_type": "ebs"
+        }
+      },
       {
         "name": "All in one",
         "shortname": "all-in-one",
@@ -34,7 +70,8 @@
             "mh-opsworks-recipes::install-utils",
             "mh-opsworks-recipes::install-mh-base-packages",
             "mh-opsworks-recipes::create-matterhorn-user",
-            "mh-opsworks-recipes::clone-matterhorn"
+            "mh-opsworks-recipes::clone-matterhorn",
+            "mh-opsworks-recipes::nfs-client"
           ]
         },
         "instances": {
@@ -50,6 +87,7 @@
         "install_updates_on_boot": true,
         "type": "db-master",
         "auto_assign_public_ips": true,
+        "use_ebs_optimized_instances": true,
         "attributes": {
           "MysqlRootPasswordUbiquitous": "true"
         },
@@ -61,8 +99,17 @@
             "mh-opsworks-recipes::create-database"
           ]
         },
+        "volume_configurations": [
+          {
+            "mount_point": "/vol/mysql",
+            "raid_level": 1,
+            "number_of_disks": 2,
+            "size": "10",
+            "volume_type": "gp2"
+          }
+        ],
         "instances": {
-          "count": 1,
+          "number_of_instances": 1,
           "instance_type": "t2.micro",
           "root_device_type": "ebs"
         }
@@ -74,8 +121,7 @@
       "type": "other",
       "deployment": {
         "to_layers": ["All in one"],
-        "custom_json": {
-        }
+        "custom_json": { }
       },
       "app_source": {
         "type": "git",

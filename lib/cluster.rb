@@ -21,7 +21,9 @@ require './lib/cluster/instance_profile'
 require './lib/cluster/service_role'
 require './lib/cluster/stack'
 require './lib/cluster/console'
+require './lib/cluster/config_checks/numbered_layer'
 require './lib/cluster/config_checks/database'
+require './lib/cluster/config_checks/storage'
 require './lib/cluster/config_checks/json_format'
 
 module Cluster

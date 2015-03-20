@@ -79,7 +79,8 @@ module Cluster
         default_os: 'Ubuntu 14.04 LTS',
         service_role_arn: service_role.arn,
         default_instance_profile_arn: instance_profile.arn,
-        default_subnet_id: vpc.subnets.first.id
+        default_subnet_id: vpc.subnets.first.id,
+        default_root_device_type: stack_config.fetch(:default_root_device_type, 'ebs')
       }
 
       stack = create_stack(parameters)
