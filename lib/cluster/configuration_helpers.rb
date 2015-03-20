@@ -9,6 +9,10 @@ module Cluster
         config.parsed
       end
 
+      def deployment_private_ssh_key
+        config.parsed_credentials[:deployment_private_ssh_key]
+      end
+
       def app_config
         stack_config[:app]
       end

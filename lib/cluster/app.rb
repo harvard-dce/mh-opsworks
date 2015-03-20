@@ -15,6 +15,11 @@ module Cluster
       app = find_existing
       return app if app
 
+      app_source = app_config[:app_source]
+      if deployment_private_ssh_key
+        app_source[:ssh_key] = deployment_private_ssh_key
+      end
+
       app = opsworks_client.create_app(
         stack_id: stack.stack_id,
         name: app_config[:name],
@@ -23,7 +28,7 @@ module Cluster
           { type: 'AutoSelectOpsworksMysqlInstance' }
         ],
         type: app_config[:type],
-        app_source: app_config[:app_source]
+        app_source: app_source
       )
       wait_until_app_available(app.app_id)
       find_existing

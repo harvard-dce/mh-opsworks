@@ -80,7 +80,6 @@
       "app_source": {
         "type": "git",
         "url": "git@github.com:/blahblah FILL_ME_IN",
-        "ssh_key": "FILL_ME_IN - The private SSH key of the deploy user",
         "revision": "FILL_ME_IN"
       }
     },
