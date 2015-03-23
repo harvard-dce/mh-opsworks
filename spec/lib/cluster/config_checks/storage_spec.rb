@@ -59,6 +59,8 @@ describe Cluster::ConfigChecks::Storage do
     )
   end
 
+  it_behaves_like 'a registered configuration check'
+
   def storage_layer_with_instances_numbering(number_of_instances)
     {
       shortname: 'storage',
@@ -76,4 +78,4 @@ describe Cluster::ConfigChecks::Storage do
       ]
     }
   end
-  end
+end

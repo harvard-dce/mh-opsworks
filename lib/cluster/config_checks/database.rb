@@ -22,7 +22,7 @@ module Cluster
       private
 
       def self.find_all_layers
-        stack_config[:layers].find_all { |layer| layer[:type] == 'db-master' }
+        layers_config.find_all { |layer| layer[:type] == 'db-master' }
       end
 
     end

@@ -19,4 +19,5 @@ describe Cluster::ConfigChecks::JsonFormat do
     end
   end
 
+  it_behaves_like 'a registered configuration check'
 end

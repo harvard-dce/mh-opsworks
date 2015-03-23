@@ -60,6 +60,7 @@ describe Cluster::ConfigChecks::Database do
     )
   end
 
+  it_behaves_like 'a registered configuration check'
 
   def database_layer_with_instances_numbering(number_of_instances)
     {

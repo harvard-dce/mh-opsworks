@@ -25,6 +25,10 @@ module Cluster
         config.parsed[:stack]
       end
 
+      def layers_config
+        stack_config[:layers]
+      end
+
       def stack_chef_config
         stack_config.fetch(:chef, {})
       end
@@ -38,7 +42,7 @@ module Cluster
       end
 
       def instances_config_in_layer(layer_name)
-        stack_config[:layers].find do |layer|
+        layers_config.find do |layer|
           layer[:name] == layer_name
         end.fetch(:instances, {})
       end
