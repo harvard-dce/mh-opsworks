@@ -14,14 +14,14 @@ module Cluster
       end
     end
 
-    # Returns a list of instances that were deleted.
+    # Stops and then deletes all instances.
     def self.delete
       instances = []
-      Cluster::Stack.with_existing_stack do |stack|
+      stack = Cluster::Stack.find_existing
+      if stack
+        Cluster::Stack.stop_all
         opsworks_client.describe_instances(stack_id: stack.stack_id).instances.each do |instance|
           opsworks_instance = Cluster::Instance.new(instance.instance_id)
-          opsworks_instance.stop
-          opsworks_instance.wait_for_instance_to_stop
           opsworks_instance.delete
 
           instances << instance

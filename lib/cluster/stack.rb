@@ -14,7 +14,8 @@ module Cluster
     end
 
     def self.delete
-      with_existing_stack do |stack|
+      stack = find_existing
+      if stack
         stack.delete
       end
     end
