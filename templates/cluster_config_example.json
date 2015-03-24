@@ -39,6 +39,7 @@
         },
         "custom_recipes": {
           "setup": [
+            "mh-opsworks-recipes::fix-raid-mapping",
             "mh-opsworks-recipes::install-utils",
             "mh-opsworks-recipes::create-matterhorn-user",
             "mh-opsworks-recipes::clone-matterhorn",
@@ -71,6 +72,7 @@
         "use_ebs_optimized_instances": true,
         "custom_recipes": {
           "setup": [
+            "mh-opsworks-recipes::fix-raid-mapping",
             "mh-opsworks-recipes::install-utils",
             "mh-opsworks-recipes::create-matterhorn-user",
             "mh-opsworks-recipes::nfs-export"
