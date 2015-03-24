@@ -59,19 +59,30 @@ revision of the custom cookbook that you'd like to use.
       "custom_json": {},
       "custom_cookbooks_source": {
         "type": "git",
-        "url": "https://github.com/harvard-dce/mh-opsworks-berkshelf"
+        "url": "https://github.com/harvard-dce/mh-opsworks-berkshelf",
+        "revision": "master"
       }
     }
   }
 }
 ```
 
+## Notes
+
+## Layer instance start order
+
+Instances in layers are started in the order in which the layers are defined by
+the "stack:instances:start" command.  They are stopped in reverse order by
+"stack:instances:stop". This allows you to manage instance dependencies by
+putting important services - say your database or nfs storage - in layers
+defined early in the stack. The example `templates/cluster_config_example.json`
+defines layers in the correct order.
 
 ## Contributing or reporting problems
 
 1. Open a github issue to discuss your problem or feature idea.
 1. Fork this repo.
-1. Make sure tests pass: `bundle exec rake`
+1. Make sure tests pass: `bundle exec rspec spec/`
 1. Submit a pull request.
 
 ## See Also

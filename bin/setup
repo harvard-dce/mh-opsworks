@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-if ! ruby -v | grep -qiE 'ruby 2.1|ruby 2.0' ; then
-  echo 'You must have ruby 2.0 or 2.1 installed'
+if ! ruby -v | grep -qiE 'ruby 2' ; then
+  echo 'You must have ruby 2.x installed'
   exit 1
 fi
 
@@ -37,4 +37,4 @@ if grep -qiE 'FILL_ME_IN' ./credentials.json; then
 fi
 
 
-echo 'Preflight checks out. Run `rake cluster::init` to create a matterhorn cluster'
+echo 'Preflight checks out. Run `rake admin:cluster:init` to create a matterhorn cluster'

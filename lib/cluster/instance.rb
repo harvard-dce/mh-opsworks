@@ -9,7 +9,7 @@ module Cluster
     end
 
     def wait_for_instance_to_stop
-      self.class.wait_until_opsworks_instance_stopped(opsworks_instance_id)
+      self.class.wait_until_opsworks_instances_stopped([opsworks_instance_id])
     end
 
     def stop

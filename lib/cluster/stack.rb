@@ -1,5 +1,6 @@
 module Cluster
   class Stack < Base
+    include Waiters
     # Returns a list of all stacks in the credentialled AWS account.
     # The list is composed of Aws::OpsWorks::Stack instances.
     def self.all
@@ -20,17 +21,30 @@ module Cluster
 
     def self.stop_all
       with_existing_stack do |stack|
-        opsworks_client.stop_stack(
-          stack_id: stack.stack_id
-        )
+        Cluster::Layers.by_start_order.reverse.each do |layer|
+          instances = Cluster::Instances.find_in_layer(layer)
+          instances.each do |instance|
+            opsworks_client.stop_instance(
+              instance_id: instance.instance_id
+            )
+          end
+          wait_until_opsworks_instances_stopped(instances.map(&:instance_id))
+        end
       end
     end
 
     def self.start_all
       with_existing_stack do |stack|
-        opsworks_client.start_stack(
-          stack_id: stack.stack_id
-        )
+        Cluster::Layers.by_start_order.each do |layer|
+          instances = Cluster::Instances.find_in_layer(layer)
+          instances.each do |instance|
+            next if instance.status != 'stopped'
+            opsworks_client.start_instance(
+              instance_id: instance.instance_id
+            )
+          end
+          wait_until_opsworks_instances_started(instances.map(&:instance_id))
+        end
       end
     end
 

@@ -13,12 +13,24 @@ module Cluster
         yield if block_given?
       end
 
-      def wait_until_opsworks_instance_stopped(instance_id)
+      def wait_until_opsworks_instances_started(instance_ids = [])
         opsworks_client.wait_until(
-          :instance_stopped, instance_ids: [instance_id]
+          :instances_online, instance_ids: instance_ids
         ) do |w|
           w.before_wait do |attempts, response|
-            puts "Stopping instance #{instance_id}, attempt ##{attempts}"
+            puts "Starting instances #{instance_ids.join(', ')}, attempt ##{attempts}"
+          end
+        end
+
+        yield if block_given?
+      end
+
+      def wait_until_opsworks_instances_stopped(instance_ids = [])
+        opsworks_client.wait_until(
+          :instances_stopped, instance_ids: instance_ids
+        ) do |w|
+          w.before_wait do |attempts, response|
+            puts "Stopping instance #{instance_ids.join(', ')}, attempt ##{attempts}"
           end
         end
 
