@@ -95,7 +95,8 @@ module Cluster
         service_role_arn: service_role.arn,
         default_instance_profile_arn: instance_profile.arn,
         default_subnet_id: vpc.subnets.first.id,
-        default_root_device_type: stack_config.fetch(:default_root_device_type, 'ebs')
+        default_root_device_type: stack_config.fetch(:default_root_device_type, 'ebs'),
+        default_ssh_key_name: stack_config.fetch(:default_ssh_key_name, '')
       }
 
       stack = create_stack(parameters)

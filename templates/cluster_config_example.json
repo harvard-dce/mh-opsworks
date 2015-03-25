@@ -10,9 +10,21 @@
     "service_role": {
       "name": "mh-opsworks-cluster"
     },
+    "default_ssh_key_name":"",
     "chef": {
       "custom_json": {
         "matterhorn_repo_root": "/opt/matterhorn",
+        "local_workspace_root": "/var/matterhorn-workspace",
+        "capture_agent_query_url": "http://example.com/captureAgentLocations.json",
+        "default_email_sender": "no-reply@dce.harvard.edu",
+        "rest_auth": {
+          "user": "username",
+          "pass": "password"
+        },
+        "admin_auth": {
+          "user": "admin",
+          "pass": "murkwood"
+        },
         "storage": {
           "export_root": "/var/matterhorn",
           "network": "10.1.1.0/24",
@@ -40,6 +52,7 @@
         "custom_recipes": {
           "setup": [
             "mh-opsworks-recipes::fix-raid-mapping",
+            "mh-opsworks-recipes::set-bash-as-default-shell",
             "mh-opsworks-recipes::install-utils",
             "mh-opsworks-recipes::create-matterhorn-user",
             "mh-opsworks-recipes::clone-matterhorn",
@@ -65,7 +78,7 @@
         "name": "Storage",
         "shortname": "storage",
         "type": "custom",
-        "enable_auto_healing": false,
+        "enable_auto_healing": true,
         "auto_assign_elastic_ips": false,
         "install_updates_on_boot": true,
         "auto_assign_public_ips": true,
@@ -73,6 +86,7 @@
         "custom_recipes": {
           "setup": [
             "mh-opsworks-recipes::fix-raid-mapping",
+            "mh-opsworks-recipes::set-bash-as-default-shell",
             "mh-opsworks-recipes::install-utils",
             "mh-opsworks-recipes::create-matterhorn-user",
             "mh-opsworks-recipes::nfs-export"
@@ -94,24 +108,105 @@
         }
       },
       {
-        "name": "All in one",
-        "shortname": "all-in-one",
+        "name": "Admin",
+        "shortname": "admin",
         "type": "custom",
-        "enable_auto_healing": false,
+        "enable_auto_healing": true,
         "auto_assign_elastic_ips": true,
         "install_updates_on_boot": true,
         "auto_assign_public_ips": true,
         "custom_recipes": {
           "setup": [
+            "mh-opsworks-recipes::fix-raid-mapping",
+            "mh-opsworks-recipes::set-bash-as-default-shell",
             "mh-opsworks-recipes::install-utils",
             "mh-opsworks-recipes::install-mh-base-packages",
             "mh-opsworks-recipes::create-matterhorn-user",
-            "mh-opsworks-recipes::clone-matterhorn",
+            "mh-opsworks-recipes::install-deploy-key",
+            "mh-opsworks-recipes::nfs-client",
+            "mh-opsworks-recipes::configure-nginx-proxy"
+          ],
+          "deploy": [
+            "mh-opsworks-recipes::deploy-admin"
+          ]
+        },
+        "volume_configurations": [
+          {
+            "mount_point": "/var/matterhorn-workspace",
+            "number_of_disks": 1,
+            "size": "10",
+            "volume_type": "gp2"
+          }
+        ],
+        "instances": {
+          "number_of_instances": 1,
+          "instance_type": "t2.micro",
+          "root_device_type": "ebs"
+        }
+      },
+      {
+        "name": "Workers",
+        "shortname": "workers",
+        "type": "custom",
+        "enable_auto_healing": true,
+        "auto_assign_elastic_ips": true,
+        "install_updates_on_boot": true,
+        "auto_assign_public_ips": true,
+        "custom_recipes": {
+          "setup": [
+            "mh-opsworks-recipes::fix-raid-mapping",
+            "mh-opsworks-recipes::set-bash-as-default-shell",
+            "mh-opsworks-recipes::install-utils",
+            "mh-opsworks-recipes::install-mh-base-packages",
+            "mh-opsworks-recipes::create-matterhorn-user",
+            "mh-opsworks-recipes::install-deploy-key",
+            "mh-opsworks-recipes::nfs-client",
+            "mh-opsworks-recipes::configure-nginx-proxy"
+          ]
+        },
+        "volume_configurations": [
+          {
+            "mount_point": "/var/matterhorn-workspace",
+            "number_of_disks": 1,
+            "size": "10",
+            "volume_type": "gp2"
+          }
+        ],
+        "instances": {
+          "number_of_instances": 2,
+          "instance_type": "t2.micro",
+          "root_device_type": "ebs"
+        }
+      },
+      {
+        "name": "Engage",
+        "shortname": "engage",
+        "type": "custom",
+        "enable_auto_healing": true,
+        "auto_assign_elastic_ips": true,
+        "install_updates_on_boot": true,
+        "auto_assign_public_ips": true,
+        "custom_recipes": {
+          "setup": [
+            "mh-opsworks-recipes::fix-raid-mapping",
+            "mh-opsworks-recipes::set-bash-as-default-shell",
+            "mh-opsworks-recipes::install-utils",
+            "mh-opsworks-recipes::install-mh-base-packages",
+            "mh-opsworks-recipes::create-matterhorn-user",
+            "mh-opsworks-recipes::install-deploy-key",
             "mh-opsworks-recipes::nfs-client"
           ]
         },
+        "volume_configurations": [
+          {
+            "mount_point": "/var/matterhorn-workspace",
+            "number_of_disks": 1,
+            "size": "10",
+            "volume_type": "gp2"
+          }
+        ],
         "instances": {
-          "number_of_instances": 2,
+          "number_of_instances": 1,
           "instance_type": "t2.micro",
           "root_device_type": "ebs"
         }
