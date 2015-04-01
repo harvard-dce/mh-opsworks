@@ -70,7 +70,7 @@
         ],
         "instances": {
           "number_of_instances": 1,
-          "instance_type": "t2.micro",
+          "instance_type": "t2.medium",
           "root_device_type": "ebs"
         }
       },
@@ -103,7 +103,7 @@
         ],
         "instances": {
           "number_of_instances": 1,
-          "instance_type": "t2.micro",
+          "instance_type": "t2.medium",
           "root_device_type": "ebs"
         }
       },
@@ -124,7 +124,8 @@
             "mh-opsworks-recipes::create-matterhorn-user",
             "mh-opsworks-recipes::install-deploy-key",
             "mh-opsworks-recipes::nfs-client",
-            "mh-opsworks-recipes::configure-nginx-proxy"
+            "mh-opsworks-recipes::configure-nginx-proxy",
+            "mh-opsworks-recipes::install-ffmpeg"
           ],
           "deploy": [
             "mh-opsworks-recipes::deploy-admin"
@@ -140,7 +141,7 @@
         ],
         "instances": {
           "number_of_instances": 1,
-          "instance_type": "t2.micro",
+          "instance_type": "t2.medium",
           "root_device_type": "ebs"
         }
       },
@@ -161,7 +162,11 @@
             "mh-opsworks-recipes::create-matterhorn-user",
             "mh-opsworks-recipes::install-deploy-key",
             "mh-opsworks-recipes::nfs-client",
-            "mh-opsworks-recipes::configure-nginx-proxy"
+            "mh-opsworks-recipes::configure-nginx-proxy",
+            "mh-opsworks-recipes::install-ffmpeg"
+          ],
+          "deploy": [
+            "mh-opsworks-recipes::deploy-worker"
           ]
         },
         "volume_configurations": [
@@ -174,7 +179,7 @@
         ],
         "instances": {
           "number_of_instances": 2,
-          "instance_type": "t2.micro",
+          "instance_type": "t2.medium",
           "root_device_type": "ebs"
         }
       },
@@ -194,7 +199,8 @@
             "mh-opsworks-recipes::install-mh-base-packages",
             "mh-opsworks-recipes::create-matterhorn-user",
             "mh-opsworks-recipes::install-deploy-key",
-            "mh-opsworks-recipes::nfs-client"
+            "mh-opsworks-recipes::nfs-client",
+            "mh-opsworks-recipes::install-ffmpeg"
           ]
         },
         "volume_configurations": [
@@ -207,7 +213,7 @@
         ],
         "instances": {
           "number_of_instances": 1,
-          "instance_type": "t2.micro",
+          "instance_type": "t2.medium",
           "root_device_type": "ebs"
         }
       }
