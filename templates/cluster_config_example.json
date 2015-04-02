@@ -29,7 +29,8 @@
           "export_root": "/var/matterhorn",
           "network": "10.1.1.0/24",
           "layer_shortname": "storage"
-        }
+        },
+        "user_tracking_authhost": "example.com"
       },
       "custom_cookbooks_source": {
         "type": "git",
@@ -127,6 +128,9 @@
             "mh-opsworks-recipes::configure-nginx-proxy",
             "mh-opsworks-recipes::install-ffmpeg"
           ],
+          "configure": [
+            "mh-opsworks-recipes::update-host-based-configurations"
+          ],
           "deploy": [
             "mh-opsworks-recipes::deploy-admin"
           ]
@@ -165,6 +169,9 @@
             "mh-opsworks-recipes::configure-nginx-proxy",
             "mh-opsworks-recipes::install-ffmpeg"
           ],
+          "configure": [
+            "mh-opsworks-recipes::update-host-based-configurations"
+          ],
           "deploy": [
             "mh-opsworks-recipes::deploy-worker"
           ]
@@ -200,7 +207,14 @@
             "mh-opsworks-recipes::create-matterhorn-user",
             "mh-opsworks-recipes::install-deploy-key",
             "mh-opsworks-recipes::nfs-client",
-            "mh-opsworks-recipes::install-ffmpeg"
+            "mh-opsworks-recipes::install-ffmpeg",
+            "mh-opsworks-recipes::configure-nginx-proxy"
+          ],
+          "configure": [
+            "mh-opsworks-recipes::update-host-based-configurations"
+          ],
+          "deploy": [
+            "mh-opsworks-recipes::deploy-engage"
           ]
         },
         "volume_configurations": [
