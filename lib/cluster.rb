@@ -24,6 +24,7 @@ require './lib/cluster/console'
 require './lib/cluster/config_checks/layer_order'
 require './lib/cluster/config_checks/numbered_layer'
 require './lib/cluster/config_checks/database'
+require './lib/cluster/config_checks/admin'
 require './lib/cluster/config_checks/storage'
 require './lib/cluster/config_checks/json_format'
 

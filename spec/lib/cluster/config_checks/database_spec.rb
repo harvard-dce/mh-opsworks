@@ -1,9 +1,9 @@
-describe Cluster::ConfigChecks::Database do
+describe Cluster::ConfigChecks::Admin do
   include EnvironmentHelpers
 
   it "does not raise when all is well with the world" do
     stub_config_to_include(
-      { stack: { layers: [database_layer_with_instances_numbering(1)] } }
+      { stack: { layers: [admin_layer_with_instances_numbering(1)] } }
     )
 
     expect{ described_class.sane? }.not_to raise_error
@@ -17,11 +17,11 @@ describe Cluster::ConfigChecks::Database do
     )
   end
 
-  it "raises when more than one database layer is defined" do
-    database_layer = database_layer_with_instances_numbering(1)
+  it "raises when more than one admin layer is defined" do
+    admin_layer = admin_layer_with_instances_numbering(1)
 
     stub_config_to_include(
-      { stack: { layers: [database_layer, database_layer] } }
+      { stack: { layers: [admin_layer, admin_layer] } }
     )
 
     expect{ described_class.sane? }.to raise_error(
@@ -29,9 +29,9 @@ describe Cluster::ConfigChecks::Database do
     )
   end
 
-  it "raises when more than one database instance is defined" do
+  it "raises when more than one admin instance is defined" do
     stub_config_to_include(
-      { stack: { layers: [database_layer_with_instances_numbering(2)] } }
+      { stack: { layers: [admin_layer_with_instances_numbering(2)] } }
     )
 
     expect{ described_class.sane? }.to raise_error(
@@ -45,8 +45,8 @@ describe Cluster::ConfigChecks::Database do
         stack: {
           layers: [
             {
-              name: 'DB Layer',
-              type: 'db-master',
+              name: 'Admin',
+              type: 'custom',
               instances: {},
               volume_configurations: []
             }
@@ -62,10 +62,9 @@ describe Cluster::ConfigChecks::Database do
 
   it_behaves_like 'a registered configuration check'
 
-  def database_layer_with_instances_numbering(number_of_instances)
+  def admin_layer_with_instances_numbering(number_of_instances)
     {
-      name: 'DB layer',
-      type: 'db-master',
+      name: 'Admin',
       instances: {
         number_of_instances: number_of_instances
       },
