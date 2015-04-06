@@ -27,7 +27,7 @@
         },
         "storage": {
           "export_root": "/var/matterhorn",
-          "network": "10.1.1.0/24",
+          "network": "10.1.1.0/24 FILL_ME_IN - this should match your cidr_block above",
           "layer_shortname": "storage"
         },
         "user_tracking_authhost": "example.com"
@@ -230,6 +230,40 @@
         "instances": {
           "number_of_instances": 1,
           "instance_type": "t2.medium",
+          "root_device_type": "ebs"
+        }
+      },
+      {
+        "name": "Ganglia",
+        "shortname": "ganglia",
+        "enable_auto_healing": true,
+        "install_updates_on_boot": true,
+        "type": "monitoring-master",
+        "auto_assign_public_ips": true,
+        "use_ebs_optimized_instances": true,
+        "attributes": {
+          "GangliaUrl": "/ganglia",
+          "GangliaUser": "FILL_ME_IN",
+          "GangliaPassword": "FILL_ME_IN"
+        },
+        "custom_recipes": {
+          "setup": [
+            "mh-opsworks-recipes::fix-raid-mapping",
+            "mh-opsworks-recipes::set-bash-as-default-shell",
+            "mh-opsworks-recipes::install-utils"
+          ]
+        },
+        "volume_configurations": [
+          {
+            "mount_point": "/vol/ganglia",
+            "number_of_disks": 1,
+            "size": "10",
+            "volume_type": "gp2"
+          }
+        ],
+        "instances": {
+          "number_of_instances": 1,
+          "instance_type": "t2.small",
           "root_device_type": "ebs"
         }
       }
