@@ -118,8 +118,8 @@ namespace :stack do
     desc 'run custom chef recipes'
     task execute_recipes: ['cluster:configtest'] do
       Cluster::Stack.with_existing_stack do |stack|
-        layers = ENV['layers'].to_s.strip.split(',')
-        recipes = ENV['recipes'].to_s.strip.split(',')
+        layers = ENV['layers'].to_s.strip.split(/,[\s]?/)
+        recipes = ENV['recipes'].to_s.strip.split(/,[\s]?/)
 
         if recipes.none?
           puts %Q|Please indicate the recipes you'd like to run.|

@@ -37,9 +37,37 @@ matterhorn cluster.
     # List the cluster-specific tasks available
     rake -T
 
-    # Initialize a VPC based on the variables defined in your default cluster_config.json
-    rake vpc:init
-    # Time passes, output is given
+    # Initialize a cluster, start the instances and then start matterhorn:
+    rake admin:cluster:init
+
+    # Start all instances, which includes installing all dependencies,
+    # cloning matterhorn, deploying, and running a maven build. This takes a while the
+    # first time you run it on a cluster
+    rake stack:instances:start
+
+    # Check the status of the registered instances
+    rake stack:instances:list
+
+    # You can start matterhorn after all instances are in the "online" state,
+    # which you can also see in the opsworks console.
+    rake stack:commands:execute_recipes layers="Admin,Engage,Workers" recipes="mh-opsworks-recipes::restart-matterhorn"
+
+    # Deploy a new revision from the repo / branch linked in your app:
+    rake deployment:deploy_app
+
+    # View the status of the deployment (it'll be the first at the top):
+    rake deployment:list
+
+    # Restart matterhorn when the deployment is complete
+    rake stack:commands:execute_recipes layers="Admin,Engage,Workers" recipes="mh-opsworks-recipes::restart-matterhorn"
+
+    # We're done!
+
+    # Stop matterhorn:
+    rake stack:commands:execute_recipes layers="Admin,Engage,Workers" recipes="mh-opsworks-recipes::stop-matterhorn"
+
+    # Delete the cluster:
+    rake admin:cluster:delete
 
 ## Chef
 

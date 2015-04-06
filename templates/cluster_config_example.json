@@ -89,8 +89,10 @@
             "mh-opsworks-recipes::set-bash-as-default-shell",
             "mh-opsworks-recipes::install-utils",
             "mh-opsworks-recipes::create-matterhorn-user",
-            "mh-opsworks-recipes::clone-matterhorn",
-            "mh-opsworks-recipes::create-database"
+            "mh-opsworks-recipes::install-deploy-key"
+          ],
+          "deploy": [
+            "mh-opsworks-recipes::deploy-database"
           ]
         },
         "volume_configurations": [
@@ -237,7 +239,7 @@
       "name": "Matterhorn",
       "type": "other",
       "deployment": {
-        "to_layers": ["All in one"],
+        "to_layers": ["Admin", "Engage", "Workers", "MySQL db"],
         "custom_json": { }
       },
       "app_source": {
