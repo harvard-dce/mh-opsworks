@@ -44,7 +44,14 @@ module Cluster
               instance_id: instance.instance_id
             )
           end
-          wait_until_opsworks_instances_started(instances.map(&:instance_id))
+          # Let storage and the database come online before spinning
+          # up all the rest of the instances
+          if (layer.type == 'db-master') || (layer.shortname == 'storage')
+            wait_until_opsworks_instances_started(instances.map(&:instance_id))
+          else
+            puts "Starting #{instances.map(&:instance_id).join(', ')}"
+            sleep 5
+          end
         end
       end
     end

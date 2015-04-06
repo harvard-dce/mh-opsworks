@@ -17,6 +17,8 @@ module Cluster
         opsworks_client.wait_until(
           :instances_online, instance_ids: instance_ids
         ) do |w|
+          w.max_attempts = 150
+          w.delay = 20
           w.before_wait do |attempts, response|
             puts "Starting instances #{instance_ids.join(', ')}, attempt ##{attempts}"
           end

@@ -40,6 +40,39 @@
     },
     "layers": [
       {
+        "name": "Storage",
+        "shortname": "storage",
+        "type": "custom",
+        "enable_auto_healing": true,
+        "auto_assign_elastic_ips": false,
+        "install_updates_on_boot": true,
+        "auto_assign_public_ips": true,
+        "use_ebs_optimized_instances": true,
+        "custom_recipes": {
+          "setup": [
+            "mh-opsworks-recipes::fix-raid-mapping",
+            "mh-opsworks-recipes::set-bash-as-default-shell",
+            "mh-opsworks-recipes::install-utils",
+            "mh-opsworks-recipes::create-matterhorn-user",
+            "mh-opsworks-recipes::nfs-export"
+          ]
+        },
+        "volume_configurations": [
+          {
+            "mount_point": "/var/matterhorn",
+            "raid_level": 0,
+            "number_of_disks": 2,
+            "size": "20",
+            "volume_type": "gp2"
+          }
+        ],
+        "instances": {
+          "number_of_instances": 1,
+          "instance_type": "t2.medium",
+          "root_device_type": "ebs"
+        }
+      },
+      {
         "name": "MySQL db",
         "shortname": "mysql-db",
         "enable_auto_healing": true,
@@ -66,39 +99,6 @@
             "raid_level": 1,
             "number_of_disks": 2,
             "size": "10",
-            "volume_type": "gp2"
-          }
-        ],
-        "instances": {
-          "number_of_instances": 1,
-          "instance_type": "t2.medium",
-          "root_device_type": "ebs"
-        }
-      },
-      {
-        "name": "Storage",
-        "shortname": "storage",
-        "type": "custom",
-        "enable_auto_healing": true,
-        "auto_assign_elastic_ips": false,
-        "install_updates_on_boot": true,
-        "auto_assign_public_ips": true,
-        "use_ebs_optimized_instances": true,
-        "custom_recipes": {
-          "setup": [
-            "mh-opsworks-recipes::fix-raid-mapping",
-            "mh-opsworks-recipes::set-bash-as-default-shell",
-            "mh-opsworks-recipes::install-utils",
-            "mh-opsworks-recipes::create-matterhorn-user",
-            "mh-opsworks-recipes::nfs-export"
-          ]
-        },
-        "volume_configurations": [
-          {
-            "mount_point": "/var/matterhorn",
-            "raid_level": 0,
-            "number_of_disks": 2,
-            "size": "20",
             "volume_type": "gp2"
           }
         ],
