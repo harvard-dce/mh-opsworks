@@ -28,6 +28,7 @@ require './lib/cluster/config_checks/database'
 require './lib/cluster/config_checks/admin'
 require './lib/cluster/config_checks/engage'
 require './lib/cluster/config_checks/monitoring'
+require './lib/cluster/config_checks/cidr_nfs_parity'
 require './lib/cluster/config_checks/storage'
 require './lib/cluster/config_checks/json_format'
 
