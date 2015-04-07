@@ -6,7 +6,34 @@ module Cluster
     class NoStorageVolumesDefined < StandardError; end
 
     class NumberedLayer < Cluster::Base
+
+      def self.sane?
+        if ! layer_defined?
+          raise LayerNotDefined.new("#{klass_name} layer is missing")
+        end
+
+        if too_many_instances?
+          raise TooManyInstancesInLayer.new("There are too many #{klass_name} instances")
+        end
+
+        if too_many_layers?
+          raise TooManyLayers.new("There are too many #{klass_name} layers")
+        end
+
+        if no_volumes_defined?
+          raise NoStorageVolumesDefined.new("The #{klass_name} layer has no volume_configurations and cannot store data persistently.")
+        end
+      end
+
       private
+
+      def self.klass_name
+        name.split('::').last
+      end
+
+      def self.find_all_layers
+        layers_config.find_all { |layer| layer[:shortname] == shortname }
+      end
 
       def self.no_volumes_defined?
         layer = find_layer

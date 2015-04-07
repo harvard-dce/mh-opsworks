@@ -19,6 +19,8 @@ describe Cluster::ConfigChecks::Deployment do
     )
   end
 
+  it_behaves_like 'a registered configuration check'
+
   def deployment_to_layers(layers = ["Admin", "Engage", "Workers", "MySQL db"])
     {
       app: {
