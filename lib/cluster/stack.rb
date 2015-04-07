@@ -35,6 +35,7 @@ module Cluster
     end
 
     def self.start_all
+      non_core_instance_ids = []
       with_existing_stack do |stack|
         Cluster::Layers.by_start_order.each do |layer|
           instances = Cluster::Instances.find_in_layer(layer)
@@ -49,11 +50,11 @@ module Cluster
           if (layer.type == 'db-master') || (layer.shortname == 'storage')
             wait_until_opsworks_instances_started(instances.map(&:instance_id))
           else
-            puts "Starting #{instances.map(&:instance_id).join(', ')}"
-            sleep 5
+            non_core_instance_ids = non_core_instance_ids + instances.map(&:instance_id)
           end
         end
       end
+      wait_until_opsworks_instances_started(non_core_instance_ids)
     end
 
     def self.find_existing
