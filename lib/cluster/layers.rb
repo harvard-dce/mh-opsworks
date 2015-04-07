@@ -8,7 +8,7 @@ module Cluster
     def self.by_start_order
       layers = self.all
       layers_config.map do |layer|
-        layers.find{|instantiated_layer| instantiated_layer.name == layer[:name]}
+        layers.find{|instantiated_layer| instantiated_layer.shortname == layer[:shortname]}
       end
     end
 

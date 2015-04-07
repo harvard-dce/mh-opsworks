@@ -74,7 +74,7 @@ namespace :stack do
       Cluster::Stack.with_existing_stack do |stack|
         layers = Cluster::Layers.find_or_create
         layers.each do |layer|
-          puts %Q|Layer: "#{layer.name}" => #{layer.layer_id}|
+          puts %Q|Layer: "#{layer.name}" => #{layer.layer_id}, #{layer.shortname}|
             Cluster::Instances.find_in_layer(layer).each do |instance|
             puts %Q|	Instance: #{instance.hostname} => status: #{instance.status}, ec2_instance_id: #{instance.ec2_instance_id}|
           end

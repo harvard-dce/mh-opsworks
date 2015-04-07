@@ -74,7 +74,7 @@
       },
       {
         "name": "MySQL db",
-        "shortname": "mysql-db",
+        "shortname": "db-master",
         "enable_auto_healing": true,
         "install_updates_on_boot": true,
         "type": "db-master",
@@ -235,7 +235,7 @@
       },
       {
         "name": "Ganglia",
-        "shortname": "ganglia",
+        "shortname": "monitoring-master",
         "enable_auto_healing": true,
         "install_updates_on_boot": true,
         "type": "monitoring-master",

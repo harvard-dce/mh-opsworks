@@ -22,7 +22,7 @@ module Cluster
       private
 
       def self.find_all_layers
-        layers_config.find_all { |layer| layer[:name] == 'Admin' }
+        layers_config.find_all { |layer| layer[:shortname] == 'admin' }
       end
 
     end

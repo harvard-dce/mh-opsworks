@@ -47,7 +47,7 @@ module Cluster
           end
           # Let storage and the database come online before spinning
           # up all the rest of the instances
-          if (layer.type == 'db-master') || (layer.shortname == 'storage')
+          if ['db-master', 'storage'].include?(layer.shortname)
             wait_until_opsworks_instances_started(instances.map(&:instance_id))
           else
             non_core_instance_ids = non_core_instance_ids + instances.map(&:instance_id)

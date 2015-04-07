@@ -40,7 +40,7 @@ describe Cluster::ConfigChecks::LayerOrder do
   it_behaves_like 'a registered configuration check'
 
   def db_layer
-    { name: 'DB Layer', type: 'db-master' }
+    { name: 'DB Layer', shortname: 'db-master' }
   end
 
   def storage_layer

@@ -41,9 +41,9 @@ module Cluster
         service_role_config[:name]
       end
 
-      def instances_config_in_layer(layer_name)
+      def instances_config_in_layer(layer_shortname)
         layers_config.find do |layer|
-          layer[:name] == layer_name
+          layer[:shortname] == layer_shortname
         end.fetch(:instances, {})
       end
     end

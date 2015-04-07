@@ -34,7 +34,7 @@ module Cluster
     def self.find_or_create
       instances = []
       Layers.find_or_create.each do |layer|
-        instances_config = instances_config_in_layer(layer.name)
+        instances_config = instances_config_in_layer(layer.shortname)
         syncer = InstanceSyncer.new(
           layer: layer,
           instances_config: instances_config

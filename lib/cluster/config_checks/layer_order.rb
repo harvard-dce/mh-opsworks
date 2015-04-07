@@ -21,7 +21,7 @@ module Cluster
       private
 
       def self.database_layer_config
-        layers_config.find{|layer| layer[:type] == 'db-master'}
+        layers_config.find{|layer| layer[:shortname] == 'db-master'}
       end
 
       def self.storage_layer_config
