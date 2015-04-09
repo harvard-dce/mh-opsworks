@@ -7,6 +7,7 @@
   },
   "stack": {
     "name": "FILL_ME_IN",
+    "shortname": "FILL_ME_IN - only lowercase letters, digits and hyphens",
     "service_role": {
       "name": "mh-opsworks-cluster"
     },

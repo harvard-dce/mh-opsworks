@@ -1,13 +1,21 @@
 module Cluster
   module NamingHelpers
     module ClassMethods
-      def instance_profile_name
-        %Q|#{service_role_name}-instance-profile|
+      def stack_shortname
+        stack_config[:shortname]
       end
-    end
 
-    def service_role_name
-      service_role_config[:name]
+      def vpc_name
+        %Q|#{stack_shortname}-vpc|
+      end
+
+      def instance_profile_name
+        %Q|#{stack_shortname}-instance-profile|
+      end
+
+      def service_role_name
+        %Q|#{stack_shortname}-service-role|
+      end
     end
 
     def self.included(base)

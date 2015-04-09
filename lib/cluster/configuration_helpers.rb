@@ -33,14 +33,6 @@ module Cluster
         stack_config.fetch(:chef, {})
       end
 
-      def service_role_config
-        config.parsed[:stack][:service_role]
-      end
-
-      def service_role_name
-        service_role_config[:name]
-      end
-
       def instances_config_in_layer(layer_shortname)
         layers_config.find do |layer|
           layer[:shortname] == layer_shortname

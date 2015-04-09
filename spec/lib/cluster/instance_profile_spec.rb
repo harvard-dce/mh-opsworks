@@ -13,12 +13,10 @@ describe Cluster::InstanceProfile do
 
   context '.delete' do
     it 'deletes correctly' do
-      stub_with_instance_profile_named('service-role-instance-profile')
+      stub_with_instance_profile_named('test-stack-instance-profile')
       stub_config_to_include(
         stack: {
-          service_role: {
-            name: 'service-role'
-          }
+          shortname: 'test-stack'
         }
       )
       instance_profile_double = double('instance_profile')
