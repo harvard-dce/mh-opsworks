@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/harvard-dce/aws-sdk-ruby
-  revision: 9cf20092a16baea2740c967290ab644c15aee414
+  revision: d78351dc043c1ae76cfe98ea4780fdd81881b0c7
   branch: master
   specs:
     aws-sdk (2.0.31)

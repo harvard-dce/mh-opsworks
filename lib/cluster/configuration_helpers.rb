@@ -9,6 +9,10 @@ module Cluster
         config.parsed
       end
 
+      def vpc_config
+        config.parsed[:vpc]
+      end
+
       def deployment_private_ssh_key
         config.parsed_credentials[:deployment_private_ssh_key]
       end

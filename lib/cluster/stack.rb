@@ -29,7 +29,9 @@ module Cluster
               instance_id: instance.instance_id
             )
           end
-          wait_until_opsworks_instances_stopped(instances.map(&:instance_id))
+          if instances.any?
+            wait_until_opsworks_instances_stopped(instances.map(&:instance_id))
+          end
         end
       end
     end

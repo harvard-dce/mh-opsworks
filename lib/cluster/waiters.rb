@@ -1,6 +1,16 @@
 module Cluster
   module Waiters
     module ClassMethods
+      def wait_until_stack_build_completed(cfn_stack_id)
+        cloudformation_client.wait_until(
+          :create_completed, stack_name: cfn_stack_id
+        ) do |w|
+          w.before_wait do |attempts, response|
+            puts "Waiting for vpc infrastructure to be built for #{vpc_name}, attempt ##{attempts}"
+          end
+        end
+      end
+
       def wait_until_app_available(app_id)
         opsworks_client.wait_until(
           :app_available, app_ids: [app_id]

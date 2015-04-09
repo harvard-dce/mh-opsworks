@@ -3,3 +3,4 @@ cluster_config*.json
 credentials.json
 credentials*.json
 tmp/
+*.bk

@@ -1,6 +1,13 @@
 module Cluster
   module ClientHelpers
     module ClassMethods
+      def cloudformation_client
+        Aws::CloudFormation::Client.new(
+          region: config.parsed[:region],
+          credentials: config.credentials
+        )
+      end
+
       def iam_client
         Aws::IAM::Client.new(
           region: config.parsed[:region],

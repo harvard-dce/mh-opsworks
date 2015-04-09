@@ -39,6 +39,9 @@ describe Cluster::VPC do
     end
 
     it 'returns an existing VPC if the name and cidr_block match' do
+      stub_config_to_include(stack: {
+        shortname: 'test'
+      })
       stub_ec2_client do |ec2|
         ec2.stub_responses(
           :describe_vpcs,
@@ -54,40 +57,6 @@ describe Cluster::VPC do
       expect(vpc.vpc_id).to eq existing_vpc[:vpc_id]
       expect(vpc.cidr_block).to eq existing_cidr_block
     end
-
-    it "creates a vpc if it doesn't exist, while tagging it" do
-      vpc_id = 'a-new-vpc-id'
-      stub_ec2_client do |ec2|
-        ec2.stub_responses(
-          :describe_vpcs,
-          { vpcs: [ existing_vpc ] }
-        )
-        ec2.stub_responses(
-          :create_vpc,
-          {
-            vpc: {
-              vpc_id: vpc_id,
-            }
-          }
-        )
-      end
-
-      allow(described_class).to receive(:create_and_associate_internet_gateway_for)
-
-      vpc_double = double('vpc client').as_null_object
-      allow(vpc_double).to receive(:vpc_id).and_return(vpc_id)
-      new_cidr_block = '192.168.1.1/16'
-      stub_config_to_include(
-        vpc: { name: 'a-sweet-new-vpc', cidr_block: new_cidr_block }
-      )
-      allow(Aws::EC2::Vpc).to receive(:new).and_return(vpc_double)
-
-      vpc = described_class.find_or_create
-      expect(vpc.vpc_id).to eq vpc_id
-      expect(vpc_double).to have_received(:create_tags)
-      expect(Aws::EC2::Vpc).to have_received(:new).at_least(2).times
-      expect(described_class).to have_received(:create_and_associate_internet_gateway_for).with(vpc_double)
-    end
   end
 
   def existing_vpc
@@ -102,7 +71,7 @@ describe Cluster::VPC do
   end
 
   def existing_vpc_name
-    'test_vpc'
+    'test-vpc'
   end
 
   def existing_cidr_block

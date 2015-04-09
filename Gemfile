@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
 # gem 'aws-sdk', '~> 2.0.23'
-# gem 'aws-sdk', path: '/home/djcp/code/work/aws-sdk-ruby'
+# # gem 'aws-sdk', path: '/home/djcp/code/work/aws-sdk-ruby'
 gem 'aws-sdk', git: 'https://github.com/harvard-dce/aws-sdk-ruby', branch: :master
 gem 'rake', '~> 10.4.2'
 

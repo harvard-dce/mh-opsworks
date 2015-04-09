@@ -1,16 +1,14 @@
 {
   "region": "us-east-1",
   "vpc": {
-    "name": "FILL_ME_IN",
-    "cidr_block": "FILL_ME_IN",
-    "_cidr_block_comment": "10.1.1.0/24 gives you 10.1.1.0-255"
+    "cidr_block": "FILL_ME_IN - e.g. 10.1.1.0/24",
+    "public_cidr_block": "FILL_ME_IN - e.g. 10.1.1.0/26",
+    "private_cidr_block": "FILL_ME_IN - e.g. 10.1.1.64/26",
+    "_cidr_block_comment": "10.1.1.0/24 gives you 254 ips"
   },
   "stack": {
     "name": "FILL_ME_IN",
     "shortname": "FILL_ME_IN - only lowercase letters, digits and hyphens",
-    "service_role": {
-      "name": "mh-opsworks-cluster"
-    },
     "default_ssh_key_name":"",
     "chef": {
       "custom_json": {
@@ -47,7 +45,7 @@
         "enable_auto_healing": true,
         "auto_assign_elastic_ips": false,
         "install_updates_on_boot": true,
-        "auto_assign_public_ips": true,
+        "auto_assign_public_ips": false,
         "use_ebs_optimized_instances": true,
         "custom_recipes": {
           "setup": [
@@ -79,7 +77,7 @@
         "enable_auto_healing": true,
         "install_updates_on_boot": true,
         "type": "db-master",
-        "auto_assign_public_ips": true,
+        "auto_assign_public_ips": false,
         "use_ebs_optimized_instances": true,
         "attributes": {
           "MysqlRootPasswordUbiquitous": "true"
@@ -157,9 +155,9 @@
         "shortname": "workers",
         "type": "custom",
         "enable_auto_healing": true,
-        "auto_assign_elastic_ips": true,
+        "auto_assign_elastic_ips": false,
         "install_updates_on_boot": true,
-        "auto_assign_public_ips": true,
+        "auto_assign_public_ips": false,
         "custom_recipes": {
           "setup": [
             "mh-opsworks-recipes::fix-raid-mapping",
@@ -240,7 +238,7 @@
         "enable_auto_healing": true,
         "install_updates_on_boot": true,
         "type": "monitoring-master",
-        "auto_assign_public_ips": true,
+        "auto_assign_public_ips": false,
         "use_ebs_optimized_instances": true,
         "attributes": {
           "GangliaUrl": "/ganglia",
