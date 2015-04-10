@@ -82,6 +82,11 @@ namespace :stack do
       end
     end
 
+    desc 'stop and delete all instances in the stack'
+    task delete: ['cluster:configtest'] do
+      Cluster::Instances.delete
+    end
+
     desc 'stop all instances in the configured stack'
     task stop: ['cluster:configtest'] do
       Cluster::Stack.stop_all
