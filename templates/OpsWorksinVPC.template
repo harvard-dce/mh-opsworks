@@ -1,7 +1,7 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
 
-  "Description" : "Sample template showing how to create a VPC environment for AWS OpsWorks. The stack contains 2 subnets: the first subnet is public and contains the load balancer, a NAT device for internet access from the private subnet. The second subnet is private. You will be billed for the AWS resources used if you create a stack from this template.",
+  "Description" : "This template creates a VPC environment for AWS OpsWorks. The stack contains 2 subnets: the first subnet is public and contains a NAT device for internet access from the private subnet. The second subnet is private.",
 
   "Parameters" : {
     "CIDRBlock": {
@@ -23,7 +23,6 @@
       "ConstraintDescription": "the CIDR block for the private part of this VPC, e.g. 10.1.1.64/26"
     }
 },
-
 
   "Mappings" : {
     "AWSNATAMI" : {
@@ -251,7 +250,7 @@
         "SecurityGroupIds" : [{ "Ref" : "NATSecurityGroup" }],
         "Tags" : [
           { "Key" : "OpsworksStack", "Value" : { "Ref" : "AWS::StackName" } },
-          { "Key" : "MachineRole", "Value" : "NAT instance for Opsworks Stack" }
+          { "Key" : "Name", "Value" : { "Fn::Join" : [ " ", [ { "Ref" : "AWS::StackName" }, "NAT instance" ] ] } }
         ]
       }
     },
@@ -282,35 +281,7 @@
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
         "GroupDescription" : "Allow the OpsWorks instances to access the NAT device",
-        "VpcId" : { "Ref" : "VPC" },
-        "SecurityGroupIngress" : [
-           { "IpProtocol" : "tcp", "FromPort" : "80",  "ToPort" : "80",  "SourceSecurityGroupId" : { "Ref" : "LoadBalancerSecurityGroup" }} ]
-      }
-    },
-
-    "ElasticLoadBalancer" : {
-      "Type" : "AWS::ElasticLoadBalancing::LoadBalancer",
-      "Properties" : {
-        "SecurityGroups" : [ { "Ref" : "LoadBalancerSecurityGroup" } ],
-        "Subnets" : [ { "Ref" : "PublicSubnet" } ],
-        "Listeners" : [ { "LoadBalancerPort" : "80", "InstancePort" : "80", "Protocol" : "HTTP" } ],
-        "HealthCheck" : {
-          "Target" : "HTTP:80/",
-          "HealthyThreshold" : "3",
-          "UnhealthyThreshold" : "5",
-          "Interval" : "90",
-          "Timeout" : "60"
-        }
-      }
-    },
-
-    "LoadBalancerSecurityGroup" : {
-      "Type" : "AWS::EC2::SecurityGroup",
-      "Properties" : {
-        "GroupDescription" : "Enable HTTP access on port 80",
-        "VpcId" : { "Ref" : "VPC" },
-        "SecurityGroupIngress" : [ { "IpProtocol" : "tcp", "FromPort" : "80", "ToPort" : "80", "CidrIp" : "0.0.0.0/0" } ],
-        "SecurityGroupEgress" : [ { "IpProtocol" : "tcp", "FromPort" : "80", "ToPort" : "80", "CidrIp" : "0.0.0.0/0"} ]
+        "VpcId" : { "Ref" : "VPC" }
       }
     }
   },
@@ -330,11 +301,6 @@
     "PrivateSubnets" : {
       "Description" : "Private Subnet",
       "Value" : {"Ref" : "PrivateSubnet" }
-    },
-
-    "LoadBalancer" : {
-      "Description" : "Load Balancer",
-      "Value" : {"Ref" : "ElasticLoadBalancer" }
     }
   }
 }

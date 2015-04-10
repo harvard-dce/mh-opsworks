@@ -25,13 +25,17 @@ describe Cluster::VPC do
         )
       end
       vpc_configs = [
-        { name: existing_vpc_name, cidr_block: '10.100.10.10/16' },
-        { name: 'a-new-vpc', cidr_block: existing_cidr_block },
+        { name: 'test', cidr_block: '10.100.10.10/16' },
+        { name: 'a-new-cluster', cidr_block: existing_cidr_block },
       ]
 
-      vpc_configs.each do |vpc|
-        stub_config_to_include(vpc: vpc)
-
+      vpc_configs.each do |vpc_config|
+        stub_config_to_include(
+          vpc: { cidr_block: vpc_config[:cidr_block] },
+          stack: {
+            shortname: vpc_config[:name]
+          }
+        )
         expect{ described_class.find_or_create }.to raise_error(
           Cluster::VpcConflictsWithAnother
         )
@@ -49,7 +53,7 @@ describe Cluster::VPC do
         )
       end
       stub_config_to_include(
-        vpc: { name: existing_vpc_name, cidr_block: existing_cidr_block}
+        vpc: { cidr_block: existing_cidr_block }
       )
 
       vpc = described_class.find_or_create

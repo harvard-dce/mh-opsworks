@@ -27,9 +27,21 @@ module Cluster
     end
 
     def self.find_or_create_in_layer(layer, instances_config)
+      vpc = Cluster::VPC.find_existing
+      subnet =
+        if layer.auto_assign_public_ips == false &&
+            layer.auto_assign_elastic_ips == false
+          # Private instance
+          vpc.subnets.find{|subnet| subnet.cidr_block == vpc_config[:private_cidr_block] }
+        else
+          # Public instance
+          vpc.subnets.find{|subnet| subnet.cidr_block == vpc_config[:public_cidr_block] }
+        end
+
       instance_params = {
         stack_id: layer.stack_id,
         layer_ids: [layer.layer_id],
+        subnet_id: subnet.subnet_id,
         root_device_type: instances_config.fetch(:root_device_type, 'instance-store'),
         instance_type: instances_config.fetch(:instance_type, 't2.micro')
       }

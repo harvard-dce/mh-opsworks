@@ -11,6 +11,16 @@ module Cluster
         end
       end
 
+      def wait_until_stack_delete_completed(cfn_stack_id)
+        cloudformation_client.wait_until(
+          :delete_completed, stack_name: cfn_stack_id
+        ) do |w|
+          w.before_wait do |attempts, response|
+            puts "Waiting for vpc infrastructure to be deleted for #{vpc_name}, attempt ##{attempts}"
+          end
+        end
+      end
+
       def wait_until_app_available(app_id)
         opsworks_client.wait_until(
           :app_available, app_ids: [app_id]
@@ -43,16 +53,6 @@ module Cluster
         ) do |w|
           w.before_wait do |attempts, response|
             puts "Stopping instance #{instance_ids.join(', ')}, attempt ##{attempts}"
-          end
-        end
-
-        yield if block_given?
-      end
-
-      def when_vpc_available(vpc_id)
-        ec2_client.wait_until(:vpc_available, vpc_ids: [vpc_id]) do |w|
-          w.before_wait do |attempts, response|
-            puts "Checking if VPC available, attempt ##{attempts}"
           end
         end
 

@@ -29,15 +29,15 @@ describe Cluster::Stack do
       existing_vpc_id = 'an-existing-vpc-id'
       existing_stack_name = 'an-existing-stack-name'
       stack_id = 'stack-id'
-      vpc_name = 'a-vpc-name'
+      vpc_name = %Q|#{existing_stack_name}-vpc|
       cidr_block = 'a-cidr-block'
       stub_ec2_client_with_a_vpc(
         name: vpc_name, cidr_block: cidr_block, vpc_id: existing_vpc_id
       )
 
       stub_config_to_include(
-        vpc: {name: vpc_name, cidr_block: cidr_block},
-        stack: {name: existing_stack_name}
+        vpc: {cidr_block: cidr_block},
+        stack: {name: existing_stack_name, shortname: existing_stack_name}
       )
 
       opsworks = stub_opsworks_client do |opsworks|

@@ -8,6 +8,11 @@ module Cluster
     end
 
     def create
+      custom_security_group_ids = []
+      if private_layer?
+        custom_security_group_ids << get_security_group_for_private_layer
+      end
+
       layer_parameters = {
         stack_id: stack.stack_id,
         type: params.fetch(:type, 'custom'),
@@ -19,10 +24,24 @@ module Cluster
         auto_assign_public_ips: params.fetch(:auto_assign_public_ips, false),
         custom_recipes: params.fetch(:custom_recipes, {}),
         volume_configurations: params.fetch(:volume_configurations, {}),
-        use_ebs_optimized_instances: params.fetch(:use_ebs_optimized_instances, false)
+        use_ebs_optimized_instances: params.fetch(:use_ebs_optimized_instances, false),
+        custom_security_group_ids: custom_security_group_ids
       }
       layer = opsworks_client.create_layer(layer_parameters)
       construct_instance(layer.layer_id)
+    end
+
+    def get_security_group_for_private_layer
+      private_network_sg = ec2_client.describe_security_groups.security_groups.find do |group|
+        # This is tightly coupled to the implementation in templates/OpsWorksinVPC.template
+        group.group_name.match(/#{vpc_name}-OpsWorksSecurityGroup/)
+      end
+      private_network_sg.group_id
+    end
+
+    def private_layer?
+      params.fetch(:auto_assign_public_ips, false) == false &&
+        params.fetch(:auto_assign_elastic_ips, false) == false
     end
 
     def self.find_or_create(params)
@@ -44,6 +63,14 @@ module Cluster
 
     def opsworks_client
       self.class.opsworks_client
+    end
+
+    def ec2_client
+      self.class.ec2_client
+    end
+
+    def vpc_name
+      self.class.vpc_name
     end
 
     def self.construct_instance(layer_id)

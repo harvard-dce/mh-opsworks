@@ -1,4 +1,12 @@
 module ClientStubHelpers
+  def stub_cloudformation_client
+    Aws::CloudFormation::Client.new(stub_responses: true).tap do |client|
+      allow(client).to receive(:wait_until)
+      allow(Cluster::Base).to receive(:cloudformation_client).and_return(client)
+      yield client if block_given?
+    end
+  end
+
   def stub_iam_client
     Aws::IAM::Client.new(stub_responses: true).tap do |client|
       allow(client).to receive(:wait_until)

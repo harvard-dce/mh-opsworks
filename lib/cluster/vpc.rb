@@ -16,9 +16,14 @@ module Cluster
     def self.delete
       vpc = find_existing
       if vpc
+        stack = cloudformation_client.describe_stacks.stacks.find do |stack|
+          stack.stack_name == vpc_name
+        end
+
         cloudformation_client.delete_stack(
-          stack_name: vpc_name
+          stack_name: stack.stack_id
         )
+        wait_until_stack_delete_completed(stack.stack_id)
       end
     end
 
