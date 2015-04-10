@@ -43,9 +43,7 @@
         "shortname": "storage",
         "type": "custom",
         "enable_auto_healing": true,
-        "auto_assign_elastic_ips": false,
         "install_updates_on_boot": true,
-        "auto_assign_public_ips": false,
         "use_ebs_optimized_instances": true,
         "custom_recipes": {
           "setup": [
@@ -77,7 +75,6 @@
         "enable_auto_healing": true,
         "install_updates_on_boot": true,
         "type": "db-master",
-        "auto_assign_public_ips": false,
         "use_ebs_optimized_instances": true,
         "attributes": {
           "MysqlRootPasswordUbiquitous": "true"
@@ -130,7 +127,8 @@
             "mh-opsworks-recipes::install-ffmpeg"
           ],
           "configure": [
-            "mh-opsworks-recipes::update-host-based-configurations"
+            "mh-opsworks-recipes::update-host-based-configurations",
+            "mh-opsworks-recipes::update-nginx-config-for-ganglia"
           ],
           "deploy": [
             "mh-opsworks-recipes::deploy-admin"
@@ -155,9 +153,7 @@
         "shortname": "workers",
         "type": "custom",
         "enable_auto_healing": true,
-        "auto_assign_elastic_ips": false,
         "install_updates_on_boot": true,
-        "auto_assign_public_ips": false,
         "custom_recipes": {
           "setup": [
             "mh-opsworks-recipes::fix-raid-mapping",
