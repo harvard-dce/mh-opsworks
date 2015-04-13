@@ -41,6 +41,10 @@ namespace :stack do
       Cluster::Stack.with_existing_stack do |stack|
         hostname = ENV['hostname'].to_s.strip
 
+        a_public_host = Cluster::Instances.online.find do |instance|
+          instance.public_dns != nil
+        end
+
         if hostname != ''
           instance = Cluster::Instances.find_by_hostname(hostname)
           if instance == nil
@@ -48,12 +52,12 @@ namespace :stack do
             exit 1
           end
 
-          if instance.status != 'online'
-            puts "#{hostname} is not online"
+          if ! ['online', 'running_setup'].include?(instance.status)
+            puts "#{hostname} is not online or ssh'able. You might try with the default stack key."
           elsif instance.public_dns == nil
-            puts "To be implemented - ssh'ing to private instances"
+            puts "ssh -A -t #{a_public_host.public_dns} ssh -A #{hostname}"
           else
-            puts "ssh #{instance.public_dns}"
+            puts "ssh -A #{instance.public_dns}"
           end
         else
           layers = Cluster::Layers.find_or_create
@@ -64,7 +68,13 @@ namespace :stack do
             end
           end
           puts 'Please specify an instance name to connect to, thusly:'
+          puts
           puts 'rake stack:instances:ssh_to hostname=<an instance name>'
+          puts
+          puts 'You can also connect directly to a machine by executing the output'
+          puts 'of this task, thusly:'
+          puts
+          puts '$(rake stack:instances:ssh_to hostname=<an instance name>)'
         end
       end
     end
