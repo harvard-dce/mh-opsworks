@@ -12,6 +12,7 @@
     "default_ssh_key_name":"",
     "chef": {
       "custom_json": {
+        "shared_asset_bucket_name": "FILL_ME_IN: mh-opsworks-shared-assets",
         "matterhorn_repo_root": "/opt/matterhorn",
         "local_workspace_root": "/var/matterhorn-workspace",
         "capture_agent_query_url": "http://example.com/captureAgentLocations.json",
