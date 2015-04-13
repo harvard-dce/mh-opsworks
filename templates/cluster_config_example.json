@@ -47,6 +47,7 @@
         "use_ebs_optimized_instances": true,
         "custom_recipes": {
           "setup": [
+            "mh-opsworks-recipes::set-timezone",
             "mh-opsworks-recipes::fix-raid-mapping",
             "mh-opsworks-recipes::set-bash-as-default-shell",
             "mh-opsworks-recipes::install-utils",
@@ -81,6 +82,7 @@
         },
         "custom_recipes": {
           "setup": [
+            "mh-opsworks-recipes::set-timezone",
             "mh-opsworks-recipes::fix-raid-mapping",
             "mh-opsworks-recipes::set-bash-as-default-shell",
             "mh-opsworks-recipes::install-utils",
@@ -116,6 +118,7 @@
         "auto_assign_public_ips": true,
         "custom_recipes": {
           "setup": [
+            "mh-opsworks-recipes::set-timezone",
             "mh-opsworks-recipes::fix-raid-mapping",
             "mh-opsworks-recipes::set-bash-as-default-shell",
             "mh-opsworks-recipes::install-utils",
@@ -156,6 +159,7 @@
         "install_updates_on_boot": true,
         "custom_recipes": {
           "setup": [
+            "mh-opsworks-recipes::set-timezone",
             "mh-opsworks-recipes::fix-raid-mapping",
             "mh-opsworks-recipes::set-bash-as-default-shell",
             "mh-opsworks-recipes::install-utils",
@@ -197,6 +201,7 @@
         "auto_assign_public_ips": true,
         "custom_recipes": {
           "setup": [
+            "mh-opsworks-recipes::set-timezone",
             "mh-opsworks-recipes::fix-raid-mapping",
             "mh-opsworks-recipes::set-bash-as-default-shell",
             "mh-opsworks-recipes::install-utils",
@@ -243,6 +248,7 @@
         },
         "custom_recipes": {
           "setup": [
+            "mh-opsworks-recipes::set-timezone",
             "mh-opsworks-recipes::fix-raid-mapping",
             "mh-opsworks-recipes::set-bash-as-default-shell",
             "mh-opsworks-recipes::install-utils"
