@@ -6,6 +6,13 @@ namespace :stack do
     end
   end
 
+  desc 'delete stack. You must remove all instances and apps first'
+  task delete: ['cluster:configtest'] do
+    Cluster::Stack.with_existing_stack do |stack|
+      Cluster::Stack.delete
+    end
+  end
+
   desc 'Initialize a stack within a vpc'
   task init: ['cluster:configtest'] do
     stack = Cluster::Stack.find_or_create
