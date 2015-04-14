@@ -106,6 +106,15 @@ putting important services - say your database or nfs storage - in layers
 defined early in the stack. The example `templates/cluster_config_example.json`
 defines layers in the correct order.
 
+## SMTP via amazon SES
+
+You need to verify the `default_email_sender` address in the amazon SES console
+and create your credentials. This is not automated, but the credentials for the
+very limited SES user can be shared across regions in multiple clusters without
+incident. If you want to send from multiple `default_email_sender` addresses,
+though, say to segment email communication by cluster, you'll need to verify
+each address before using.
+
 ## Contributing or reporting problems
 
 1. Open a github issue to discuss your problem or feature idea.

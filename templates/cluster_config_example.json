@@ -16,7 +16,13 @@
         "matterhorn_repo_root": "/opt/matterhorn",
         "local_workspace_root": "/var/matterhorn-workspace",
         "capture_agent_query_url": "http://example.com/captureAgentLocations.json",
-        "default_email_sender": "no-reply@dce.harvard.edu",
+        "smtp_auth": {
+          "_default_email_sender_comment": "If you're using SES, you must verify the address below in the SES console to ensure messages can be delivered.",
+          "default_email_sender": "no-reply@dce.harvard.edu",
+          "relay_host": "email.us-east-1.amazonaws.com",
+          "username": "FILL_ME_IN: SES username",
+          "password": "FILL_ME_IN: SES password"
+        },
         "rest_auth": {
           "user": "username",
           "pass": "password"
@@ -54,6 +60,7 @@
             "mh-opsworks-recipes::install-utils",
             "mh-opsworks-recipes::create-matterhorn-user",
             "mh-opsworks-recipes::nfs-export",
+            "mh-opsworks-recipes::enable-postfix-smarthost",
             "mh-opsworks-recipes::clean-up-package-cache"
           ]
         },
@@ -90,6 +97,7 @@
             "mh-opsworks-recipes::install-utils",
             "mh-opsworks-recipes::create-matterhorn-user",
             "mh-opsworks-recipes::install-deploy-key",
+            "mh-opsworks-recipes::enable-postfix-smarthost",
             "mh-opsworks-recipes::clean-up-package-cache"
           ],
           "deploy": [
@@ -130,6 +138,7 @@
             "mh-opsworks-recipes::create-matterhorn-user",
             "mh-opsworks-recipes::install-deploy-key",
             "mh-opsworks-recipes::nfs-client",
+            "mh-opsworks-recipes::enable-postfix-smarthost",
             "mh-opsworks-recipes::configure-nginx-proxy",
             "mh-opsworks-recipes::install-ffmpeg",
             "mh-opsworks-recipes::clean-up-package-cache"
@@ -172,6 +181,7 @@
             "mh-opsworks-recipes::install-mh-base-packages",
             "mh-opsworks-recipes::create-matterhorn-user",
             "mh-opsworks-recipes::install-deploy-key",
+            "mh-opsworks-recipes::enable-postfix-smarthost",
             "mh-opsworks-recipes::nfs-client",
             "mh-opsworks-recipes::configure-nginx-proxy",
             "mh-opsworks-recipes::install-ffmpeg",
@@ -216,6 +226,7 @@
             "mh-opsworks-recipes::install-mh-base-packages",
             "mh-opsworks-recipes::create-matterhorn-user",
             "mh-opsworks-recipes::install-deploy-key",
+            "mh-opsworks-recipes::enable-postfix-smarthost",
             "mh-opsworks-recipes::nfs-client",
             "mh-opsworks-recipes::install-ffmpeg",
             "mh-opsworks-recipes::configure-nginx-proxy",
@@ -261,6 +272,7 @@
             "mh-opsworks-recipes::fix-raid-mapping",
             "mh-opsworks-recipes::set-bash-as-default-shell",
             "mh-opsworks-recipes::install-utils",
+            "mh-opsworks-recipes::enable-postfix-smarthost",
             "mh-opsworks-recipes::clean-up-package-cache"
           ]
         },
