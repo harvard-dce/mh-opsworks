@@ -12,7 +12,7 @@
     "default_ssh_key_name":"",
     "chef": {
       "custom_json": {
-        "shared_asset_bucket_name": "FILL_ME_IN: mh-opsworks-shared-assets",
+        "shared_asset_bucket_name": "FILL_ME_IN: e.g. mh-opsworks-shared-assets",
         "matterhorn_repo_root": "/opt/matterhorn",
         "local_workspace_root": "/var/matterhorn-workspace",
         "capture_agent_query_url": "http://example.com/captureAgentLocations.json",
@@ -53,7 +53,8 @@
             "mh-opsworks-recipes::set-bash-as-default-shell",
             "mh-opsworks-recipes::install-utils",
             "mh-opsworks-recipes::create-matterhorn-user",
-            "mh-opsworks-recipes::nfs-export"
+            "mh-opsworks-recipes::nfs-export",
+            "mh-opsworks-recipes::clean-up-package-cache"
           ]
         },
         "volume_configurations": [
@@ -88,7 +89,8 @@
             "mh-opsworks-recipes::set-bash-as-default-shell",
             "mh-opsworks-recipes::install-utils",
             "mh-opsworks-recipes::create-matterhorn-user",
-            "mh-opsworks-recipes::install-deploy-key"
+            "mh-opsworks-recipes::install-deploy-key",
+            "mh-opsworks-recipes::clean-up-package-cache"
           ],
           "deploy": [
             "mh-opsworks-recipes::deploy-database"
@@ -123,12 +125,14 @@
             "mh-opsworks-recipes::fix-raid-mapping",
             "mh-opsworks-recipes::set-bash-as-default-shell",
             "mh-opsworks-recipes::install-utils",
+            "mh-opsworks-recipes::populate-maven-cache",
             "mh-opsworks-recipes::install-mh-base-packages",
             "mh-opsworks-recipes::create-matterhorn-user",
             "mh-opsworks-recipes::install-deploy-key",
             "mh-opsworks-recipes::nfs-client",
             "mh-opsworks-recipes::configure-nginx-proxy",
-            "mh-opsworks-recipes::install-ffmpeg"
+            "mh-opsworks-recipes::install-ffmpeg",
+            "mh-opsworks-recipes::clean-up-package-cache"
           ],
           "configure": [
             "mh-opsworks-recipes::update-host-based-configurations",
@@ -164,12 +168,14 @@
             "mh-opsworks-recipes::fix-raid-mapping",
             "mh-opsworks-recipes::set-bash-as-default-shell",
             "mh-opsworks-recipes::install-utils",
+            "mh-opsworks-recipes::populate-maven-cache",
             "mh-opsworks-recipes::install-mh-base-packages",
             "mh-opsworks-recipes::create-matterhorn-user",
             "mh-opsworks-recipes::install-deploy-key",
             "mh-opsworks-recipes::nfs-client",
             "mh-opsworks-recipes::configure-nginx-proxy",
-            "mh-opsworks-recipes::install-ffmpeg"
+            "mh-opsworks-recipes::install-ffmpeg",
+            "mh-opsworks-recipes::clean-up-package-cache"
           ],
           "configure": [
             "mh-opsworks-recipes::update-host-based-configurations"
@@ -206,12 +212,14 @@
             "mh-opsworks-recipes::fix-raid-mapping",
             "mh-opsworks-recipes::set-bash-as-default-shell",
             "mh-opsworks-recipes::install-utils",
+            "mh-opsworks-recipes::populate-maven-cache",
             "mh-opsworks-recipes::install-mh-base-packages",
             "mh-opsworks-recipes::create-matterhorn-user",
             "mh-opsworks-recipes::install-deploy-key",
             "mh-opsworks-recipes::nfs-client",
             "mh-opsworks-recipes::install-ffmpeg",
-            "mh-opsworks-recipes::configure-nginx-proxy"
+            "mh-opsworks-recipes::configure-nginx-proxy",
+            "mh-opsworks-recipes::clean-up-package-cache"
           ],
           "configure": [
             "mh-opsworks-recipes::update-host-based-configurations"
@@ -252,7 +260,8 @@
             "mh-opsworks-recipes::set-timezone",
             "mh-opsworks-recipes::fix-raid-mapping",
             "mh-opsworks-recipes::set-bash-as-default-shell",
-            "mh-opsworks-recipes::install-utils"
+            "mh-opsworks-recipes::install-utils",
+            "mh-opsworks-recipes::clean-up-package-cache"
           ]
         },
         "volume_configurations": [
