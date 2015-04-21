@@ -1,6 +1,14 @@
 module Cluster
   module ClientHelpers
     module ClassMethods
+
+      def sns_client
+        Aws::SNS::Client.new(
+          region: config.parsed[:region],
+          credentials: config.credentials
+        )
+      end
+
       def s3_client
         Aws::S3::Client.new(
           region: config.parsed[:region],

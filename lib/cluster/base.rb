@@ -24,6 +24,25 @@ module Cluster
     def self.instance_profile_policy_document
       with_encoded_document do
         {
+          "Statement" =>  [
+            {
+              "Action" =>  [
+                "cloudwatch:*",
+                "sns:CreateTopic"
+              ],
+              "Effect" => "Allow",
+              "Resource" => [
+                "*"
+              ]
+            }
+          ]
+        }
+      end
+    end
+
+    def self.instance_profile_assume_role_policy_document
+      with_encoded_document do
+        {
           "Version" => "2008-10-17",
           "Statement" => [
             {

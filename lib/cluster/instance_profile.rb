@@ -28,10 +28,17 @@ module Cluster
       if ! exists?
         iam_client.create_role(
           role_name: instance_profile_name,
-          assume_role_policy_document: instance_profile_policy_document
+          assume_role_policy_document: instance_profile_assume_role_policy_document
         )
         iam_client.create_instance_profile(
           instance_profile_name: instance_profile_name
+        )
+        # This policy allows an instance to use other related AWS resources
+        # without needing to have an access key or other local credentials.
+        iam_client.put_role_policy(
+          role_name: instance_profile_name,
+          policy_name: "#{instance_profile_name}-policy",
+          policy_document: instance_profile_policy_document
         )
         iam_client.add_role_to_instance_profile(
           role_name: instance_profile_name,

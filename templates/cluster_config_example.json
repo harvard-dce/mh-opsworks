@@ -61,7 +61,12 @@
             "mh-opsworks-recipes::create-matterhorn-user",
             "mh-opsworks-recipes::nfs-export",
             "mh-opsworks-recipes::enable-postfix-smarthost",
+            "mh-opsworks-recipes::install-custom-metrics",
+            "mh-opsworks-recipes::create-alerts-from-opsworks-metrics",
             "mh-opsworks-recipes::clean-up-package-cache"
+          ],
+          "shutdown": [
+            "mh-opsworks-recipes::remove-alarms"
           ]
         },
         "volume_configurations": [
@@ -98,10 +103,15 @@
             "mh-opsworks-recipes::create-matterhorn-user",
             "mh-opsworks-recipes::install-deploy-key",
             "mh-opsworks-recipes::enable-postfix-smarthost",
+            "mh-opsworks-recipes::install-custom-metrics",
+            "mh-opsworks-recipes::create-alerts-from-opsworks-metrics",
             "mh-opsworks-recipes::clean-up-package-cache"
           ],
           "deploy": [
             "mh-opsworks-recipes::deploy-database"
+          ],
+          "shutdown": [
+            "mh-opsworks-recipes::remove-alarms"
           ]
         },
         "volume_configurations": [
@@ -141,6 +151,8 @@
             "mh-opsworks-recipes::enable-postfix-smarthost",
             "mh-opsworks-recipes::configure-nginx-proxy",
             "mh-opsworks-recipes::install-ffmpeg",
+            "mh-opsworks-recipes::install-custom-metrics",
+            "mh-opsworks-recipes::create-alerts-from-opsworks-metrics",
             "mh-opsworks-recipes::clean-up-package-cache"
           ],
           "configure": [
@@ -149,6 +161,9 @@
           ],
           "deploy": [
             "mh-opsworks-recipes::deploy-admin"
+          ],
+          "shutdown": [
+            "mh-opsworks-recipes::remove-alarms"
           ]
         },
         "volume_configurations": [
@@ -185,6 +200,8 @@
             "mh-opsworks-recipes::nfs-client",
             "mh-opsworks-recipes::configure-nginx-proxy",
             "mh-opsworks-recipes::install-ffmpeg",
+            "mh-opsworks-recipes::install-custom-metrics",
+            "mh-opsworks-recipes::create-alerts-from-opsworks-metrics",
             "mh-opsworks-recipes::clean-up-package-cache"
           ],
           "configure": [
@@ -192,6 +209,9 @@
           ],
           "deploy": [
             "mh-opsworks-recipes::deploy-worker"
+          ],
+          "shutdown": [
+            "mh-opsworks-recipes::remove-alarms"
           ]
         },
         "volume_configurations": [
@@ -230,6 +250,8 @@
             "mh-opsworks-recipes::nfs-client",
             "mh-opsworks-recipes::install-ffmpeg",
             "mh-opsworks-recipes::configure-nginx-proxy",
+            "mh-opsworks-recipes::install-custom-metrics",
+            "mh-opsworks-recipes::create-alerts-from-opsworks-metrics",
             "mh-opsworks-recipes::clean-up-package-cache"
           ],
           "configure": [
@@ -237,6 +259,9 @@
           ],
           "deploy": [
             "mh-opsworks-recipes::deploy-engage"
+          ],
+          "shutdown": [
+            "mh-opsworks-recipes::remove-alarms"
           ]
         },
         "volume_configurations": [
@@ -273,7 +298,12 @@
             "mh-opsworks-recipes::set-bash-as-default-shell",
             "mh-opsworks-recipes::install-utils",
             "mh-opsworks-recipes::enable-postfix-smarthost",
+            "mh-opsworks-recipes::install-custom-metrics",
+            "mh-opsworks-recipes::create-alerts-from-opsworks-metrics",
             "mh-opsworks-recipes::clean-up-package-cache"
+          ],
+          "shutdown": [
+            "mh-opsworks-recipes::remove-alarms"
           ]
         },
         "volume_configurations": [

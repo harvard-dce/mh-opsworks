@@ -32,6 +32,8 @@ namespace :admin do
       Cluster::InstanceProfile.delete
       puts 'deleting service role'
       Cluster::ServiceRole.delete
+      puts 'deleting sns topic and subscriptions'
+      Cluster::SNS.delete
       puts 'deleting VPC'
       Cluster::VPC.delete
     end
