@@ -11,7 +11,7 @@ matterhorn cluster.
 
 ## What you get
 
-* Complete isolation for matterhorn production, staging, and development environments while having environment parity,
+* Complete isolation for matterhorn production, staging, and development environments with environment parity,
 * OpsWorks layers and EC2 instances for your admin, engage, worker, and support nodes,
 * Automated monitoring and alarms via Ganglia and aws cloudwatch,
 * A set of custom chef recipes that can be used to compose other layer and instance types,
@@ -58,6 +58,9 @@ prerequisites and sets up empty cluster configuration templates.
     cd mh-opsworks
     ./bin/setup # checks for dependencies and sets up template env files
 
+The base scripts (`rake`, mostly) live in `$REPO_ROOT/bin` and all paths below
+assume you're in repo root.
+
 ### Step 3 - Create your configuration files.
 
 You can use multiple configuration files (more on that later), but by default
@@ -83,14 +86,14 @@ looks right. They are by no means comprehensive, but serve as a basic
 pre-flight check. The checks are run automatically before ever `rake` task.
 
     # sanity check your cluster_config.json
-    bundle exec rake cluster:configtest
+    ./bin/rake cluster:configtest
 
 You'll see a relatively descriptive error message if there's something wrong
 with your cluster configuration.
 
 ### Step 5 - Spin up your cluster
 
-    bundle exec rake admin:cluster:init
+    ./bin/rake admin:cluster:init
 
 This will create the VPC, opsworks stack, layers, and instances according to
 the parameters and sizes you set in your `cluster_config.json`. Basic feedback
@@ -104,16 +107,16 @@ start the instances in the cluster.  The process of starting an instance also
 does a deploy, per the [OpsWorks default lifecycle
 policies](https://docs.aws.amazon.com/opsworks/latest/userguide/workingcookbook-events.html).
 
-    bundle exec rake stack:instances:start
+    ./bin/rake stack:instances:start
 
-You can watch the process via `bundle exec rake stack:instances:list` or
+You can watch the process via `./bin/rake stack:instances:list` or
 (better) via the AWS web console. Starting the entire cluster takes about 30 minutes.
 
 ### Step 7 - Start matterhorn
 
 We've built chef recipes to manage cluster-wide matterhorn startup and shutdown, so we'll use the "execute recipe" facilities built into OpsWorks to start matterhorn on the relevant instances - Admin, Engage, and Workers.
 
-    bundle exec rake stack:commands:execute_recipes layers="Admin,Engage,Workers" recipes="mh-opsworks-recipes::restart-matterhorn"
+    ./bin/rake stack:commands:execute_recipes layers="Admin,Engage,Workers" recipes="mh-opsworks-recipes::restart-matterhorn"
 
 The "mh-opsworks-recipes::restart-matterhorn" recipe is safe for both cold
 starts and warm restarts.
@@ -126,35 +129,35 @@ in with the password you set in your cluster configuration files.
 ### Other
 
     # List the cluster-specific tasks available
-    bundle exec rake -T
+    ./bin/rake -T
 
     # ssh to a public or private instance, using your defaultly configured ssh key.
     # This key should match the public key you set in your cluster_config.json
     # You can omit the $() wrapper if you'd like to see the raw SSH connection info.
-    $(bundle exec rake stack:instances:ssh_to hostname=admin1)
+    $(./bin/rake stack:instances:ssh_to hostname=admin1)
 
     # You can mix-and-match credentials and configuration files in the same invocation
 
     # Use an alternate cluster configuration file
-    CLUSTER_CONFIG_FILE="./some_other_config.json" bundle exec rake cluster:configtest
+    CLUSTER_CONFIG_FILE="./some_other_config.json" ./bin/rake cluster:configtest
 
     # Use an alternate credentials file
-    CREDENTIALS_FILE="./some_other_credentials_file.json" bundle exec rake cluster:configtest
+    CREDENTIALS_FILE="./some_other_credentials_file.json" ./bin/rake cluster:configtest
 
     # Deploy a new revision from the repo / branch linked in your app. Be sure to restart
     # matterhorn after the deployment is complete.
-    bundle exec rake deployment:deploy_app
+    ./bin/rake deployment:deploy_app
 
     # View the status of the deployment (it'll be the first at the top):
-    bundle exec rake deployment:list
+    ./bin/rake deployment:list
 
     # Stop matterhorn:
-    bundle exec rake stack:commands:execute_recipes layers="Admin,Engage,Workers" recipes="mh-opsworks-recipes::stop-matterhorn"
+    ./bin/rake stack:commands:execute_recipes layers="Admin,Engage,Workers" recipes="mh-opsworks-recipes::stop-matterhorn"
 
     # We're done! Get rid of the cluster.
 
     # Delete the cluster:
-    bundle exec rake admin:cluster:delete
+    ./bin/rake admin:cluster:delete
 
 ## Chef
 
