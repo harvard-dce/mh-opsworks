@@ -131,7 +131,7 @@
       "Properties" : {
         "NetworkAclId" : { "Ref" : "PublicNetworkAcl" },
         "RuleNumber" : "100",
-        "Protocol" : "6",
+        "Protocol" : "-1",
         "RuleAction" : "allow",
         "Egress" : "true",
         "CidrBlock" : "0.0.0.0/0",
@@ -203,7 +203,7 @@
       "Properties" : {
         "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" },
         "RuleNumber" : "100",
-        "Protocol" : "6",
+        "Protocol" : "-1",
         "RuleAction" : "allow",
         "Egress" : "false",
         "CidrBlock" : "0.0.0.0/0",
@@ -216,7 +216,7 @@
       "Properties" : {
         "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" },
         "RuleNumber" : "100",
-        "Protocol" : "6",
+        "Protocol" : "-1",
         "RuleAction" : "allow",
         "Egress" : "true",
         "CidrBlock" : "0.0.0.0/0",
