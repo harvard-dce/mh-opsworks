@@ -21,7 +21,7 @@ module Cluster
       )
     end
 
-    def self.run_command_on_instances(layers: [], command:, args: {})
+    def self.run_command_on_instances(layers: [], command: nil, args: {})
       Cluster::Stack.with_existing_stack do |stack|
         instance_ids = []
         if layers.any?

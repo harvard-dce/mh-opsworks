@@ -6,7 +6,7 @@ module Cluster
       :stack_id,
       :arns_by_username
 
-    def initialize(configured_users:, iam_users:, opsworks_permissions:, stack_id:)
+    def initialize(configured_users: nil, iam_users: nil, opsworks_permissions: nil, stack_id: nil)
       @configured_users = configured_users
       @iam_users = iam_users
       @opsworks_permissions = opsworks_permissions

@@ -4,7 +4,7 @@ module Cluster
 
     attr_reader :layer, :instances_config, :desired_number_of_instances
 
-    def initialize(layer:, instances_config:)
+    def initialize(layer: nil, instances_config: nil)
       @layer = layer
       @instances_config = instances_config
       @desired_number_of_instances = instances_config.fetch(:number_of_instances, 0).to_i
