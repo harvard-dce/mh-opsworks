@@ -19,7 +19,7 @@ module Cluster
         opsworks_permissions: opsworks_permissions,
         stack_id: stack_id
       )
-      syncer.remove_unconfigured_user_profiles
+      syncer.deny_privileges_for_unconfigured_users
       syncer.create_missing_users
       syncer.create_missing_opsworks_user_profiles
       syncer.set_user_permissions_from_config
