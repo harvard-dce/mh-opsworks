@@ -18,7 +18,7 @@ module Cluster
       end
 
       def shared_asset_bucket_name
-        stack_chef_config[:custom_json][:shared_asset_bucket_name]
+        stack_custom_json[:shared_asset_bucket_name]
       end
     end
 

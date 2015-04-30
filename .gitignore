@@ -1,6 +1,6 @@
 /cluster_config.json
 /cluster_config*.json
-/credentials.json
-/credentials*.json
+/secrets.json
+/secrets*.json
 tmp/
 *.bk

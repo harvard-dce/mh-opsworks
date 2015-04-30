@@ -4,7 +4,7 @@ module Cluster
 
     class CidrNfsParity < Base
       def self.sane?
-        if root_config[:vpc][:cidr_block] != stack_chef_config[:custom_json][:storage][:network]
+        if root_config[:vpc][:cidr_block] != stack_custom_json[:storage][:network]
           raise VpcCidrAndNfsExportMismatch.new('The Vpc cidr_block and stack-level storage network export must match')
         end
       end

@@ -99,7 +99,7 @@ module Cluster
           berkshelf_version: '3.2.0'
         },
         custom_json: json_encode(
-          stack_chef_config.fetch(:custom_json, {})
+          stack_custom_json
         ),
         default_os: 'Ubuntu 14.04 LTS',
         service_role_arn: service_role.arn,

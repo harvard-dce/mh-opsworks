@@ -24,11 +24,11 @@ else
   echo 'Using existing ./cluster_config.json'
 fi
 
-if [ ! -f "./credentials.json" ]; then
-  cp templates/credentials_example.json ./credentials.json
-  echo 'Creating a new ./credentials.json file, be sure to fill it in with your credentials'
+if [ ! -f "./secrets.json" ]; then
+  cp templates/secrets_example.json ./secrets.json
+  echo 'Creating a new ./secrets.json file, be sure to fill it in with your credentials and other "secrets".'
 else
-  echo 'Using existing ./credentials.json file'
+  echo 'Using existing ./secrets.json file'
 fi
 
 if grep -qiE 'FILL_ME_IN' ./cluster_config.json; then
@@ -36,10 +36,10 @@ if grep -qiE 'FILL_ME_IN' ./cluster_config.json; then
   exit 1;
 fi
 
-if grep -qiE 'FILL_ME_IN' ./credentials.json; then
-  echo 'Be sure to complete configuring your ./credentials.json file'
+if grep -qiE 'FILL_ME_IN' ./secrets.json; then
+  echo 'Be sure to complete configuring your ./secrets.json file'
   exit 1;
 fi
 
 
-echo 'Preflight checks out. Run `rake admin:cluster:init` to create a matterhorn cluster'
+echo 'Preflight checks out. Run `./bin/rake admin:cluster:init` to create a matterhorn cluster'

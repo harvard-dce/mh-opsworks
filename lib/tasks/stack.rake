@@ -17,6 +17,8 @@ namespace :stack do
   task init: ['cluster:configtest'] do
     stack = Cluster::Stack.find_or_create
     puts %Q|Stack "#{stack.name}" initialized, id: #{stack.stack_id}|
+    app = Cluster::App.find_or_create
+    puts "App: #{app.name} created"
   end
 
   namespace :users do
@@ -76,12 +78,12 @@ namespace :stack do
           end
           puts 'Please specify an instance name to connect to, thusly:'
           puts
-          puts 'rake stack:instances:ssh_to hostname=<an instance name>'
+          puts './bin/rake stack:instances:ssh_to hostname=<an instance name>'
           puts
           puts 'You can also connect directly to a machine by executing the output'
           puts 'of this task, thusly:'
           puts
-          puts '$(rake stack:instances:ssh_to hostname=<an instance name>)'
+          puts '$(./bin/rake stack:instances:ssh_to hostname=<an instance name>)'
         end
       end
     end
@@ -147,7 +149,7 @@ namespace :stack do
           puts %Q|Please indicate the recipes you'd like to run.|
           puts %Q|If you don't specify any layers, the recipes will be run on all layers.|
           puts
-          puts 'rake stack:commands:execute_recipes recipes="recipe1,recipe1" layers="Full Name,Full Name2"'
+          puts './bin/rake stack:commands:execute_recipes recipes="recipe1,recipe1" layers="Full Name,Full Name2"'
         else
           Cluster::Deployment.execute_chef_recipes_on_layers(
             recipes: recipes,

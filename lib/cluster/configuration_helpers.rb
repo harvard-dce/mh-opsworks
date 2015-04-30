@@ -14,7 +14,7 @@ module Cluster
       end
 
       def deployment_private_ssh_key
-        config.parsed_credentials[:deployment_private_ssh_key]
+        config.parsed_secrets[:deployment_private_ssh_key]
       end
 
       def app_config
@@ -31,6 +31,14 @@ module Cluster
 
       def layers_config
         stack_config[:layers]
+      end
+
+      def stack_secrets
+        config.parsed_secrets[:stack].fetch(:secrets, {})
+      end
+
+      def stack_custom_json
+        stack_config[:chef].fetch(:custom_json, {}).merge(stack_secrets)
       end
 
       def stack_chef_config

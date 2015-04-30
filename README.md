@@ -65,7 +65,7 @@ assume you're in repo root.
 
 You can use multiple configuration files (more on that later), but by default
 `mh-opsworks` reads from `$REPO_ROOT/cluster_config.json` and
-`$REPO_ROOT/credentials.json`. If you're working with a cluster that already
+`$REPO_ROOT/secrets.json`. If you're working with a cluster that already
 exists, get the correct `cluster_config.json` from the right person.
 
     cd mh-opsworks
@@ -73,17 +73,14 @@ exists, get the correct `cluster_config.json` from the right person.
     # edit cluster_config.json with your specific values
     vim cluster_config.json
 
-    # Edit credentials to include the correct AWS credentials. Handily, we've
-    # included a comment field to allow you to keep track of what credentials are
-    # what.
-
-    vim credentials.json
+    # Edit secrets to include the correct AWS (and other) credentials.
+    vim secrets.json
 
 ### Step 4 - Sanity check your cluster configuration
 
 We've implemented a set of sanity checks to ensure your cluster configuration
 looks right. They are by no means comprehensive, but serve as a basic
-pre-flight check. The checks are run automatically before ever `rake` task.
+pre-flight check. The checks are run automatically before every `rake` task.
 
     # sanity check your cluster_config.json
     ./bin/rake cluster:configtest
@@ -136,13 +133,13 @@ in with the password you set in your cluster configuration files.
     # You can omit the $() wrapper if you'd like to see the raw SSH connection info.
     $(./bin/rake stack:instances:ssh_to hostname=admin1)
 
-    # You can mix-and-match credentials and configuration files in the same invocation
+    # You can mix-and-match secrets and configuration files in the same invocation
 
     # Use an alternate cluster configuration file
     CLUSTER_CONFIG_FILE="./some_other_config.json" ./bin/rake cluster:configtest
 
-    # Use an alternate credentials file
-    CREDENTIALS_FILE="./some_other_credentials_file.json" ./bin/rake cluster:configtest
+    # Use an alternate secrets file
+    SECRETS_FILE="./some_other_secrets_file.json" ./bin/rake cluster:configtest
 
     # Deploy a new revision from the repo / branch linked in your app. Be sure to restart
     # matterhorn after the deployment is complete.
@@ -208,7 +205,8 @@ in the amazon SNS console under the topic named for your cluster.
 [Ganglia](http://ganglia.sourceforge.net) provides very deep instance-level
 metrics automatically as nodes are added and removed. You can log in to ganglia
 with the username / password set in your cluster configuration. The url is
-`<your public admin node hostname>/ganglia`.
+`<your public admin node hostname>/ganglia`. The username and password is set
+in your cluster configuration.
 
 ## SMTP via amazon SES
 

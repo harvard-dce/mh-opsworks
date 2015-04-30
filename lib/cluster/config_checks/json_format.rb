@@ -7,7 +7,7 @@ module Cluster
         begin
           config = Cluster::Config.new
           config.parsed
-          config.parsed_credentials
+          config.parsed_secrets
         rescue => e
           raise JSONFormatError.new(e)
         end

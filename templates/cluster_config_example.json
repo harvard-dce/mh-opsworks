@@ -15,28 +15,11 @@
         "shared_asset_bucket_name": "FILL_ME_IN: e.g. mh-opsworks-shared-assets",
         "matterhorn_repo_root": "/opt/matterhorn",
         "local_workspace_root": "/var/matterhorn-workspace",
-        "capture_agent_query_url": "http://example.com/captureAgentLocations.json",
-        "smtp_auth": {
-          "_default_email_sender_comment": "If you're using SES, you must verify the address below in the SES console to ensure messages can be delivered.",
-          "default_email_sender": "no-reply@dce.harvard.edu",
-          "relay_host": "email.us-east-1.amazonaws.com",
-          "username": "FILL_ME_IN: SES username",
-          "password": "FILL_ME_IN: SES password"
-        },
-        "rest_auth": {
-          "user": "username",
-          "pass": "password"
-        },
-        "admin_auth": {
-          "user": "admin",
-          "pass": "murkwood"
-        },
         "storage": {
           "export_root": "/var/matterhorn",
           "network": "10.1.1.0/24 FILL_ME_IN - this should match your cidr_block above",
           "layer_shortname": "storage"
-        },
-        "user_tracking_authhost": "example.com"
+        }
       },
       "custom_cookbooks_source": {
         "type": "git",
@@ -91,9 +74,6 @@
         "install_updates_on_boot": true,
         "type": "db-master",
         "use_ebs_optimized_instances": true,
-        "attributes": {
-          "MysqlRootPasswordUbiquitous": "true"
-        },
         "custom_recipes": {
           "setup": [
             "mh-opsworks-recipes::set-timezone",
@@ -310,11 +290,6 @@
         "type": "monitoring-master",
         "auto_assign_public_ips": false,
         "use_ebs_optimized_instances": true,
-        "attributes": {
-          "GangliaUrl": "/ganglia",
-          "GangliaUser": "FILL_ME_IN",
-          "GangliaPassword": "FILL_ME_IN"
-        },
         "custom_recipes": {
           "setup": [
             "mh-opsworks-recipes::set-timezone",

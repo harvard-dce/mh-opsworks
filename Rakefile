@@ -17,7 +17,7 @@ namespace :admin do
         end
       end
       puts
-      puts %Q|Initializing the cluster does not start instances. To start them, use "rake stack:instances:start"|
+      puts %Q|Initializing the cluster does not start instances. To start them, use "./bin/rake stack:instances:start"|
     end
 
     desc 'Delete a matterhorn cluster using the policies defined in your cluster_config.json'
@@ -66,9 +66,9 @@ end
 
 task :default do
   Rake.application.tasks.each do |task|
-    puts "rake #{task.name}"
+    puts "./bin/rake #{task.name}"
   end
   puts
-  puts 'Run "rake -T" for full task output'
+  puts 'Run "./bin/rake -T" for full task output'
 end
 

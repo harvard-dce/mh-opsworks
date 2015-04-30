@@ -18,7 +18,7 @@ module Cluster
         type: params.fetch(:type, 'custom'),
         enable_auto_healing: params.fetch(:enable_auto_healing, false),
         name: params[:name],
-        attributes: params.fetch(:attributes, {}),
+        attributes: layer_attributes,
         shortname: params[:shortname],
         auto_assign_elastic_ips: params.fetch(:auto_assign_elastic_ips, false),
         auto_assign_public_ips: params.fetch(:auto_assign_public_ips, false),
@@ -60,6 +60,12 @@ module Cluster
     end
 
     private
+
+    def layer_attributes
+      self.class.config.parsed_secrets.fetch(
+        %Q|#{params[:shortname]}-attributes|.to_sym, {}
+      )
+    end
 
     def opsworks_client
       self.class.opsworks_client
