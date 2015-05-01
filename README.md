@@ -23,16 +23,25 @@ matterhorn cluster.
 
 ## Getting started
 
-### Step 0
+### Step 0 - Create and configure credentials and policies
 
 Create or import an ec2 SSH keypair. You can do this in the AWS web console
 under "EC2 -> Network & Security -> Key Pairs".  Keep the name handy because
-you'll need it later in your `cluster_config.json` file. This keypair allows
-you to access the built-in "ubuntu" user as a backchannel for debugging.
+you'll need it later in your `cluster_config.json` file. This ssh keypair
+allows you to access the built-in "ubuntu" user as a backchannel for debugging.
 
-Create an IAM user with rights TBD (for now, give them IAMFullAccess and
-AdministratorAccess). Create an aws access key pair for this user and have it
-handy.
+Create an IAM group with the "AWSOpsWorksFullAccess" managed policy and an
+inline policy as defined in `./templates/example_group_inline_policy.json`.
+Name it something like `mh-opsworks-cluster-managers`. You'll probably need to
+be an account administrator to do this. You only need to do this once per AWS
+account.
+
+This group allows a user to create / delete clusters including the VPC,
+cloudformation templates, SNS topics, cloudwatch metrics and alarms and
+numerous other AWS resources.
+
+Create an IAM user and add it to the group you created above. Create an aws
+access key pair for this user and have it handy.
 
 ### Step 1 - Find an unused cidr block for your cluster's VPC
 
@@ -107,16 +116,24 @@ policies](https://docs.aws.amazon.com/opsworks/latest/userguide/workingcookbook-
     ./bin/rake stack:instances:start
 
 You can watch the process via `./bin/rake stack:instances:list` or
-(better) via the AWS web console. Starting the entire cluster takes about 30 minutes.
+(better) via the AWS web console. Starting the entire cluster takes about 30
+minutes the first time because you're installing a bunch of base packages.
+Subsequent instance restarts go significantly faster.
 
 ### Step 7 - Start matterhorn
 
-We've built chef recipes to manage cluster-wide matterhorn startup and shutdown, so we'll use the "execute recipe" facilities built into OpsWorks to start matterhorn on the relevant instances - Admin, Engage, and Workers.
+We've built chef recipes to manage cluster-wide matterhorn startup and
+shutdown, so we'll use the "execute recipe" facilities built into OpsWorks to
+start matterhorn on the relevant instances - Admin, Engage, and Workers.
 
     ./bin/rake stack:commands:execute_recipes layers="Admin,Engage,Workers" recipes="mh-opsworks-recipes::restart-matterhorn"
 
 The "mh-opsworks-recipes::restart-matterhorn" recipe is safe for both cold
 starts and warm restarts.
+
+You can also start matterhorn via the OpsWorks web UI under "Stack -> Run
+Command". Select the instances, choose "Execute Recipes" and enter
+"mh-opsworks-recipes::restart-matterhorn".
 
 ### Step 8 - Log in!
 
@@ -133,8 +150,7 @@ in with the password you set in your cluster configuration files.
     # You can omit the $() wrapper if you'd like to see the raw SSH connection info.
     $(./bin/rake stack:instances:ssh_to hostname=admin1)
 
-    # You can mix-and-match secrets and configuration files in the same invocation
-
+    # You can mix-and-match secrets and configuration files in the same invocation.
     # Use an alternate cluster configuration file
     CLUSTER_CONFIG_FILE="./some_other_config.json" ./bin/rake cluster:configtest
 
@@ -152,8 +168,6 @@ in with the password you set in your cluster configuration files.
     ./bin/rake stack:commands:execute_recipes layers="Admin,Engage,Workers" recipes="mh-opsworks-recipes::stop-matterhorn"
 
     # We're done! Get rid of the cluster.
-
-    # Delete the cluster:
     ./bin/rake admin:cluster:delete
 
 ## Chef
@@ -224,7 +238,7 @@ using.
 
 1. Open a github issue to discuss your problem or feature idea.
 1. Fork this repo.
-1. Make sure tests pass: `bin/rspec spec/`
+1. Make sure tests pass: `./bin/rspec spec/`
 1. Submit a pull request.
 
 ## See Also
