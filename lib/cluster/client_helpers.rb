@@ -9,6 +9,13 @@ module Cluster
         )
       end
 
+      def cloudwatch_client
+        Aws::CloudWatch::Client.new(
+          region: config.parsed[:region],
+          credentials: config.credentials
+        )
+      end
+
       def s3_client
         Aws::S3::Client.new(
           region: config.parsed[:region],
