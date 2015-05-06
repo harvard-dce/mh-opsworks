@@ -23,27 +23,32 @@ matterhorn cluster.
 
 ## Getting started
 
-### Step 0 - Create and configure credentials and policies
+### Step 0 - Create account-wide groups and policies
 
-Create or import an ec2 SSH keypair. You can do this in the AWS web console
-under "EC2 -> Network & Security -> Key Pairs".  Keep the name handy because
-you'll need it later in your `cluster_config.json` file. This ssh keypair
-allows you to access the built-in "ubuntu" user as a backchannel for debugging.
-
-Create an IAM group with the "AWSOpsWorksFullAccess" managed policy and an
-inline policy as defined in `./templates/example_group_inline_policy.json`.
-Name it something like `mh-opsworks-cluster-managers`. You'll probably need to
-be an account administrator to do this. You only need to do this once per AWS
-account.
+Ask an account administrator to create an IAM group with the
+"AWSOpsWorksFullAccess" managed policy and an inline policy as defined in
+`./templates/example_group_inline_policy.json`.  Name it something like
+`mh-opsworks-cluster-managers`. You only need to do this once per AWS account.
 
 This group allows a user to create / delete clusters including the VPC,
-cloudformation templates, SNS topics, cloudwatch metrics and alarms and
+cloudformation templates, SNS topics, cloudwatch metrics, alarms and
 numerous other AWS resources.
 
-Create an IAM user and add it to the group you created above. Create an aws
-access key pair for this user and have it handy.
+### Step 1 - Create your account and credentials
 
-### Step 1 - Find an unused cidr block for your cluster's VPC
+Create or import an ec2 SSH keypair. You can do this in the AWS web console
+under "EC2 -> Network & Security -> Key Pairs".  Ensure that you're logged into
+the correct region in the aws console, and that this region matches your
+`cluster_config.json` later.
+
+Keep the ec2 ssh keypair name handy because you'll need it later in your
+`cluster_config.json` file. This ssh keypair allows you to access the built-in
+"ubuntu" user as a backchannel for debugging and is used infrequently.
+
+Create an IAM user and ensure it's in the group you created in "Step 0". Create
+an aws access key pair for this user and have it handy.
+
+### Step 2 - Find an unused cidr block for your cluster's VPC
 
 Every cluster has its own VPC, and that VPC must be unique on its cidr block
 and name within the aws account.  Look at the list of VPCs in the aws console
@@ -57,7 +62,7 @@ peering easier should we want to do it in the future. The semantics of how we
 split clusters across VPCs and how much we care about unique cidr blocks may
 change in the future.
 
-### Step 2 - Install mh-opsworks
+### Step 3 - Install mh-opsworks
 
 You must have ruby 2 installed, ideally through something like rbenv or rvm,
 though if your system ruby is >= 2 you should be fine. `./bin/setup` installs
@@ -70,7 +75,7 @@ prerequisites and sets up empty cluster configuration templates.
 The base scripts (`rake`, mostly) live in `$REPO_ROOT/bin` and all paths below
 assume you're in repo root.
 
-### Step 3 - Create your configuration files.
+### Step 4 - Create your configuration files.
 
 You can use multiple configuration files (more on that later), but by default
 `mh-opsworks` reads from `$REPO_ROOT/cluster_config.json` and
@@ -85,7 +90,7 @@ exists, get the correct `cluster_config.json` from the right person.
     # Edit secrets to include the correct AWS (and other) credentials.
     vim secrets.json
 
-### Step 4 - Sanity check your cluster configuration
+### Step 5 - Sanity check your cluster configuration
 
 We've implemented a set of sanity checks to ensure your cluster configuration
 looks right. They are by no means comprehensive, but serve as a basic
@@ -97,7 +102,7 @@ pre-flight check. The checks are run automatically before every `rake` task.
 You'll see a relatively descriptive error message if there's something wrong
 with your cluster configuration.
 
-### Step 5 - Spin up your cluster
+### Step 6 - Spin up your cluster
 
     ./bin/rake admin:cluster:init
 
@@ -106,7 +111,7 @@ the parameters and sizes you set in your `cluster_config.json`. Basic feedback
 is given while the cluster is being created, you can see more information in
 the AWS opsworks console.
 
-### Step 6 - Start your ec2 instances
+### Step 7 - Start your ec2 instances
 
 Creating a cluster only instantiates the configuration in OpsWorks. You must
 start the instances in the cluster.  The process of starting an instance also
@@ -120,7 +125,7 @@ You can watch the process via `./bin/rake stack:instances:list` or
 minutes the first time because you're installing a bunch of base packages.
 Subsequent instance restarts go significantly faster.
 
-### Step 7 - Start matterhorn
+### Step 8 - Start matterhorn
 
 We've built chef recipes to manage cluster-wide matterhorn startup and
 shutdown, so we'll use the "execute recipe" facilities built into OpsWorks to
@@ -135,7 +140,7 @@ You can also start matterhorn via the OpsWorks web UI under "Stack -> Run
 Command". Select the instances, choose "Execute Recipes" and enter
 "mh-opsworks-recipes::restart-matterhorn".
 
-### Step 8 - Log in!
+### Step 9 - Log in!
 
 Find the public hostname for your admin node and visit it in your browser.  Log
 in with the password you set in your cluster configuration files.
@@ -233,6 +238,32 @@ shared across regions in multiple clusters without incident. If you want to
 send from multiple `default_email_sender` addresses, though, say to segment
 email communication by cluster, you'll need to verify each address before
 using.
+
+## Potentially problematic aws resource limits
+
+The default aws resource limits are listed
+[here](https://docs.aws.amazon.com/general/latest/gr/aws_service_limits.html).
+
+Every mh-opsworks managed cluster provisions:
+
+* A vpc
+* An opsworks stack,
+* A cloudformation stack, and
+* An internet gateway
+
+among numerous other resources. This may change in future releases.
+
+For now, you should ensure the following limits are raised to equal the number
+of clusters you'd like to deploy in your account.
+
+* VPCs per region
+* Internet gateways per region
+* Cloudformation Stack limit
+* Opsworks Stack Limit
+
+Fortunately error messages are fairly clear when a resource limit is hit,
+either in the shell output of mh-opsworks or in the aws web cloudformation (or
+other) UIs.
 
 ## Contributing or reporting problems
 
