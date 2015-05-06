@@ -21,7 +21,7 @@ module Cluster
       )
       syncer.deny_privileges_for_unconfigured_users
       syncer.create_missing_users
-      syncer.create_missing_opsworks_user_profiles
+      syncer.sync_opsworks_user_profiles
       syncer.set_user_permissions_from_config
     end
   end

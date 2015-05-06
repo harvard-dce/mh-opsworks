@@ -34,7 +34,6 @@ module Cluster
     def create_missing_users
       configured_users.each do |configured_user|
         if ! user_name_exists_in_iam?(configured_user[:user_name])
-          # TODO - wait semantics
           new_iam_user = self.class.iam_client.create_user(
             user_name: configured_user[:user_name]
           )
@@ -43,16 +42,19 @@ module Cluster
       end
     end
 
-    def create_missing_opsworks_user_profiles
+    def sync_opsworks_user_profiles
       user_profiles = self.class.opsworks_client.describe_user_profiles.user_profiles
       configured_users.each do |configured_user|
         user_name = configured_user[:user_name]
-        if ! user_profiles.find { |user_profile| user_profile.name == user_name }
-          # TODO  - wait semantics
-          self.class.opsworks_client.create_user_profile(
-            iam_user_arn: arns_by_username[user_name],
-            ssh_public_key: configured_user.fetch(:ssh_public_key, '')
-          )
+        ssh_key = configured_user.fetch(:ssh_public_key, '')
+
+        user_profile = user_profiles.find { |user_profile| user_profile.name == user_name }
+        if ! user_profile
+          create_user_profile(arns_by_username[user_name], ssh_key)
+        else
+          if user_profile.ssh_public_key.nil? && (ssh_key != '')
+            update_ssh_key_on_user_profile(user_profile.iam_user_arn, ssh_key)
+          end
         end
       end
     end
@@ -61,7 +63,6 @@ module Cluster
       configured_users.each do |user|
         arn = arns_by_username[user[:user_name]]
         if is_not_me?(arn)
-          # TODO  - wait semantics
           self.class.opsworks_client.set_permission(
             iam_user_arn: arn,
             stack_id: stack_id,
@@ -74,6 +75,22 @@ module Cluster
     end
 
     private
+
+    def create_user_profile(user_arn, ssh_key)
+      self.class.opsworks_client.create_user_profile(
+        iam_user_arn: user_arn,
+        ssh_public_key: ssh_key,
+        allow_self_management: true
+      )
+    end
+
+    def update_ssh_key_on_user_profile(user_arn, ssh_key)
+      self.class.opsworks_client.update_user_profile(
+        iam_user_arn: user_arn,
+        ssh_public_key: ssh_key,
+        allow_self_management: true
+      )
+    end
 
     def is_not_me?(arn)
       self.class.iam_client.get_user.user.arn != arn
