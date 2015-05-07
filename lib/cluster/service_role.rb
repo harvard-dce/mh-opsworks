@@ -50,7 +50,7 @@ module Cluster
     end
 
     def self.all_roles
-      iam_client.list_roles.roles.map do |role|
+      iam_client.list_roles.inject([]){ |memo, page| memo + page.roles }.map do |role|
         construct_instance(role.role_name)
       end
     end

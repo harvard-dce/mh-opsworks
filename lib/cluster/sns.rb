@@ -13,12 +13,10 @@ module Cluster
       opsworks_instance_ids = Cluster::Instances.find_existing.map { |i| i.instance_id }
       to_remove = []
 
-      cloudwatch_client.describe_alarms.each do |page|
-        page.metric_alarms.each do |alarm|
-          alarm.dimensions.each do |dimension|
-            if dimension.name == 'InstanceId' && opsworks_instance_ids.include?(dimension.value)
-              to_remove << alarm
-            end
+      cloudwatch_client.describe_alarms.inject([]){ |memo, page| memo + page.metric_alarms }.each do |alarm|
+        alarm.dimensions.each do |dimension|
+          if dimension.name == 'InstanceId' && opsworks_instance_ids.include?(dimension.value)
+            to_remove << alarm
           end
         end
       end

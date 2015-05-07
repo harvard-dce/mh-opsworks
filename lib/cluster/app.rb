@@ -36,7 +36,7 @@ module Cluster
 
     def self.find_existing
       stack = Cluster::Stack.find_existing
-      stack && opsworks_client.describe_apps(stack_id: stack.stack_id).apps.find do |app|
+      stack && opsworks_client.describe_apps(stack_id: stack.stack_id).inject([]){ |memo, page| memo + page.apps }.find do |app|
         app.name == app_config[:name]
       end
     end

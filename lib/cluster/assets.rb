@@ -16,7 +16,7 @@ module Cluster
     private
 
     def self.find_or_create_shared_asset_bucket
-      asset_bucket = s3_client.list_buckets.buckets.find do |bucket|
+      asset_bucket = s3_client.list_buckets.inject([]){ |memo, page| memo + page.buckets }.find do |bucket|
         bucket.name == shared_asset_bucket_name
       end
 
@@ -32,6 +32,5 @@ module Cluster
     def self.construct_bucket(name)
       Aws::S3::Bucket.new(name, client: s3_client)
     end
-
   end
 end

@@ -2,7 +2,9 @@ module Cluster
   class Deployment < Base
     def self.all
       stack = Cluster::Stack.with_existing_stack
-      opsworks_client.describe_deployments(stack_id: stack.stack_id).deployments
+      opsworks_client.describe_deployments(
+        stack_id: stack.stack_id
+      ).inject([]){ |memo, page| memo + page.deployments }
     end
 
     def self.deploy_app

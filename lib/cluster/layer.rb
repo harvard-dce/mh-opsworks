@@ -32,7 +32,7 @@ module Cluster
     end
 
     def get_security_group_for_private_layer
-      private_network_sg = ec2_client.describe_security_groups.security_groups.find do |group|
+      private_network_sg = ec2_client.describe_security_groups.inject([]){ |memo, page| memo + page.security_groups }.find do |group|
         # This is tightly coupled to the implementation in templates/OpsWorksinVPC.template
         group.group_name.match(/#{vpc_name}-OpsWorksSecurityGroup/)
       end

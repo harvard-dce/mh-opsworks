@@ -3,7 +3,7 @@ module Cluster
     include Cluster::Waiters
 
     def self.all
-      iam_client.list_instance_profiles.instance_profiles.map do |metadata|
+      iam_client.list_instance_profiles.inject([]){ |memo, page| memo + page.instance_profiles }.map do |metadata|
         construct_instance(metadata.instance_profile_name)
       end
     end
@@ -11,14 +11,13 @@ module Cluster
     def self.delete
       instance_profile = find_instance_profile
       if instance_profile
-        instance_profile_client = construct_instance(instance_profile.instance_profile_name)
-        instance_profile_client.roles.each do |role|
+        instance_profile.roles.each do |role|
           iam_client.remove_role_from_instance_profile(
-            instance_profile_name: instance_profile_client.instance_profile_name,
+            instance_profile_name: instance_profile.instance_profile_name,
             role_name: role.role_name
           )
         end
-        instance_profile_client.delete
+        instance_profile.delete
 
         delete_instance_profile_role(instance_profile_name)
       end
@@ -66,7 +65,7 @@ module Cluster
     end
 
     def self.find_instance_profile
-      iam_client.list_instance_profiles.instance_profiles.find do |instance_profile|
+      all.find do |instance_profile|
         instance_profile.instance_profile_name == instance_profile_name
       end
     end

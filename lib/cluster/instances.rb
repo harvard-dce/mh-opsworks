@@ -20,7 +20,7 @@ module Cluster
       stack = Cluster::Stack.find_existing
       if stack
         Cluster::Stack.stop_all
-        opsworks_client.describe_instances(stack_id: stack.stack_id).instances.each do |instance|
+        opsworks_client.describe_instances(stack_id: stack.stack_id).inject([]){ |memo, page| memo + page.instances }.each do |instance|
           opsworks_instance = Cluster::Instance.new(instance.instance_id)
           opsworks_instance.delete
 
@@ -48,8 +48,7 @@ module Cluster
 
     def self.find_existing
       stack = Stack.find_existing
-      instances = opsworks_client.describe_instances(stack_id: stack.stack_id)
-      (instances) ? instances.instances : []
+      opsworks_client.describe_instances(stack_id: stack.stack_id).inject([]){ |memo, page| memo + page.instances }
     end
 
     def self.online
@@ -59,7 +58,7 @@ module Cluster
     private
 
     def self.get_instances_in(layer)
-      opsworks_client.describe_instances(layer_id: layer.layer_id).instances
+      opsworks_client.describe_instances(layer_id: layer.layer_id).inject([]){ |memo, page| memo + page.instances }
     end
   end
 end

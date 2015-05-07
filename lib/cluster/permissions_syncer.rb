@@ -43,7 +43,7 @@ module Cluster
     end
 
     def sync_opsworks_user_profiles
-      user_profiles = self.class.opsworks_client.describe_user_profiles.user_profiles
+      user_profiles = self.class.opsworks_client.describe_user_profiles.inject([]){ |memo, page| memo + page.user_profiles }
       configured_users.each do |configured_user|
         user_name = configured_user[:user_name]
         ssh_key = configured_user.fetch(:ssh_public_key, '')

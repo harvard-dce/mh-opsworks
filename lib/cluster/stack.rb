@@ -5,10 +5,8 @@ module Cluster
     # The list is composed of Aws::OpsWorks::Stack instances.
     def self.all
       stacks = []
-      opsworks_client.describe_stacks.each do |page|
-        page.stacks.each do |stack|
-          stacks << construct_instance(stack.stack_id)
-        end
+      opsworks_client.describe_stacks.inject([]){ |memo, page| memo + page.stacks }.each do |stack|
+        stacks << construct_instance(stack.stack_id)
       end
       stacks
     end

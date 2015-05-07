@@ -5,10 +5,8 @@ module Cluster
 
     def self.all
       vpcs = []
-      ec2_client.describe_vpcs.each do |page|
-        page.vpcs.each do |vpc|
-          vpcs << construct_instance(vpc.vpc_id)
-        end
+      ec2_client.describe_vpcs.inject([]){ |memo, page| memo + page.vpcs }.each do |vpc|
+        vpcs << construct_instance(vpc.vpc_id)
       end
       vpcs
     end
@@ -16,7 +14,7 @@ module Cluster
     def self.delete
       vpc = find_existing
       if vpc
-        stack = cloudformation_client.describe_stacks.stacks.find do |stack|
+        stack = cloudformation_client.describe_stacks.inject([]){ |memo, page| memo + page.stacks }.find do |stack|
           stack.stack_name == vpc_name
         end
 

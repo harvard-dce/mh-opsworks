@@ -5,13 +5,11 @@ module Cluster
 
       opsworks_client.describe_permissions(
         stack_id: stack.stack_id
-      ).permissions
+      ).inject([]){ |memo, page| memo + page.permissions }
     end
 
     def self.reset_stack_user_permissions_for(stack_id)
-      opsworks_permissions = opsworks_client.describe_permissions(
-        stack_id: stack_id
-      ).permissions
+      opsworks_permissions = all
 
       syncer = PermissionsSyncer.new(
         configured_users: stack_config[:users],
