@@ -55,9 +55,8 @@
         "volume_configurations": [
           {
             "mount_point": "/var/matterhorn",
-            "raid_level": 0,
-            "number_of_disks": 2,
-            "size": "200",
+            "number_of_disks": 1,
+            "size": "500",
             "volume_type": "gp2"
           }
         ],
@@ -133,7 +132,6 @@
             "mh-opsworks-recipes::install-mh-base-packages",
             "mh-opsworks-recipes::create-matterhorn-user",
             "mh-opsworks-recipes::install-deploy-key",
-            "mh-opsworks-recipes::nfs-client",
             "mh-opsworks-recipes::enable-postfix-smarthost",
             "mh-opsworks-recipes::configure-nginx-proxy",
             "mh-opsworks-recipes::install-ffmpeg",
@@ -142,6 +140,7 @@
             "mh-opsworks-recipes::clean-up-package-cache"
           ],
           "configure": [
+            "mh-opsworks-recipes::nfs-client",
             "mh-opsworks-recipes::update-host-based-configurations",
             "mh-opsworks-recipes::update-nginx-config-for-ganglia"
           ],
@@ -168,7 +167,7 @@
         ],
         "instances": {
           "number_of_instances": 1,
-          "instance_type": "c4.xlarge",
+          "instance_type": "c4.large",
           "root_device_type": "ebs"
         }
       },
@@ -189,7 +188,6 @@
             "mh-opsworks-recipes::create-matterhorn-user",
             "mh-opsworks-recipes::install-deploy-key",
             "mh-opsworks-recipes::enable-postfix-smarthost",
-            "mh-opsworks-recipes::nfs-client",
             "mh-opsworks-recipes::configure-nginx-proxy",
             "mh-opsworks-recipes::install-ffmpeg",
             "mh-opsworks-recipes::install-custom-metrics",
@@ -197,6 +195,7 @@
             "mh-opsworks-recipes::clean-up-package-cache"
           ],
           "configure": [
+            "mh-opsworks-recipes::nfs-client",
             "mh-opsworks-recipes::update-host-based-configurations"
           ],
           "deploy": [
@@ -222,7 +221,7 @@
         ],
         "instances": {
           "number_of_instances": 4,
-          "instance_type": "c4.xlarge",
+          "instance_type": "c4.large",
           "root_device_type": "ebs"
         }
       },
@@ -245,7 +244,6 @@
             "mh-opsworks-recipes::create-matterhorn-user",
             "mh-opsworks-recipes::install-deploy-key",
             "mh-opsworks-recipes::enable-postfix-smarthost",
-            "mh-opsworks-recipes::nfs-client",
             "mh-opsworks-recipes::install-ffmpeg",
             "mh-opsworks-recipes::configure-nginx-proxy",
             "mh-opsworks-recipes::install-custom-metrics",
@@ -253,6 +251,7 @@
             "mh-opsworks-recipes::clean-up-package-cache"
           ],
           "configure": [
+            "mh-opsworks-recipes::nfs-client",
             "mh-opsworks-recipes::update-host-based-configurations"
           ],
           "deploy": [
@@ -278,7 +277,7 @@
         ],
         "instances": {
           "number_of_instances": 1,
-          "instance_type": "c4.xlarge",
+          "instance_type": "c4.large",
           "root_device_type": "ebs"
         }
       },

@@ -21,6 +21,14 @@ module Cluster
       self.class.construct_instance(instance_id)
     end
 
+    def self.storage_config
+      stack_custom_json.fetch(:storage, {})
+    end
+
+    def self.external_storage?
+      storage_config[:type] == 'external'
+    end
+
     def self.instance_profile_policy_document
       with_encoded_document do
         {

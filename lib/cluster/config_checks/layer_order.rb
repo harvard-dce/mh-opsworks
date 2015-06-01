@@ -5,6 +5,9 @@ module Cluster
 
     class LayerOrder < Base
       def self.sane?
+        if external_storage?
+          return
+        end
         first_two = layers_config.slice(0,2)
 
         missing_layers = [ database_layer_config, storage_layer_config ] - first_two

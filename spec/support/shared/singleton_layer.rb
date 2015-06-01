@@ -3,14 +3,14 @@ shared_examples_for 'a singleton layer for' do |shortname|
 
   it "does not raise when all is well with the world" do
     stub_config_to_include(
-      { stack: { layers: [layer_with_instances_numbering_for(shortname, 1)] } }
+      { stack: { chef: { custom_json: {} }, layers: [layer_with_instances_numbering_for(shortname, 1)] } }
     )
 
     expect{ described_class.sane? }.not_to raise_error
   end
 
   it "raises when no layer is defined" do
-    stub_config_to_include( { stack: { layers: [] } })
+    stub_config_to_include( { stack: { chef: { custom_json: {} }, layers: [] } })
 
     expect{ described_class.sane? }.to raise_error(
       Cluster::ConfigChecks::LayerNotDefined
@@ -21,7 +21,7 @@ shared_examples_for 'a singleton layer for' do |shortname|
     layer = layer_with_instances_numbering_for(shortname, 1)
 
     stub_config_to_include(
-      { stack: { layers: [layer, layer] } }
+      { stack: { chef: { custom_json: {} }, layers: [layer, layer] } }
     )
 
     expect{ described_class.sane? }.to raise_error(
@@ -31,7 +31,7 @@ shared_examples_for 'a singleton layer for' do |shortname|
 
   it "raises when more than one #{shortname} instance is defined" do
     stub_config_to_include(
-      { stack: { layers: [layer_with_instances_numbering_for(shortname, 2)] } }
+      { stack: { chef: { custom_json: {} }, layers: [layer_with_instances_numbering_for(shortname, 2)] } }
     )
 
     expect{ described_class.sane? }.to raise_error(
@@ -43,6 +43,7 @@ shared_examples_for 'a singleton layer for' do |shortname|
     stub_config_to_include(
       {
         stack: {
+          chef: { custom_json: {} },
           layers: [
             {
               shortname: shortname,

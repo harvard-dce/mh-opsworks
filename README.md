@@ -203,6 +203,18 @@ revision of the custom cookbook that you'd like to use.
 
 ## Notes
 
+## NFS storage options
+
+The default `cluster_config.json` assumes you're using NFS storage provided by
+the "Storage" layer.  If you use the default opsworks-managed storage,
+`mh-opsworks` will create an NFS server on the single ec2 instance defined in
+the "Storage" layer and connect the Admin, Engage, and Worker nodes to it via
+autofs / automount and the `mh-opsworks-recipes::nfs-client` chef recipe.
+
+If you'd like to use NFS storage provided by some other service - [zadara
+storage](http://www.zadarastorage.com), for instance, please see
+"README.zadara.md".
+
 ## Layer instance start order
 
 The "Storage" and "MySQL db" layers are started before all others. Once those
