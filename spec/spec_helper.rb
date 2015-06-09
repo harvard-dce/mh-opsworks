@@ -7,6 +7,10 @@ Dir['./spec/support/**/*.rb'].each { |file| require file }
 RSpec.configure do |config|
   config.order = :random
 
+  config.filter_run_excluding not_for_ruby: -> (skip_if_version) {
+    RUBY_VERSION.to_s =~ /^#{skip_if_version.to_s}/
+  }
+
   config.before(:all) do
     Aws.config[:stub_responses] = true
     ENV['CLUSTER_CONFIG_FILE'] = 'templates/cluster_config_example.json'

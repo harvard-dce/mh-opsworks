@@ -1,7 +1,7 @@
 describe Cluster::Layers do
   include EnvironmentHelpers
   context '.all' do
-    it 'uses the Stack to find layers' do
+    it 'uses the Stack to find layers', not_for_ruby: 2.0 do
       find_double = double('find_or_create')
       allow(find_double).to receive(:layers).and_return([])
       allow(Cluster::Stack).to receive(:with_existing_stack).and_return(find_double)
@@ -13,7 +13,7 @@ describe Cluster::Layers do
   end
 
   context '.find_or_create' do
-    it 'uses Cluster::Layer to find or create layers' do
+    it 'uses Cluster::Layer to find or create layers', not_for_ruby: 2.0 do
       allow(Cluster::Layer).to receive(:find_or_create)
       layer = { name: 'a name'}
 
