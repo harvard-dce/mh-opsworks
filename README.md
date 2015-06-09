@@ -215,15 +215,6 @@ If you'd like to use NFS storage provided by some other service - [zadara
 storage](http://www.zadarastorage.com), for instance, please see
 "README.zadara.md".
 
-## Layer instance start order
-
-The "Storage" and "MySQL db" layers are started before all others. Once those
-layers report that they are "online", every other instance is started
-simultaneously. This will probably change, especially if/when we move to amazon
-efs storage.
-
-Instances are stopped in reverse layer definition order by "stack:instances:stop".
-
 ## Metrics, alarms, and notifications
 
 We add and remove SNS-linked cloudwatch alarms when an instance is stopped and

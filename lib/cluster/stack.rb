@@ -19,42 +19,25 @@ module Cluster
     end
 
     def self.stop_all
+      instance_ids = []
       with_existing_stack do |stack|
-        Cluster::Layers.by_start_order.reverse.each do |layer|
-          instances = Cluster::Instances.find_in_layer(layer)
-          instances.each do |instance|
-            opsworks_client.stop_instance(
-              instance_id: instance.instance_id
-            )
-          end
-          if instances.any?
-            wait_until_opsworks_instances_stopped(instances.map(&:instance_id))
-          end
-        end
+        instance_ids = Cluster::Instances.find_existing.map(&:instance_id)
+        opsworks_client.stop_stack(stack_id: stack.stack_id)
+      end
+      if instance_ids.any?
+        wait_until_opsworks_instances_stopped(instance_ids)
       end
     end
 
     def self.start_all
-      non_core_instance_ids = []
+      instance_ids = []
       with_existing_stack do |stack|
-        Cluster::Layers.by_start_order.each do |layer|
-          instances = Cluster::Instances.find_in_layer(layer)
-          instances.each do |instance|
-            next if instance.status != 'stopped'
-            opsworks_client.start_instance(
-              instance_id: instance.instance_id
-            )
-          end
-          # Let storage and the database come online before spinning
-          # up all the rest of the instances
-          if ['db-master', 'storage'].include?(layer.shortname)
-            wait_until_opsworks_instances_started(instances.map(&:instance_id))
-          else
-            non_core_instance_ids = non_core_instance_ids + instances.map(&:instance_id)
-          end
-        end
+        instance_ids = Cluster::Instances.find_existing.map(&:instance_id)
+        opsworks_client.start_stack(stack_id: stack.stack_id)
       end
-      wait_until_opsworks_instances_started(non_core_instance_ids)
+      if instance_ids.any?
+        wait_until_opsworks_instances_started(instance_ids)
+      end
     end
 
     def self.find_existing
