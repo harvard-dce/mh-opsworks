@@ -19,6 +19,7 @@ matterhorn cluster.
 * Security out of the box - instances can only be accessed via ssh keys and most instances are isolated to a private network,
 * Automated matterhorn git deployments via OpsWorks built-ins,
 * The ability to create and destroy matterhorn clusters completely, including all attached resources,
+* Tagged matterhorn logging to [loggly](http://loggly.com),
 * A set of high-level ruby tasks designed to make managing your OpsWorks matterhorn cluster easier.
 
 ## Getting started
@@ -229,6 +230,23 @@ metrics automatically as nodes are added and removed. You can log in to ganglia
 with the username / password set in your cluster configuration. The url is
 `<your public admin node hostname>/ganglia`. The username and password is set
 in your cluster configuration.
+
+## Loggly
+
+The Admin, Engage, and Workers layers include a chef recipe to add an rsyslog
+drain to loggly for matterhorn logs. Update `secrets.json` to add your loggly
+URL and token, and ensure matterhorn is logging to syslog.
+
+Log entries are tagged with:
+
+* Stack name,
+* Hostname,
+* Layer name, and
+* A single string comprising stack and hostname.
+
+If you don't want to log to loggly, remove the
+`mh-opsworks-recipes::rsyslog-to-loggly` recipe from your cluster config and
+remove the "loggly" stanza from `secrets.json`.
 
 ## SMTP via amazon SES
 
