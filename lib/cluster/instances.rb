@@ -47,8 +47,12 @@ module Cluster
     end
 
     def self.find_existing
+      instances = []
       stack = Stack.find_existing
-      opsworks_client.describe_instances(stack_id: stack.stack_id).inject([]){ |memo, page| memo + page.instances }
+      if stack
+        instances = opsworks_client.describe_instances(stack_id: stack.stack_id).inject([]){ |memo, page| memo + page.instances }
+      end
+      instances
     end
 
     def self.online
