@@ -52,7 +52,7 @@ module Cluster
           timeout_in_minutes: 15,
           tags: [
             {
-              key: 'ForOpsworksStack',
+              key: 'opsworks:stack',
               value: stack_shortname
             }
           ]

@@ -38,7 +38,6 @@
         "CidrBlock" : { "Ref" : "CIDRBlock"},
         "EnableDnsHostnames" : "true",
         "Tags" : [
-          { "Key" : "OpsworksStack", "Value" : { "Ref" : "AWS::StackName" } },
           { "Key" : "Name", "Value" : { "Ref" : "AWS::StackName" } }
         ]
       }
@@ -50,8 +49,7 @@
         "VpcId" : { "Ref" : "VPC" },
         "CidrBlock" : { "Ref" : "PublicCIDRBlock" },
         "Tags" : [
-          { "Key" : "OpsworksStack", "Value" : { "Ref" : "AWS::StackName" } },
-          { "Key" : "Name", "Value" : "Public subnet" },
+          { "Key" : "Name", "Value" : { "Fn::Join" : [ " ", [ { "Ref" : "AWS::StackName" }, "Public subnet" ] ] } },
           { "Key" : "Network", "Value" : "Public" }
         ]
       }
@@ -61,7 +59,6 @@
       "Type" : "AWS::EC2::InternetGateway",
       "Properties" : {
         "Tags" : [
-          { "Key" : "Application", "Value" : { "Ref" : "AWS::StackName" } },
           { "Key" : "Network", "Value" : "Public" }
         ]
       }
@@ -80,7 +77,6 @@
       "Properties" : {
         "VpcId" : { "Ref" : "VPC" },
         "Tags" : [
-          { "Key" : "Application", "Value" : { "Ref" : "AWS::StackName" } },
           { "Key" : "Network", "Value" : "Public" }
         ]
       }
@@ -108,7 +104,6 @@
       "Properties" : {
         "VpcId" : { "Ref" : "VPC" },
         "Tags" : [
-          { "Key" : "Application", "Value" : { "Ref" : "AWS::StackName" } },
           { "Key" : "Network", "Value" : "Public" }
         ]
       }
@@ -153,8 +148,7 @@
         "VpcId" : { "Ref" : "VPC" },
         "CidrBlock" : { "Ref" : "PrivateCIDRBlock" },
         "Tags" : [
-          { "Key" : "Application", "Value" : { "Ref" : "AWS::StackName" } },
-          { "Key" : "Name", "Value" : "Private subnet" }
+          { "Key" : "Name", "Value" : { "Fn::Join" : [ " ", [ { "Ref" : "AWS::StackName" }, "private subnet" ] ] } }
         ]
       }
     },
@@ -164,7 +158,6 @@
       "Properties" : {
         "VpcId" : { "Ref" : "VPC" },
         "Tags" : [
-          { "Key" : "Application", "Value" : { "Ref" : "AWS::StackName" } },
           { "Key" : "Network", "Value" : "Private" }
         ]
       }
@@ -192,8 +185,8 @@
       "Properties" : {
         "VpcId" : { "Ref" : "VPC" },
         "Tags" : [
-          { "Key" : "Application", "Value" : { "Ref" : "AWS::StackName" } },
-          { "Key" : "Network", "Value" : "Private" }
+          { "Key" : "Network", "Value" : "Private" },
+          { "Key" : "Name", "Value" : { "Fn::Join" : [ " ", [ { "Ref" : "AWS::StackName" }, "private subnet network acl" ] ] } }
         ]
       }
     },
@@ -249,7 +242,6 @@
         "ImageId" : { "Fn::FindInMap" : [ "AWSNATAMI", { "Ref" : "AWS::Region" }, "AMI" ]},
         "SecurityGroupIds" : [{ "Ref" : "NATSecurityGroup" }],
         "Tags" : [
-          { "Key" : "OpsworksStack", "Value" : { "Ref" : "AWS::StackName" } },
           { "Key" : "Name", "Value" : { "Fn::Join" : [ " ", [ { "Ref" : "AWS::StackName" }, "NAT instance" ] ] } }
         ]
       }
@@ -273,6 +265,9 @@
            { "IpProtocol" : "tcp", "FromPort" : "443", "ToPort" : "443", "CidrIp" : "0.0.0.0/0" },
            { "IpProtocol" : "tcp", "FromPort" : "9418",  "ToPort" : "9418",  "CidrIp" : "0.0.0.0/0" },
            { "IpProtocol" : "tcp", "FromPort" : "11371",  "ToPort" : "11371",  "CidrIp" : "0.0.0.0/0" }
+        ],
+        "Tags" : [
+          { "Key" : "Name", "Value" : { "Fn::Join" : [ " ", [ { "Ref" : "AWS::StackName" }, "security group" ] ] } }
         ]
       }
     },
@@ -281,7 +276,10 @@
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
         "GroupDescription" : "Allow the OpsWorks instances to access the NAT device",
-        "VpcId" : { "Ref" : "VPC" }
+        "VpcId" : { "Ref" : "VPC" },
+        "Tags" : [
+          { "Key" : "Name", "Value" : { "Fn::Join" : [ " ", [ { "Ref" : "AWS::StackName" }, "opsworks nat security group" ] ] } }
+        ]
       }
     }
   },
