@@ -53,7 +53,7 @@ module Cluster
           tags: [
             {
               key: 'opsworks:stack',
-              value: stack_shortname
+              value: stack_config[:name]
             }
           ]
         )

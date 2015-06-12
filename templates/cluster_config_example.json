@@ -8,7 +8,6 @@
   },
   "stack": {
     "name": "FILL_ME_IN",
-    "shortname": "FILL_ME_IN - only lowercase letters, digits and hyphens",
     "default_ssh_key_name":"",
     "chef": {
       "custom_json": {

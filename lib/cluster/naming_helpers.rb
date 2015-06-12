@@ -2,7 +2,7 @@ module Cluster
   module NamingHelpers
     module ClassMethods
       def stack_shortname
-        stack_config[:shortname]
+        stack_config[:name].downcase.gsub(/[^a-z\d\-_]/,'_')
       end
 
       def vpc_name

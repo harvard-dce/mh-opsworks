@@ -33,7 +33,7 @@ describe Cluster::VPC do
         stub_config_to_include(
           vpc: { cidr_block: vpc_config[:cidr_block] },
           stack: {
-            shortname: vpc_config[:name]
+            name: vpc_config[:name]
           }
         )
         expect{ described_class.find_or_create }.to raise_error(
@@ -44,7 +44,7 @@ describe Cluster::VPC do
 
     it 'returns an existing VPC if the name and cidr_block match' do
       stub_config_to_include(stack: {
-        shortname: 'test'
+        name: 'test'
       })
       stub_ec2_client do |ec2|
         ec2.stub_responses(

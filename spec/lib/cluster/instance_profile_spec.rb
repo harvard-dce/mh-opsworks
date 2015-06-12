@@ -13,14 +13,14 @@ describe Cluster::InstanceProfile do
 
   context '.delete' do
     it 'deletes correctly' do
-      stub_with_instance_profile_named('test-stack-instance-profile')
+      stub_with_instance_profile_named('test_stack-instance-profile')
       stub_config_to_include(
         stack: {
-          shortname: 'test-stack'
+          name: 'Test Stack'
         }
       )
       instance_profile_double = double('instance_profile')
-      allow(instance_profile_double).to receive(:instance_profile_name).and_return('test-stack-instance-profile')
+      allow(instance_profile_double).to receive(:instance_profile_name).and_return('test_stack-instance-profile')
       allow(instance_profile_double).to receive(:delete)
       allow(instance_profile_double).to receive(:roles).and_return([])
       allow(Aws::IAM::InstanceProfile).to receive(:new).and_return(instance_profile_double)
