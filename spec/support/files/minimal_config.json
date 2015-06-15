@@ -1,0 +1,9 @@
+{
+  "version": 1000,
+  "stack": {
+    "name": "A stack",
+    "chef": {
+      "custom_json": { }
+    }
+  }
+}

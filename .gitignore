@@ -4,3 +4,5 @@
 /secrets*.json
 tmp/
 *.bk
+.mhopsworks.rc
+coverage/

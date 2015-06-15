@@ -1,22 +1,22 @@
 {
+  "version": "0",
   "region": "us-east-1",
   "vpc": {
-    "cidr_block": "FILL_ME_IN - e.g. 10.1.1.0/24",
-    "public_cidr_block": "FILL_ME_IN - e.g. 10.1.1.0/26",
-    "private_cidr_block": "FILL_ME_IN - e.g. 10.1.1.64/26",
+    "cidr_block": "<%= cidr_block_root %>.0/24",
+    "public_cidr_block": "<%= cidr_block_root %>.0/26",
+    "private_cidr_block": "<%= cidr_block_root %>.64/26",
     "_cidr_block_comment": "10.1.1.0/24 gives you 254 ips"
   },
   "stack": {
-    "name": "FILL_ME_IN",
+    "name": "<%= name %>",
     "default_ssh_key_name":"",
     "chef": {
       "custom_json": {
-        "shared_asset_bucket_name": "FILL_ME_IN: e.g. mh-opsworks-shared-assets",
         "matterhorn_repo_root": "/opt/matterhorn",
         "local_workspace_root": "/var/matterhorn-workspace",
         "storage": {
           "export_root": "/var/matterhorn",
-          "network": "10.1.1.0/24 FILL_ME_IN - this should match your cidr_block above",
+          "network": "<%= cidr_block_root %>.0/24",
           "layer_shortname": "storage"
         }
       },
@@ -55,13 +55,13 @@
           {
             "mount_point": "/var/matterhorn",
             "number_of_disks": 1,
-            "size": "500",
+            "size": "<%= storage_disk_size %>",
             "volume_type": "gp2"
           }
         ],
         "instances": {
           "number_of_instances": 1,
-          "instance_type": "c4.xlarge",
+          "instance_type": "<%= storage_instance_type %>",
           "root_device_type": "ebs"
         }
       },
@@ -97,19 +97,19 @@
             "mount_point": "/vol/mysql",
             "raid_level": 1,
             "number_of_disks": 2,
-            "size": "50",
+            "size": "<%= database_disk_size %>",
             "volume_type": "gp2"
           },
           {
             "mount_point": "/opt/matterhorn",
             "number_of_disks": 1,
-            "size": "50",
+            "size": "<%= matterhorn_root_size %>",
             "volume_type": "gp2"
           }
         ],
         "instances": {
           "number_of_instances": 1,
-          "instance_type": "t2.medium",
+          "instance_type": "<%= database_instance_type %>",
           "root_device_type": "ebs"
         }
       },
@@ -155,19 +155,19 @@
           {
             "mount_point": "/var/matterhorn-workspace",
             "number_of_disks": 1,
-            "size": "500",
+            "size": "<%= matterhorn_workspace_size %>",
             "volume_type": "gp2"
           },
           {
             "mount_point": "/opt/matterhorn",
             "number_of_disks": 1,
-            "size": "50",
+            "size": "<%= matterhorn_root_size %>",
             "volume_type": "gp2"
           }
         ],
         "instances": {
           "number_of_instances": 1,
-          "instance_type": "c4.large",
+          "instance_type": "<%= admin_instance_type %>",
           "root_device_type": "ebs"
         }
       },
@@ -210,19 +210,19 @@
           {
             "mount_point": "/var/matterhorn-workspace",
             "number_of_disks": 1,
-            "size": "500",
+            "size": "<%= matterhorn_workspace_size %>",
             "volume_type": "gp2"
           },
           {
             "mount_point": "/opt/matterhorn",
             "number_of_disks": 1,
-            "size": "50",
+            "size": "<%= matterhorn_root_size %>",
             "volume_type": "gp2"
           }
         ],
         "instances": {
-          "number_of_instances": 4,
-          "instance_type": "c4.large",
+          "number_of_instances": "<%= workers_instance_count %>",
+          "instance_type": "<%= workers_instance_type %>",
           "root_device_type": "ebs"
         }
       },
@@ -267,19 +267,19 @@
           {
             "mount_point": "/var/matterhorn-workspace",
             "number_of_disks": 1,
-            "size": "500",
+            "size": "<%= matterhorn_workspace_size %>",
             "volume_type": "gp2"
           },
           {
             "mount_point": "/opt/matterhorn",
             "number_of_disks": 1,
-            "size": "50",
+            "size": "<%= matterhorn_root_size %>",
             "volume_type": "gp2"
           }
         ],
         "instances": {
           "number_of_instances": 1,
-          "instance_type": "c4.large",
+          "instance_type": "<%= engage_instance_type %>",
           "root_device_type": "ebs"
         }
       },
@@ -310,13 +310,13 @@
           {
             "mount_point": "/vol/ganglia",
             "number_of_disks": 1,
-            "size": "50",
+            "size": "<%= ganglia_disk_size %>",
             "volume_type": "gp2"
           }
         ],
         "instances": {
           "number_of_instances": 1,
-          "instance_type": "t2.medium",
+          "instance_type": "<%= ganglia_instance_type %>",
           "root_device_type": "ebs"
         }
       }
@@ -331,8 +331,8 @@
       },
       "app_source": {
         "type": "git",
-        "url": "git@github.com:/blahblah FILL_ME_IN",
-        "revision": "FILL_ME_IN"
+        "url": "<%= app_git_url %>",
+        "revision": "<%= app_git_revision %>"
       }
     },
     "users": [

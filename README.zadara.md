@@ -1,14 +1,14 @@
 # Configuring a cluster to connect to zadara storage
 
-## mh-opsworks and `cluster_config.json` changes
+## mh-opsworks and cluster configuration changes
 
-The list below represents the `cluster_config.json` level changes necessary to
+The list below represents the cluster configuration level changes necessary to
 connect a cluster to zadara (or perhaps other) external storage.
 
 1. Create your VPC via `./bin/rake vpc:init`
 1. Now create your zadara storage volumes (see below). Come back and continue
    with the next step when that's done.
-1. Remove the storage layer entirely in your `cluster_config.json`
+1. Remove the storage layer entirely in your cluster configuration.
 1. Move the `mh-opsworks-recipes::nfs-client` recipe to the `setup` lifecycle
    event for the Admin, Engage, and Workers layers after the
    "mh-opsworks-recipes::create-matterhorn-user" recipe. Technically this is
@@ -71,4 +71,4 @@ Zadara VPSA creation is discussed in more detail
    subnets
 1. Attach the volume you created above to this server.
 1. You should now have the information you need to update your
-   `cluster_config.json` for external storage.
+   cluster configuration for external storage.

@@ -26,7 +26,8 @@
                 "iam:*Polic*",
                 "iam:*Role*",
                 "iam:*User*",
-                "sns:*"
+                "sns:*",
+                "cloudwatch:*"
             ],
             "Resource": [
                 "*"

@@ -15,14 +15,9 @@ if ! command -v bundle > /dev/null; then
   exit 1;
 fi
 
-bundle install --binstubs
+echo
 
-if [ ! -f "./cluster_config.json" ]; then
-  cp templates/cluster_config_example.json ./cluster_config.json
-  echo 'Creating a new ./cluster_config.json file, be sure to fill it in with your values'
-else
-  echo 'Using existing ./cluster_config.json'
-fi
+bundle install --binstubs
 
 if [ ! -f "./secrets.json" ]; then
   cp templates/secrets_example.json ./secrets.json
@@ -31,15 +26,17 @@ else
   echo 'Using existing ./secrets.json file'
 fi
 
-if grep -qiE 'FILL_ME_IN' ./cluster_config.json; then
-  echo 'Be sure to complete configuring your ./cluster_config.json file'
-  exit 1;
-fi
-
 if grep -qiE 'FILL_ME_IN' ./secrets.json; then
   echo 'Be sure to complete configuring your ./secrets.json file'
   exit 1;
 fi
 
+echo
+echo '**************************************'
+echo 'You should now ensure you have a secrets.json file with a working
+aws access key / secret and other variables relevant to your
+overall cluster hosting environment.'
+echo
 
-echo 'Preflight checks out. Run `./bin/rake admin:cluster:init` to create a matterhorn cluster'
+echo 'Run `./bin/rake cluster:switch` to start working in an existing cluster'
+echo 'Run `./bin/rake cluster:new` to create a new cluster entirely'

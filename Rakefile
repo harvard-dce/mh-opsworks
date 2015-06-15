@@ -3,8 +3,8 @@ Dir['./lib/tasks/*.rake'].each { |file| load file }
 
 namespace :admin do
   namespace :cluster do
-    desc 'Initialize a matterhorn cluster using the policies in your defined cluster_config.json'
-    task init: ['cluster:configtest'] do
+    desc 'Initialize a matterhorn cluster using the policies in your defined cluster configuration'
+    task init: ['cluster:configtest', 'cluster:config_sync_check'] do
       stack = Cluster::Stack.find_or_create
       puts %Q|Stack "#{stack.name}" initialized, id: #{stack.stack_id}|
       layers = Cluster::Layers.find_or_create
@@ -20,8 +20,8 @@ namespace :admin do
       puts %Q|Initializing the cluster does not start instances. To start them, use "./bin/rake stack:instances:start"|
     end
 
-    desc 'Delete a matterhorn cluster using the policies defined in your cluster_config.json'
-    task delete: ['cluster:configtest'] do
+    desc 'Delete a matterhorn cluster using the policies defined in your cluster configuration'
+    task delete: ['cluster:configtest', 'cluster:config_sync_check'] do
       puts 'deleting app'
       Cluster::App.delete
 
@@ -42,12 +42,15 @@ namespace :admin do
 
       puts 'deleting VPC'
       Cluster::VPC.delete
+
+      puts 'deleting configuration files'
+      Cluster::RemoteConfig.new.delete
     end
   end
 
   namespace :users do
     desc 'list all IAM users'
-    task list: ['cluster:configtest'] do
+    task list: ['cluster:configtest', 'cluster:config_sync_check'] do
       Cluster::IAMUser.all.each do |user|
         puts %Q|#{user.user_name} => #{user.arn}|
       end
@@ -55,15 +58,17 @@ namespace :admin do
   end
 
   desc 'republish maven cache to s3'
-  task republish_maven_cache: ['cluster:configtest'] do
+  task republish_maven_cache: ['cluster:configtest', 'cluster:config_sync_check'] do
+    asset_bucket_name = Cluster::Base.shared_asset_bucket_name
+
     a_public_host = Cluster::Instances.online.find do |instance|
       instance.public_dns != nil
     end
 
     system %Q|ssh -C #{a_public_host.public_dns} 'sudo bash -c "cd /root && tar cvfz - .m2/"' > maven_cache.tgz|
 
-    puts %Q|Uploading maven_cache.tgz to #{Cluster::Base.shared_asset_bucket_name}|
-    Cluster::Assets.publish_support_asset('maven_cache.tgz')
+    puts %Q|Uploading maven_cache.tgz to #{asset_bucket_name}|
+    Cluster::Assets.publish_support_asset_to(bucket: asset_bucket_name, file_name: 'maven_cache.tgz')
     puts 'done.'
 
     File.unlink('maven_cache.tgz')

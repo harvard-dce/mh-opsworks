@@ -1,11 +1,11 @@
 namespace :deployment do
   desc 'deploy the main application'
-  task deploy_app: ['cluster:configtest'] do
+  task deploy_app: ['cluster:configtest', 'cluster:config_sync_check'] do
     Cluster::Deployment.deploy_app
   end
 
   desc 'list recent deployments'
-  task list: ['cluster:configtest'] do
+  task list: ['cluster:configtest', 'cluster:config_sync_check'] do
     puts 'Deployments: '
     Cluster::Deployment.all.each do |deployment|
       recipe_output = ''

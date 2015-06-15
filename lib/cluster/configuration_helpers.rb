@@ -2,7 +2,7 @@ module Cluster
   module ConfigurationHelpers
     module ClassMethods
       def config
-        @@config ||= Config.new
+        Config.new
       end
 
       def root_config
@@ -39,6 +39,14 @@ module Cluster
 
       def stack_custom_json
         stack_config[:chef].fetch(:custom_json, {}).merge(stack_secrets)
+      end
+
+      def cluster_config_bucket_name
+        stack_secrets[:cluster_config_bucket_name]
+      end
+
+      def shared_asset_bucket_name
+        stack_secrets[:shared_asset_bucket_name]
       end
 
       def stack_chef_config

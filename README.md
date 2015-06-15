@@ -20,11 +20,12 @@ matterhorn cluster.
 * Automated matterhorn git deployments via OpsWorks built-ins,
 * The ability to create and destroy matterhorn clusters completely, including all attached resources,
 * Tagged matterhorn logging to [loggly](http://loggly.com),
-* A set of high-level ruby tasks designed to make managing your OpsWorks matterhorn cluster easier.
+* A set of high-level rake tasks designed to make managing your OpsWorks matterhorn cluster easier,
+* A way to switch between existing clusters to make collaboration easier.
 
 ## Getting started
 
-### Step 0 - Create account-wide groups and policies
+### Step 0 - Create account-wide groups and policies (aws account admin only)
 
 Ask an account administrator to create an IAM group with the
 "AWSOpsWorksFullAccess" managed policy and an inline policy as defined in
@@ -37,82 +38,77 @@ numerous other AWS resources.
 
 ### Step 1 - Create your account and credentials
 
-Create or import an ec2 SSH keypair. You can do this in the AWS web console
-under "EC2 -> Network & Security -> Key Pairs".  Ensure that you're logged into
-the correct region in the aws console, and that this region matches your
-`cluster_config.json` later.
-
-Keep the ec2 ssh keypair name handy because you'll need it later in your
-`cluster_config.json` file. This ssh keypair allows you to access the built-in
-"ubuntu" user as a backchannel for debugging and is used infrequently.
-
 Create an IAM user and ensure it's in the group you created in "Step 0". Create
-an aws access key pair for this user and have it handy.
+an aws access key pair for this user and have it handy. You'll use this account
+to manage clusters.
 
-### Step 2 - Find an unused cidr block for your cluster's VPC
+It's easier if your IAM cluster manager account username doesn't match the one
+you'd like to use to SSH into your clusters. If your name is "Jane Smith", your
+IAM cluster manager user might be "janesmith" while your stack SSH username
+would be "jane".
 
-Every cluster has its own VPC, and that VPC must be unique on its cidr block
-and name within the aws account.  Look at the list of VPCs in the aws console
-and pick a cidr block that's not currently in use large enough to contain your
-public and private instances. For example, 10.1.1.0/24 gives you 254 addresses
-that can then be split into public, private, and reserve ranges (for future
-expansion).
-
-VPCs do not share RFC 1918 space, but keeping cidr blocks unique makes VPC
-peering easier should we want to do it in the future. The semantics of how we
-split clusters across VPCs and how much we care about unique cidr blocks may
-change in the future.
-
-### Step 3 - Install mh-opsworks
+### Step 2 - Install mh-opsworks
 
 You must have ruby 2 installed, ideally through something like rbenv or rvm,
 though if your system ruby is >= 2 you should be fine. `./bin/setup` installs
-prerequisites and sets up empty cluster configuration templates.
+prerequisites and sets up an empty `secrets.json`.
 
-    git clone git@github.com:harvard-dce/mh-opsworks.git mh-opsworks/
+    git clone https://github.com/harvard-dce/mh-opsworks mh-opsworks/
     cd mh-opsworks
     ./bin/setup # checks for dependencies and sets up template env files
 
 The base scripts (`rake`, mostly) live in `$REPO_ROOT/bin` and all paths below
 assume you're in repo root.
 
-### Step 4 - Create your configuration files.
+### Step 3 - Choose (or create) your configuration files.
 
-You can use multiple configuration files (more on that later), but by default
-`mh-opsworks` reads from `$REPO_ROOT/cluster_config.json` and
-`$REPO_ROOT/secrets.json`. If you're working with a cluster that already
-exists, get the correct `cluster_config.json` from the right person.
+First, be sure you have a `secrets.json` with the correct values in it. The
+most important ones are `access_key_id`, `secret_access_key`,
+`shared_asset_bucket_name`, and `cluster_config_bucket_name`. This file lives
+in the root of the repository by default.
 
-    cd mh-opsworks
+Once you've set up your `secrets.json` correctly, you can start working with
+clusters.
 
-    # edit cluster_config.json with your specific values
-    vim cluster_config.json
+If you'd like to work in an existing cluster, run:
 
-    # Edit secrets to include the correct AWS (and other) credentials.
-    vim secrets.json
+    ./bin/rake cluster:switch
 
-### Step 5 - Sanity check your cluster configuration
+If you'd like to create a new cluster entirely, run:
+
+    ./bin/rake cluster:new
+
+and follow the prompts.
+
+Be sure to set up the "users" stanza with your desired SSH username, rights,
+and public key.  Following the example set in Step 1, it'd be "jane".
+
+It's easiest if your SSH user matches your default local unix username as
+the `stack:instances:ssh_to` rake task will work out of the box.
+
+### Step 4 - Sanity check your cluster configuration
 
 We've implemented a set of sanity checks to ensure your cluster configuration
 looks right. They are by no means comprehensive, but serve as a basic
-pre-flight check. The checks are run automatically before every `rake` task.
+pre-flight check. The checks are run automatically before most `rake` tasks.
 
-    # sanity check your cluster_config.json
+    # sanity check your cluster configuration
     ./bin/rake cluster:configtest
 
 You'll see a relatively descriptive error message if there's something wrong
-with your cluster configuration.
+with your cluster configuration. If there's nothing wrong, you'll see no
+output.
 
-### Step 6 - Spin up your cluster
+### Step 5 - Spin up your cluster
 
     ./bin/rake admin:cluster:init
 
 This will create the VPC, opsworks stack, layers, and instances according to
-the parameters and sizes you set in your `cluster_config.json`. Basic feedback
-is given while the cluster is being created, you can see more information in
-the AWS opsworks console.
+the parameters and sizes you set in your cluster config. Basic feedback is
+given while the cluster is being created, you can see more information in the
+AWS opsworks console.
 
-### Step 7 - Start your ec2 instances
+### Step 6 - Start your ec2 instances
 
 Creating a cluster only instantiates the configuration in OpsWorks. You must
 start the instances in the cluster.  The process of starting an instance also
@@ -121,12 +117,12 @@ policies](https://docs.aws.amazon.com/opsworks/latest/userguide/workingcookbook-
 
     ./bin/rake stack:instances:start
 
-You can watch the process via `./bin/rake stack:instances:list` or
-(better) via the AWS web console. Starting the entire cluster takes about 30
-minutes the first time because you're installing a bunch of base packages.
-Subsequent instance restarts go significantly faster.
+You can watch the process via `./bin/rake stack:instances:list` or (better) via
+the AWS web console. Starting the entire cluster takes about 30 minutes the
+first time because you're installing a bunch of base packages.  Subsequent
+instance restarts go significantly faster.
 
-### Step 8 - Start matterhorn
+### Step 7 - Start matterhorn
 
 We've built chef recipes to manage cluster-wide matterhorn startup and
 shutdown, so we'll use the "execute recipe" facilities built into OpsWorks to
@@ -141,7 +137,7 @@ You can also start matterhorn via the OpsWorks web UI under "Stack -> Run
 Command". Select the instances, choose "Execute Recipes" and enter
 "mh-opsworks-recipes::restart-matterhorn".
 
-### Step 9 - Log in!
+### Step 8 - Log in!
 
 Find the public hostname for your admin node and visit it in your browser.  Log
 in with the password you set in your cluster configuration files.
@@ -152,16 +148,15 @@ in with the password you set in your cluster configuration files.
     ./bin/rake -T
 
     # ssh to a public or private instance, using your defaultly configured ssh key.
-    # This key should match the public key you set in your cluster_config.json
+    # This key should match the public key you set in your cluster config
     # You can omit the $() wrapper if you'd like to see the raw SSH connection info.
     $(./bin/rake stack:instances:ssh_to hostname=admin1)
 
-    # You can mix-and-match secrets and configuration files in the same invocation.
-    # Use an alternate cluster configuration file
-    CLUSTER_CONFIG_FILE="./some_other_config.json" ./bin/rake cluster:configtest
-
-    # Use an alternate secrets file
+    # Use an alternate secrets file, overriding whatever's set in .mhopsworks.rc
     SECRETS_FILE="./some_other_secrets_file.json" ./bin/rake cluster:configtest
+
+    # Use an alternate config file, overriding whatever's set in .mhopsworks.rc
+    CLUSTER_CONFIG_FILE="./some_other_cluster_config.json" ./bin/rake cluster:configtest
 
     # Deploy a new revision from the repo / branch linked in your app. Be sure to restart
     # matterhorn after the deployment is complete.
@@ -173,14 +168,19 @@ in with the password you set in your cluster configuration files.
     # Stop matterhorn:
     ./bin/rake stack:commands:execute_recipes layers="Admin,Engage,Workers" recipes="mh-opsworks-recipes::stop-matterhorn"
 
+    # Check to see if your config file is up-to-date with the remotely stored authoritative config:
+    ./bin/rake cluster:config_sync_check
+
     # We're done! Get rid of the cluster.
     ./bin/rake admin:cluster:delete
 
-## Chef
+## Notes
+
+### Chef
 
 OpsWorks uses [chef](https://chef.io).  You configure the repository that
 contains custom recipes in the stack section of your active
-`cluster_config.json` file.  These options are pretty much passed through to
+cluster configuration file.  These options are pretty much passed through to
 the `opsworks` ruby client. [Details
 here](http://docs.aws.amazon.com/sdkforruby/api/Aws/OpsWorks/Client.html#create_stack-instance_method)
 about what options you can pass through to, say, control security or the
@@ -202,11 +202,43 @@ revision of the custom cookbook that you'd like to use.
 }
 ```
 
-## Notes
+### Cluster switching
 
-## NFS storage options
+The rake task `cluster:switch` looks for all configuration files stored in the
+s3 bucket defined in `cluster_config_bucket_name` and lets you choose from
+them.
 
-The default `cluster_config.json` assumes you're using NFS storage provided by
+When you switch into a cluster, the file `.mhopsworks.rc` is written. This file
+defines the cluster and secrets file you're working with.
+
+The order of cluster config (and secrets.json) file location resolution is:
+
+- If you define `CLUSTER_CONFIG_FILE` or `SECRETS_FILE` ENV on the command
+  line, they take precedent.
+- The config in `.mhopsworks.rc` is next, and finally
+- If the cluster config or secrets file location isn't found in the environment
+  or in `.mhopsworks.rc`, they default to `templates/cluster_config_default.json.erb` or
+  `secrets.json`.  The default cluster config template does not work and shouldn't be used.
+
+The best way to deal with cluster switching is to use `cluster:new` and
+`cluster:switch`.
+
+### Cluster configuration syncing
+
+Cluster configuration files are stored in an s3 bucket defined by the
+`cluster_config_bucket_name` variable in your `secrets.json`.  Before (almost)
+every `rake` task, we check both that the configuration you're using is valid
+and that it's up to date with the remote.
+
+If there's a newer remote version, it's automatically downloaded and is used
+immediately.
+
+If your local version is ahead of the remote authoritative version you'll get a
+chance to see the differences and then publish your local changes.
+
+### NFS storage options
+
+The default cluster configuration assumes you're using NFS storage provided by
 the "Storage" layer.  If you use the default opsworks-managed storage,
 `mh-opsworks` will create an NFS server on the single ec2 instance defined in
 the "Storage" layer and connect the Admin, Engage, and Worker nodes to it via
@@ -216,22 +248,21 @@ If you'd like to use NFS storage provided by some other service - [zadara
 storage](http://www.zadarastorage.com), for instance, please see
 "README.zadara.md".
 
-## Metrics, alarms, and notifications
+### Metrics, alarms, and notifications
 
 We add and remove SNS-linked cloudwatch alarms when an instance is stopped and
 started. These alarms monitor the load, available RAM and all local disk
 mounts for free space.  You can subscribe to get notifications for these alarms
 in the amazon SNS console under the topic named for your cluster.
 
-## Monitoring
+### Monitoring
 
 [Ganglia](http://ganglia.sourceforge.net) provides very deep instance-level
 metrics automatically as nodes are added and removed. You can log in to ganglia
-with the username / password set in your cluster configuration. The url is
-`<your public admin node hostname>/ganglia`. The username and password is set
-in your cluster configuration.
+with the username / password set in your `secrets.json` configuration. The url is
+`<your public admin node hostname>/ganglia`.
 
-## Loggly
+### Loggly
 
 The Admin, Engage, and Workers layers include a chef recipe to add an rsyslog
 drain to loggly for matterhorn logs. Update `secrets.json` to add your loggly
@@ -248,11 +279,16 @@ If you don't want to log to loggly, remove the
 `mh-opsworks-recipes::rsyslog-to-loggly` recipe from your cluster config and
 remove the "loggly" stanza from `secrets.json`.
 
-## SMTP via amazon SES
+### SMTP via amazon SES
 
-You need to verify the `default_email_sender` address in the amazon SES console
-and create your credentials. This means the `default_email_sender` must be
-deliverable to pick up the verification message.
+If you're starting from scratch, you need to create SMTP credentials in the SES
+section of the AWS console so you can populate the `stack` -> `secrets` ->
+`smtp_auth` stanza of your `secrets.json` file.  If you're starting with an
+existing `secrets.json`, this has probably already been done for you.
+
+You also need to verify the `default_email_sender` address in the amazon SES
+console. This means the `default_email_sender` must be deliverable to pick up
+the verification message.
 
 This is not automated, but the credentials for the very limited SES user can be
 shared across regions in multiple clusters without incident. If you want to
@@ -260,7 +296,7 @@ send from multiple `default_email_sender` addresses, though, say to segment
 email communication by cluster, you'll need to verify each address before
 using.
 
-## Potentially problematic aws resource limits
+### Potentially problematic aws resource limits
 
 The default aws resource limits are listed
 [here](https://docs.aws.amazon.com/general/latest/gr/aws_service_limits.html).

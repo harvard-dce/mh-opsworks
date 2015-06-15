@@ -1,20 +1,20 @@
 namespace :stack do
   desc 'list stacks'
-  task list: ['cluster:configtest'] do
+  task list: ['cluster:configtest', 'cluster:config_sync_check'] do
     Cluster::Stack.all.each do |stack|
       puts %Q|#{stack.name} => #{stack.vpc_id}|
     end
   end
 
   desc 'delete stack. You must remove all instances and apps first'
-  task delete: ['cluster:configtest'] do
+  task delete: ['cluster:configtest', 'cluster:config_sync_check'] do
     Cluster::Stack.with_existing_stack do |stack|
       Cluster::Stack.delete
     end
   end
 
   desc 'Initialize a stack within a vpc'
-  task init: ['cluster:configtest'] do
+  task init: ['cluster:configtest', 'cluster:config_sync_check'] do
     stack = Cluster::Stack.find_or_create
     puts %Q|Stack "#{stack.name}" initialized, id: #{stack.stack_id}|
     app = Cluster::App.find_or_create
@@ -23,14 +23,14 @@ namespace :stack do
 
   namespace :users do
     desc 'list users in the configured stack'
-    task list: ['cluster:configtest'] do
+    task list: ['cluster:configtest', 'cluster:config_sync_check'] do
       Cluster::User.all.each do |permission|
         puts %Q|#{permission.iam_user_arn} => #{permission.level}|
       end
     end
 
     desc 'init the users and rights in the configured cluster'
-    task init: ['cluster:configtest'] do
+    task init: ['cluster:configtest', 'cluster:config_sync_check'] do
       Cluster::Stack.with_existing_stack do |stack|
         Cluster::User.reset_stack_user_permissions_for(
           stack.stack_id
@@ -41,12 +41,12 @@ namespace :stack do
 
   namespace :instances do
     desc 'init instances in each layer'
-    task init: ['cluster:configtest', 'stack:layers:init'] do
+    task init: ['cluster:configtest', 'cluster:config_sync_check', 'stack:layers:init'] do
       Cluster::Instances.find_or_create
     end
 
     desc 'ssh connection string'
-    task ssh_to: ['cluster:configtest'] do
+    task ssh_to: ['cluster:configtest', 'cluster:config_sync_check'] do
       Cluster::Stack.with_existing_stack do |stack|
         hostname = ENV['hostname'].to_s.strip
 
@@ -89,7 +89,7 @@ namespace :stack do
     end
 
     desc 'list instances in each layer'
-    task list: ['cluster:configtest'] do
+    task list: ['cluster:configtest', 'cluster:config_sync_check'] do
       Cluster::Stack.with_existing_stack do |stack|
         layers = Cluster::Layers.find_or_create
         layers.each do |layer|
@@ -102,24 +102,24 @@ namespace :stack do
     end
 
     desc 'stop and delete all instances in the stack'
-    task delete: ['cluster:configtest'] do
+    task delete: ['cluster:configtest', 'cluster:config_sync_check'] do
       Cluster::Instances.delete
     end
 
     desc 'stop all instances in the configured stack'
-    task stop: ['cluster:configtest'] do
+    task stop: ['cluster:configtest', 'cluster:config_sync_check'] do
       Cluster::Stack.stop_all
     end
 
     desc 'start all instances in the configured stack'
-    task start: ['cluster:configtest'] do
+    task start: ['cluster:configtest', 'cluster:config_sync_check'] do
       Cluster::Stack.start_all
     end
   end
 
   namespace :layers do
     desc 'list layers in configured stack'
-    task list: ['cluster:configtest'] do
+    task list: ['cluster:configtest', 'cluster:config_sync_check'] do
       # find the layers from the stack object to ensure we're seeing
       # what's actually there.
       Cluster::Stack.with_existing_stack do |stack|
@@ -130,7 +130,7 @@ namespace :stack do
     end
 
     desc 'init layers'
-    task init: ['cluster:configtest', 'stack:init'] do
+    task init: ['cluster:configtest', 'cluster:config_sync_check', 'stack:init'] do
       layers = Cluster::Layers.find_or_create
       layers.each do |layer|
         puts %Q|Layer: "#{layer.name}" ready to serve!|
@@ -140,7 +140,7 @@ namespace :stack do
 
   namespace :commands do
     desc 'run custom chef recipes'
-    task execute_recipes: ['cluster:configtest'] do
+    task execute_recipes: ['cluster:configtest', 'cluster:config_sync_check'] do
       Cluster::Stack.with_existing_stack do |stack|
         layers = ENV['layers'].to_s.strip.split(/,[\s]?/)
         recipes = ENV['recipes'].to_s.strip.split(/,[\s]?/)
@@ -160,7 +160,7 @@ namespace :stack do
     end
 
     desc 'update all chef recipes'
-    task update_chef_recipes: ['cluster:configtest'] do
+    task update_chef_recipes: ['cluster:configtest', 'cluster:config_sync_check'] do
       Cluster::Deployment.update_chef_recipes
 
       Cluster::Stack.with_existing_stack do |stack|
@@ -171,7 +171,7 @@ namespace :stack do
     end
 
     desc 'install updated OS packages'
-    task update_packages: ['cluster:configtest'] do
+    task update_packages: ['cluster:configtest', 'cluster:config_sync_check'] do
       Cluster::Deployment.update_dependencies
       puts 'Updating OS packages'
     end
