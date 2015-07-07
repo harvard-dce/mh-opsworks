@@ -18,6 +18,8 @@ module Cluster
 
           instance = Cluster::Instance.new(to_remove.instance_id)
           instance.stop
+          puts 'waiting for instance to stop. . .'
+          sleep 30
           instance.wait_for_instance_to_stop
           instance.delete
         end

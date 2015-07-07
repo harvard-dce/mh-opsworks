@@ -1,17 +1,14 @@
 GIT
   remote: https://github.com/harvard-dce/aws-sdk-ruby
-  revision: cff284bfa7146ca0128f2b8e034095500e8968e9
+  revision: 5ed19937aa3b8f6c9c0ff69f508319987b320abb
   branch: master
   specs:
-    aws-sdk (2.0.31)
-      aws-sdk-resources (= 2.0.31)
-    aws-sdk-core (2.0.31)
-      builder (~> 3.0)
+    aws-sdk (2.1.2)
+      aws-sdk-resources (= 2.1.2)
+    aws-sdk-core (2.1.2)
       jmespath (~> 1.0)
-      multi_json (~> 1.0)
-      multi_xml (~> 0.5)
-    aws-sdk-resources (2.0.31)
-      aws-sdk-core (= 2.0.31)
+    aws-sdk-resources (2.1.2)
+      aws-sdk-core (= 2.1.2)
 
 GEM
   remote: https://rubygems.org/
@@ -22,7 +19,6 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
-    builder (3.2.2)
     climate_control (0.0.3)
       activesupport (>= 3.0)
     coderay (1.1.0)
@@ -36,8 +32,7 @@ GEM
     json (1.8.2)
     method_source (0.8.2)
     minitest (5.5.1)
-    multi_json (1.11.0)
-    multi_xml (0.5.5)
+    multi_json (1.11.2)
     pry (0.10.1)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)

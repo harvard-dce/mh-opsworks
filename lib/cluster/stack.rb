@@ -25,6 +25,8 @@ module Cluster
         opsworks_client.stop_stack(stack_id: stack.stack_id)
       end
       if instance_ids.any?
+        puts 'waiting for instances to stop. . .'
+        sleep 60
         wait_until_opsworks_instances_stopped(instance_ids)
       end
     end
@@ -36,6 +38,8 @@ module Cluster
         opsworks_client.start_stack(stack_id: stack.stack_id)
       end
       if instance_ids.any?
+        puts 'waiting for instances to start. . .'
+        sleep 60
         wait_until_opsworks_instances_started(instance_ids)
       end
     end

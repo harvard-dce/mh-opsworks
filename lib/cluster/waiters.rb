@@ -3,7 +3,7 @@ module Cluster
     module ClassMethods
       def wait_until_stack_build_completed(cfn_stack_id)
         cloudformation_client.wait_until(
-          :create_completed, stack_name: cfn_stack_id
+          :stack_create_complete, stack_name: cfn_stack_id
         ) do |w|
           w.before_wait do |attempts, response|
             puts "Waiting for vpc infrastructure to be built for #{vpc_name}, attempt ##{attempts}"
@@ -13,7 +13,7 @@ module Cluster
 
       def wait_until_stack_delete_completed(cfn_stack_id)
         cloudformation_client.wait_until(
-          :delete_completed, stack_name: cfn_stack_id
+          :stack_delete_complete, stack_name: cfn_stack_id
         ) do |w|
           w.before_wait do |attempts, response|
             puts "Waiting for vpc infrastructure to be deleted for #{vpc_name}, attempt ##{attempts}"
@@ -35,7 +35,7 @@ module Cluster
 
       def wait_until_opsworks_instances_started(instance_ids = [])
         opsworks_client.wait_until(
-          :instances_online, instance_ids: instance_ids
+          :instance_online, instance_ids: instance_ids
         ) do |w|
           w.max_attempts = 150
           w.delay = 20
@@ -49,7 +49,7 @@ module Cluster
 
       def wait_until_opsworks_instances_stopped(instance_ids = [])
         opsworks_client.wait_until(
-          :instances_stopped, instance_ids: instance_ids
+          :instance_stopped, instance_ids: instance_ids
         ) do |w|
           w.before_wait do |attempts, response|
             puts "Stopping instance #{instance_ids.join(', ')}, attempt ##{attempts}"
