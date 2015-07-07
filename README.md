@@ -150,6 +150,8 @@ in with the password you set in your cluster configuration files.
     # ssh to a public or private instance, using your defaultly configured ssh key.
     # This key should match the public key you set in your cluster config
     # You can omit the $() wrapper if you'd like to see the raw SSH connection info.
+    # By default, the ssh username is your current login username (so, the value of $USER).
+    # You can override this by passing in `ssh_user` to this rake target.
     $(./bin/rake stack:instances:ssh_to hostname=admin1)
 
     # Use an alternate secrets file, overriding whatever's set in .mhopsworks.rc

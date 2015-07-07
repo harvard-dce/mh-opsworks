@@ -46,8 +46,9 @@ namespace :stack do
     end
 
     desc 'ssh connection string'
-    task ssh_to: ['cluster:configtest', 'cluster:config_sync_check'] do
+    task ssh_to: ['cluster:configtest'] do
       Cluster::Stack.with_existing_stack do |stack|
+        ssh_user = ENV.fetch('ssh_user', %Q|#{ENV['USER']}|) + '@'
         hostname = ENV['hostname'].to_s.strip
 
         a_public_host = Cluster::Instances.online.find do |instance|
@@ -64,9 +65,9 @@ namespace :stack do
           if ! ['online', 'running_setup'].include?(instance.status)
             puts "#{hostname} is not online or ssh'able. You might try with the default stack key."
           elsif instance.public_dns == nil
-            puts "ssh -A -t #{a_public_host.public_dns} ssh -A #{hostname}"
+            puts "ssh -A -t #{ssh_user}#{a_public_host.public_dns} ssh -A #{ssh_user}#{hostname}"
           else
-            puts "ssh -A #{instance.public_dns}"
+            puts "ssh -A #{ssh_user}#{instance.public_dns}"
           end
         else
           layers = Cluster::Layers.find_or_create
@@ -76,12 +77,16 @@ namespace :stack do
               puts %Q|	#{instance.hostname}|
             end
           end
+          puts
           puts 'Please specify an instance name to connect to, thusly:'
           puts
           puts './bin/rake stack:instances:ssh_to hostname=<an instance name>'
           puts
-          puts 'You can also connect directly to a machine by executing the output'
-          puts 'of this task, thusly:'
+          puts 'You can specific a username (if different than the default of $USER) for the SSH connection like so:'
+          puts
+          puts './bin/rake stack:instances:ssh_to ssh_user=<username in your cluster configuration>'
+          puts
+          puts 'You can also connect directly to a machine by executing the output of this task, thusly:'
           puts
           puts '$(./bin/rake stack:instances:ssh_to hostname=<an instance name>)'
         end

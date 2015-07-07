@@ -14,7 +14,7 @@ namespace :cluster do
   end
 
   desc "get info on the cluster we're currently working in"
-  task :active do
+  task active: [:configtest ] do
     remote_config = Cluster::RemoteConfig.new
     puts %Q|\nCurrently managing: "#{Cluster::Base.stack_config[:name]}" : #{remote_config.active_cluster_config_name}\n|
   end
