@@ -19,6 +19,14 @@ namespace :cluster do
     puts %Q|\nCurrently managing: "#{Cluster::Base.stack_config[:name]}" : #{remote_config.active_cluster_config_name}\n|
   end
 
+  desc 'edit the active cluster configuration file in $EDITOR and sync afterwards'
+  task edit: [:configtest] do
+    remote_config = Cluster::RemoteConfig.new
+    system %Q|$EDITOR #{remote_config.active_cluster_config_name}|
+
+    Rake::Task['cluster:config_sync_check'].execute
+  end
+
   desc 'checks that the cluster config is up to date'
   task :config_sync_check do
     remote_config = Cluster::RemoteConfig.new

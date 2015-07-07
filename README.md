@@ -147,6 +147,18 @@ in with the password you set in your cluster configuration files.
     # List the cluster-specific tasks available
     ./bin/rake -T
 
+    # Switch into an already existing cluster
+    ./bin/rake cluster:switch
+
+    # Create a new cluster
+    ./bin/rake cluster:new
+
+    # Edit the currently active cluster config with the editor specified in $EDITOR
+    ./bin/rake cluster:edit
+
+    # See info about the currently active cluster
+    ./bin/rake cluster:active
+
     # ssh to a public or private instance, using your defaultly configured ssh key.
     # This key should match the public key you set in your cluster config
     # You can omit the $() wrapper if you'd like to see the raw SSH connection info.
