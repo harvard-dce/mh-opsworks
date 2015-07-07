@@ -1,8 +1,8 @@
+require 'simplecov'
+SimpleCov.start
 require './lib/cluster'
 require 'climate_control'
 require 'pry'
-require 'simplecov'
-SimpleCov.start
 
 Dir['./spec/support/**/*.rb'].each { |file| require file }
 

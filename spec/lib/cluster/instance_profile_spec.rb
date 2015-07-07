@@ -37,7 +37,14 @@ describe Cluster::InstanceProfile do
         :list_instance_profiles,
         {
           instance_profiles: [
-            { instance_profile_name: name}
+            {
+              instance_profile_name: name,
+              path: 'a_path',
+              instance_profile_id: 'an_id',
+              arn: 'an_arn',
+              create_date: Time.now,
+              roles: []
+            }
           ]
         }
       )
