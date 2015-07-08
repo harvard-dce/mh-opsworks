@@ -99,7 +99,7 @@ namespace :stack do
         layers = Cluster::Layers.find_or_create
         layers.each do |layer|
           puts %Q|Layer: "#{layer.name}" => #{layer.layer_id}, #{layer.shortname}|
-            Cluster::Instances.find_in_layer(layer).each do |instance|
+          Cluster::Instances.find_in_layer(layer).each do |instance|
             puts %Q|	Instance: #{instance.hostname} => status: #{instance.status}, ec2_instance_id: #{instance.ec2_instance_id}|
           end
         end
@@ -144,21 +144,42 @@ namespace :stack do
   end
 
   namespace :commands do
-    desc 'run custom chef recipes'
-    task execute_recipes: ['cluster:configtest', 'cluster:config_sync_check'] do
+    desc 'run chef recipes on instances in specific layers'
+    task execute_recipes_on_layers: ['cluster:configtest', 'cluster:config_sync_check'] do
       Cluster::Stack.with_existing_stack do |stack|
         layers = ENV['layers'].to_s.strip.split(/,[\s]?/)
         recipes = ENV['recipes'].to_s.strip.split(/,[\s]?/)
 
         if recipes.none?
+          puts
           puts %Q|Please indicate the recipes you'd like to run.|
           puts %Q|If you don't specify any layers, the recipes will be run on all layers.|
           puts
-          puts './bin/rake stack:commands:execute_recipes recipes="recipe1,recipe1" layers="Full Name,Full Name2"'
+          puts './bin/rake stack:commands:execute_recipes_on_layers recipes="recipe1,recipe1" layers="Full Name,Full Name2"'
         else
           Cluster::Deployment.execute_chef_recipes_on_layers(
             recipes: recipes,
             layers: layers
+          )
+        end
+      end
+    end
+
+    desc 'run chef recipes on specific instances by hostname'
+    task execute_recipes_on_instances: ['cluster:configtest', 'cluster:config_sync_check'] do
+      Cluster::Stack.with_existing_stack do |stack|
+        hostnames = ENV['hostnames'].to_s.strip.split(/,[\s]?/)
+        recipes = ENV['recipes'].to_s.strip.split(/,[\s]?/)
+
+        if recipes.none? || hostnames.none?
+          puts
+          puts %Q|Please indicate the recipes you'd like to run, along with a comma-separated list of hostnames|
+          puts
+          puts './bin/rake stack:commands:execute_recipes_on_instances recipes="recipe1,recipe1" hostnames="admin1,workers1"'
+        else
+          Cluster::Deployment.execute_chef_recipes_on_instances(
+            recipes: recipes,
+            hostnames: hostnames
           )
         end
       end

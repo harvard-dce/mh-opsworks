@@ -23,34 +23,20 @@ module Cluster
       )
     end
 
-    def self.run_command_on_instances(layers: [], command: nil, args: {})
-      Cluster::Stack.with_existing_stack do |stack|
-        instance_ids = []
-        if layers.any?
-          instance_ids = deployable_instance_ids_in_layers(layers)
-        else
-          instance_ids = Cluster::Instances.online.map(&:instance_id)
-        end
+    def self.execute_chef_recipes_on_instances(recipes: [], hostnames: [])
+      raise NoRecipesToRun if recipes.none?
 
-        if instance_ids.any?
-          opsworks_client.create_deployment(
-            stack_id: stack.stack_id,
-            instance_ids: instance_ids,
-            command: {
-              name: command,
-              args: args
-            }
-          )
-        else
-          raise Cluster::NoInstancesOnline
-        end
-      end
+      run_command_on_instances(
+        command: 'execute_recipes',
+        args: { recipes: recipes },
+        hostnames: hostnames
+      )
     end
 
     def self.execute_chef_recipes_on_layers(recipes: [], layers: [])
       raise NoRecipesToRun if recipes.none?
 
-      run_command_on_instances(
+      run_command_on_layers(
         command: 'execute_recipes',
         args: { recipes: recipes },
         layers: layers
@@ -58,14 +44,51 @@ module Cluster
     end
 
     def self.update_dependencies
-      run_command_on_instances(command: 'update_dependencies')
+      run_command_on_layers(command: 'dependencies')
     end
 
     def self.update_chef_recipes
-      run_command_on_instances(command: 'update_custom_cookbooks')
+      run_command_on_layers(command: 'update_custom_cookbooks')
     end
 
     private
+
+    def self.run_command_on_instances(hostnames: [], command: nil, args: {})
+      Cluster::Stack.with_existing_stack do |stack|
+        instance_ids = Cluster::Instances.online.find_all do |instance|
+          hostnames.include?(instance.hostname)
+        end.map(&:instance_id)
+
+        run_on_instance_ids(instance_ids: instance_ids, stack: stack, command: command, args: args)
+      end
+    end
+
+    def self.run_command_on_layers(layers: [], command: nil, args: {})
+      Cluster::Stack.with_existing_stack do |stack|
+        instance_ids = []
+        if layers.any?
+          instance_ids = deployable_instance_ids_in_layers(layers)
+        else
+          instance_ids = Cluster::Instances.online.map(&:instance_id)
+        end
+        run_on_instance_ids(instance_ids: instance_ids, stack: stack, command: command, args: args)
+      end
+    end
+
+    def self.run_on_instance_ids(instance_ids: [], stack: nil, command: nil, args: {})
+      if instance_ids.any?
+        opsworks_client.create_deployment(
+          stack_id: stack.stack_id,
+          instance_ids: instance_ids,
+          command: {
+            name: command,
+            args: args
+          }
+        )
+      else
+        raise Cluster::NoInstancesOnline
+      end
+    end
 
     def self.deployable_instance_ids_in_layers(layers)
       instances = []

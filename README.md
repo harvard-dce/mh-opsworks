@@ -128,14 +128,16 @@ We've built chef recipes to manage cluster-wide matterhorn startup and
 shutdown, so we'll use the "execute recipe" facilities built into OpsWorks to
 start matterhorn on the relevant instances - Admin, Engage, and Workers.
 
-    ./bin/rake stack:commands:execute_recipes layers="Admin,Engage,Workers" recipes="mh-opsworks-recipes::restart-matterhorn"
+    ./bin/rake matterhorn:restart
 
-The "mh-opsworks-recipes::restart-matterhorn" recipe is safe for both cold
-starts and warm restarts.
+The "mh-opsworks-recipes::restart-matterhorn" recipe (run under the covers by
+the `matterhorn:start` rake task) is safe for both cold starts and warm
+restarts.
 
 You can also start matterhorn via the OpsWorks web UI under "Stack -> Run
-Command". Select the instances, choose "Execute Recipes" and enter
-"mh-opsworks-recipes::restart-matterhorn".
+Command". Select the correct instances, choose "Execute Recipes" and enter
+"mh-opsworks-recipes::restart-matterhorn". The rake task above does essentially
+the same thing, but with more precision.
 
 ### Step 8 - Log in!
 
@@ -180,7 +182,19 @@ in with the password you set in your cluster configuration files.
     ./bin/rake deployment:list
 
     # Stop matterhorn:
-    ./bin/rake stack:commands:execute_recipes layers="Admin,Engage,Workers" recipes="mh-opsworks-recipes::stop-matterhorn"
+    ./bin/rake matterhorn:stop
+
+    # Start matterhorn
+    ./bin/rake matterhorn:start
+
+    # Execute a chef recipe against a set of layers
+    ./bin/rake stack:commands:execute_recipes_on_layers layers="Admin,Engage,Workers" recipes="mh-opsworks-recipes::some-excellent-recipe"
+
+    # Execute a chef recipe on all instances
+    ./bin/rake stack:commands:execute_recipes_on_layers recipes="mh-opsworks-recipes::some-excellent-recipe"
+
+    # Execute a chef recipe against only specific instances
+    ./bin/rake stack:commands:execute_recipes_on_instances hostnames="admin1,workers2" recipes="mh-opsworks-recipes::some-excellent-recipe"
 
     # Check to see if your config file is up-to-date with the remotely stored authoritative config:
     ./bin/rake cluster:config_sync_check
