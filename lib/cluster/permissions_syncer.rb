@@ -1,10 +1,11 @@
 module Cluster
   class PermissionsSyncer < Base
+    include Waiters
+
     attr_reader :configured_users,
       :iam_users,
       :opsworks_permissions,
-      :stack_id,
-      :arns_by_username
+      :stack_id
 
     def initialize(configured_users: nil, iam_users: nil, opsworks_permissions: nil, stack_id: nil)
       @configured_users = configured_users
@@ -12,7 +13,10 @@ module Cluster
       @opsworks_permissions = opsworks_permissions
       @stack_id = stack_id
 
-      @arns_by_username ||= iam_users.reduce({}) do |memo, user|
+    end
+
+    def arns_by_username
+      iam_users.reduce({}) do |memo, user|
         memo[user.user_name] = user.arn
         memo
       end
@@ -33,11 +37,11 @@ module Cluster
 
     def create_missing_users
       configured_users.each do |configured_user|
-        if ! user_name_exists_in_iam?(configured_user[:user_name])
-          new_iam_user = self.class.iam_client.create_user(
-            user_name: configured_user[:user_name]
-          )
-          @iam_users << new_iam_user.user
+        user_name = configured_user[:user_name]
+        if ! user_name_exists_in_iam?(user_name)
+          new_iam_user = self.class.iam_client.create_user(user_name: user_name)
+          self.class.wait_until_user_exists(user_name)
+          @iam_users << Aws::IAM::User.new(user_name, client: self.class.iam_client)
         end
       end
     end

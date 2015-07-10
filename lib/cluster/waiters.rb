@@ -59,6 +59,19 @@ module Cluster
         yield if block_given?
       end
 
+      def wait_until_user_exists(user_name)
+        iam_client.wait_until(
+          :user_exists,
+          user_name: user_name
+        ) do |w|
+          w.before_wait do |attempts, response|
+            puts "Checking if user #{instance_profile_name} exists, attempt: ##{attempts}"
+          end
+        end
+
+        yield if block_given?
+      end
+
       def wait_until_instance_profile_available(instance_profile_name)
         iam_client.wait_until(
           :instance_profile_available,
