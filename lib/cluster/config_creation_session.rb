@@ -1,19 +1,49 @@
 module Cluster
   class ConfigCreationSession
-    attr_accessor :variant, :name, :cidr_block_root, :git_url, :git_revision
+    attr_accessor :variant, :name, :cidr_block_root, :git_url, :git_revision,
+      :export_root, :nfs_server_host
 
     def choose_variant
       puts "Please choose the size of the cluster you'd like to deploy.\n\n"
       keys = []
       Cluster::ConfigCreator::VARIANTS.each do |key, variant|
         keys << key
-        puts %Q|#{key}: #{variant[:description]}|
+        puts %Q|- #{key}: #{variant[:description]}|
       end
       print %Q|\nOne of #{keys.join(', ')}: |
       variant_choice = STDIN.gets.chomp.to_sym
       return choose_variant unless keys.include?(variant_choice)
 
       @variant = variant_choice
+    end
+
+    def zadara_variant?
+      variant.match(/zadara/)
+    end
+
+    def get_export_root
+      print "\nThe path to the volume you're exporting from zadara: "
+      export_root = STDIN.gets.chomp
+
+      if ! export_root.match(/^\/[a-z\d\-\/]+/)
+        puts "Please enter an absolute unix path, something like:"
+        puts "/export/data"
+        return get_export_root
+      end
+
+      @export_root = export_root
+    end
+
+    def get_nfs_server_host
+      print "\nThe IP address of the zadara NFS server: "
+      nfs_server_host = STDIN.gets.chomp
+
+      if ! nfs_server_host.match(/^\d+[\.\d]+/)
+        puts 'Please enter something that looks like an IP address.'
+        return get_nfs_server_host
+      end
+
+      @nfs_server_host = nfs_server_host
     end
 
     def get_cluster_name

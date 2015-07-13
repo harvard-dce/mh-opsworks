@@ -1,0 +1,310 @@
+{
+  "version": "0",
+  "region": "us-east-1",
+  "vpc": {
+    "cidr_block": "<%= cidr_block_root %>.0/24",
+    "public_cidr_block": "<%= cidr_block_root %>.0/26",
+    "private_cidr_block": "<%= cidr_block_root %>.64/26",
+    "_cidr_block_comment": "10.1.1.0/24 gives you 254 ips"
+  },
+  "stack": {
+    "name": "<%= name %>",
+    "default_ssh_key_name":"",
+    "chef": {
+      "custom_json": {
+        "matterhorn_repo_root": "/opt/matterhorn",
+        "local_workspace_root": "/var/matterhorn-workspace",
+        "storage": {
+          "export_root": "<%= export_root %>",
+          "type": "external",
+          "nfs_server_host": "<%= nfs_server_host %>"
+        }
+      },
+      "custom_cookbooks_source": {
+        "type": "git",
+        "url": "https://github.com/harvard-dce/mh-opsworks-recipes",
+        "revision": "master"
+      }
+    },
+    "layers": [
+      {
+        "name": "MySQL db",
+        "shortname": "db-master",
+        "enable_auto_healing": true,
+        "install_updates_on_boot": true,
+        "type": "db-master",
+        "use_ebs_optimized_instances": true,
+        "custom_recipes": {
+          "setup": [
+            "mh-opsworks-recipes::set-timezone",
+            "mh-opsworks-recipes::fix-raid-mapping",
+            "mh-opsworks-recipes::set-bash-as-default-shell",
+            "mh-opsworks-recipes::install-utils",
+            "mh-opsworks-recipes::create-matterhorn-user",
+            "mh-opsworks-recipes::install-deploy-key",
+            "mh-opsworks-recipes::enable-postfix-smarthost",
+            "mh-opsworks-recipes::install-custom-metrics",
+            "mh-opsworks-recipes::create-alerts-from-opsworks-metrics",
+            "mh-opsworks-recipes::clean-up-package-cache"
+          ],
+          "deploy": [
+            "mh-opsworks-recipes::deploy-database"
+          ],
+          "shutdown": [
+            "mh-opsworks-recipes::remove-alarms"
+          ]
+        },
+        "volume_configurations": [
+          {
+            "mount_point": "/vol/mysql",
+            "raid_level": 1,
+            "number_of_disks": 2,
+            "size": "<%= database_disk_size %>",
+            "volume_type": "gp2"
+          },
+          {
+            "mount_point": "/opt/matterhorn",
+            "number_of_disks": 1,
+            "size": "<%= matterhorn_root_size %>",
+            "volume_type": "gp2"
+          }
+        ],
+        "instances": {
+          "number_of_instances": 1,
+          "instance_type": "<%= database_instance_type %>",
+          "root_device_type": "ebs"
+        }
+      },
+      {
+        "name": "Admin",
+        "shortname": "admin",
+        "type": "custom",
+        "enable_auto_healing": true,
+        "auto_assign_elastic_ips": true,
+        "install_updates_on_boot": true,
+        "auto_assign_public_ips": true,
+        "custom_recipes": {
+          "setup": [
+            "mh-opsworks-recipes::set-timezone",
+            "mh-opsworks-recipes::fix-raid-mapping",
+            "mh-opsworks-recipes::set-bash-as-default-shell",
+            "mh-opsworks-recipes::install-utils",
+            "mh-opsworks-recipes::populate-maven-cache",
+            "mh-opsworks-recipes::install-mh-base-packages",
+            "mh-opsworks-recipes::create-matterhorn-user",
+            "mh-opsworks-recipes::install-deploy-key",
+            "mh-opsworks-recipes::enable-postfix-smarthost",
+            "mh-opsworks-recipes::configure-nginx-proxy",
+            "mh-opsworks-recipes::install-ffmpeg",
+            "mh-opsworks-recipes::install-custom-metrics",
+            "mh-opsworks-recipes::create-alerts-from-opsworks-metrics",
+            "mh-opsworks-recipes::rsyslog-to-loggly",
+            "mh-opsworks-recipes::clean-up-package-cache",
+            "mh-opsworks-recipes::nfs-client"
+          ],
+          "configure": [
+            "mh-opsworks-recipes::update-host-based-configurations",
+            "mh-opsworks-recipes::update-nginx-config-for-ganglia"
+          ],
+          "deploy": [
+            "mh-opsworks-recipes::deploy-admin"
+          ],
+          "shutdown": [
+            "mh-opsworks-recipes::remove-alarms"
+          ]
+        },
+        "volume_configurations": [
+          {
+            "mount_point": "/var/matterhorn-workspace",
+            "number_of_disks": 1,
+            "size": "<%= matterhorn_workspace_size %>",
+            "volume_type": "gp2"
+          },
+          {
+            "mount_point": "/opt/matterhorn",
+            "number_of_disks": 1,
+            "size": "<%= matterhorn_root_size %>",
+            "volume_type": "gp2"
+          }
+        ],
+        "instances": {
+          "number_of_instances": 1,
+          "instance_type": "<%= admin_instance_type %>",
+          "root_device_type": "ebs"
+        }
+      },
+      {
+        "name": "Workers",
+        "shortname": "workers",
+        "type": "custom",
+        "enable_auto_healing": true,
+        "install_updates_on_boot": true,
+        "custom_recipes": {
+          "setup": [
+            "mh-opsworks-recipes::set-timezone",
+            "mh-opsworks-recipes::fix-raid-mapping",
+            "mh-opsworks-recipes::set-bash-as-default-shell",
+            "mh-opsworks-recipes::install-utils",
+            "mh-opsworks-recipes::populate-maven-cache",
+            "mh-opsworks-recipes::install-mh-base-packages",
+            "mh-opsworks-recipes::create-matterhorn-user",
+            "mh-opsworks-recipes::install-deploy-key",
+            "mh-opsworks-recipes::enable-postfix-smarthost",
+            "mh-opsworks-recipes::configure-nginx-proxy",
+            "mh-opsworks-recipes::install-ffmpeg",
+            "mh-opsworks-recipes::install-custom-metrics",
+            "mh-opsworks-recipes::create-alerts-from-opsworks-metrics",
+            "mh-opsworks-recipes::rsyslog-to-loggly",
+            "mh-opsworks-recipes::clean-up-package-cache",
+            "mh-opsworks-recipes::nfs-client"
+          ],
+          "configure": [
+            "mh-opsworks-recipes::update-host-based-configurations"
+          ],
+          "deploy": [
+            "mh-opsworks-recipes::deploy-worker"
+          ],
+          "shutdown": [
+            "mh-opsworks-recipes::remove-alarms"
+          ]
+        },
+        "volume_configurations": [
+          {
+            "mount_point": "/var/matterhorn-workspace",
+            "number_of_disks": 1,
+            "size": "<%= matterhorn_workspace_size %>",
+            "volume_type": "gp2"
+          },
+          {
+            "mount_point": "/opt/matterhorn",
+            "number_of_disks": 1,
+            "size": "<%= matterhorn_root_size %>",
+            "volume_type": "gp2"
+          }
+        ],
+        "instances": {
+          "number_of_instances": "<%= workers_instance_count %>",
+          "instance_type": "<%= workers_instance_type %>",
+          "root_device_type": "ebs"
+        }
+      },
+      {
+        "name": "Engage",
+        "shortname": "engage",
+        "type": "custom",
+        "enable_auto_healing": true,
+        "auto_assign_elastic_ips": true,
+        "install_updates_on_boot": true,
+        "auto_assign_public_ips": true,
+        "custom_recipes": {
+          "setup": [
+            "mh-opsworks-recipes::set-timezone",
+            "mh-opsworks-recipes::fix-raid-mapping",
+            "mh-opsworks-recipes::set-bash-as-default-shell",
+            "mh-opsworks-recipes::install-utils",
+            "mh-opsworks-recipes::populate-maven-cache",
+            "mh-opsworks-recipes::install-mh-base-packages",
+            "mh-opsworks-recipes::create-matterhorn-user",
+            "mh-opsworks-recipes::install-deploy-key",
+            "mh-opsworks-recipes::enable-postfix-smarthost",
+            "mh-opsworks-recipes::install-ffmpeg",
+            "mh-opsworks-recipes::configure-nginx-proxy",
+            "mh-opsworks-recipes::install-custom-metrics",
+            "mh-opsworks-recipes::create-alerts-from-opsworks-metrics",
+            "mh-opsworks-recipes::rsyslog-to-loggly",
+            "mh-opsworks-recipes::clean-up-package-cache",
+            "mh-opsworks-recipes::nfs-client"
+          ],
+          "configure": [
+            "mh-opsworks-recipes::update-host-based-configurations"
+          ],
+          "deploy": [
+            "mh-opsworks-recipes::deploy-engage"
+          ],
+          "shutdown": [
+            "mh-opsworks-recipes::remove-alarms"
+          ]
+        },
+        "volume_configurations": [
+          {
+            "mount_point": "/var/matterhorn-workspace",
+            "number_of_disks": 1,
+            "size": "<%= matterhorn_workspace_size %>",
+            "volume_type": "gp2"
+          },
+          {
+            "mount_point": "/opt/matterhorn",
+            "number_of_disks": 1,
+            "size": "<%= matterhorn_root_size %>",
+            "volume_type": "gp2"
+          }
+        ],
+        "instances": {
+          "number_of_instances": 1,
+          "instance_type": "<%= engage_instance_type %>",
+          "root_device_type": "ebs"
+        }
+      },
+      {
+        "name": "Ganglia",
+        "shortname": "monitoring-master",
+        "enable_auto_healing": true,
+        "install_updates_on_boot": true,
+        "type": "monitoring-master",
+        "auto_assign_public_ips": false,
+        "use_ebs_optimized_instances": true,
+        "custom_recipes": {
+          "setup": [
+            "mh-opsworks-recipes::set-timezone",
+            "mh-opsworks-recipes::fix-raid-mapping",
+            "mh-opsworks-recipes::set-bash-as-default-shell",
+            "mh-opsworks-recipes::install-utils",
+            "mh-opsworks-recipes::enable-postfix-smarthost",
+            "mh-opsworks-recipes::install-custom-metrics",
+            "mh-opsworks-recipes::create-alerts-from-opsworks-metrics",
+            "mh-opsworks-recipes::clean-up-package-cache"
+          ],
+          "shutdown": [
+            "mh-opsworks-recipes::remove-alarms"
+          ]
+        },
+        "volume_configurations": [
+          {
+            "mount_point": "/vol/ganglia",
+            "number_of_disks": 1,
+            "size": "<%= ganglia_disk_size %>",
+            "volume_type": "gp2"
+          }
+        ],
+        "instances": {
+          "number_of_instances": 1,
+          "instance_type": "<%= ganglia_instance_type %>",
+          "root_device_type": "ebs"
+        }
+      }
+    ],
+    "app": {
+      "shortname": "matterhorn",
+      "name": "Matterhorn",
+      "type": "other",
+      "deployment": {
+        "to_layers": ["Admin", "Engage", "Workers", "MySQL db"],
+        "custom_json": { }
+      },
+      "app_source": {
+        "type": "git",
+        "url": "<%= app_git_url %>",
+        "revision": "<%= app_git_revision %>"
+      }
+    },
+    "users": [
+      {
+        "user_name": "FILL_ME_IN",
+        "level": "FILL_ME_IN: one of: deny show deploy manage iam_only",
+        "allow_ssh": true,
+        "allow_sudo": true,
+        "ssh_public_key": "The public key for this user"
+      }
+    ]
+  }
+}

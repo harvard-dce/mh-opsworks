@@ -1,5 +1,7 @@
 describe Cluster::RemoteConfig do
   include EnvironmentHelpers
+  include ClusterCreationHelpers
+
   context '.create' do
     it 'uses Cluster::ConfigCreator to create the templatted json' do
       config_creator_double = double('Config creator')
@@ -26,7 +28,7 @@ describe Cluster::RemoteConfig do
       allow(file_double).to receive(:write)
       allow(File).to receive(:open).and_return(file_double)
 
-      described_class.create(name: cluster_name)
+      described_class.create(dummy_cluster_attributes.merge(name: cluster_name))
 
       expect(File).to have_received(:open).with('cluster_config-a-test-cluster.json', 'w')
     end

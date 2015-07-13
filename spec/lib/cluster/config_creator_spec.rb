@@ -1,4 +1,6 @@
 describe Cluster::ConfigCreator do
+  include ClusterCreationHelpers
+
   it 'substitutes in values correctly' do
     name = 'A test name'
     cidr_block_root = '10.0.1'
@@ -29,7 +31,7 @@ describe Cluster::ConfigCreator do
   it 'has multiple variants' do
     %i|small medium large|.each do |variant|
       variant_attributes = described_class::VARIANTS[variant]
-      creator = described_class.new(variant: variant)
+      creator = described_class.new(dummy_cluster_attributes.merge(variant: variant))
 
       output = creator.create
 

@@ -74,6 +74,50 @@ module Cluster
 
         matterhorn_root_size: '50',
         matterhorn_workspace_size: '500'
+      },
+
+      zadara_medium: {
+        template: './templates/cluster_config_zadara.json.erb',
+
+        description: 'Appropriate for processing small workloads and testing capture agent integration. Uses zadara storage - see README.zadara.md for instructions. ',
+
+        database_instance_type: 'c4.large',
+        database_disk_size: '50',
+
+        admin_instance_type: 'c4.xlarge',
+
+        workers_instance_type: 'c4.xlarge',
+        workers_instance_count: 4,
+
+        engage_instance_type: 'c4.xlarge',
+
+        ganglia_instance_type: 't2.medium',
+        ganglia_disk_size: '50',
+
+        matterhorn_root_size: '50',
+        matterhorn_workspace_size: '500'
+      },
+
+      zadara_large: {
+        template: './templates/cluster_config_zadara.json.erb',
+
+        description: 'Appropriate for large workloads. Uses zadara storage - see README.zadara.md for instructions. ',
+
+        database_instance_type: 'c4.large',
+        database_disk_size: '100',
+
+        admin_instance_type: 'c4.8xlarge',
+
+        workers_instance_type: 'c4.8xlarge',
+        workers_instance_count: 5,
+
+        engage_instance_type: 'c4.8xlarge',
+
+        ganglia_instance_type: 'c4.large',
+        ganglia_disk_size: '100',
+
+        matterhorn_root_size: '50',
+        matterhorn_workspace_size: '500'
       }
     }
 
@@ -90,12 +134,7 @@ module Cluster
 
       erb = Erubis::Eruby.new(File.read(template))
 
-      all_attributes = {
-        name: attributes[:name],
-        cidr_block_root: attributes[:cidr_block_root],
-        app_git_url: attributes[:app_git_url],
-        app_git_revision: attributes[:app_git_revision],
-      }.merge(variant_attributes)
+      all_attributes = attributes.merge(variant_attributes)
 
       erb.result(all_attributes)
     end

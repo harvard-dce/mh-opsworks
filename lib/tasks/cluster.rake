@@ -68,12 +68,19 @@ namespace :cluster do
     session.get_git_revision
     session.compute_cidr_block_root
 
+    if session.zadara_variant?
+      session.get_export_root
+      session.get_nfs_server_host
+    end
+
     config_file = Cluster::RemoteConfig.create(
       name: session.name,
       variant: session.variant,
       cidr_block_root: session.cidr_block_root,
       app_git_url: session.git_url,
-      app_git_revision: session.git_revision
+      app_git_revision: session.git_revision,
+      export_root: session.export_root,
+      nfs_server_host: session.nfs_server_host
     )
     rc_file = Cluster::RcFileSwitcher.new(config_file: config_file)
     rc_file.write

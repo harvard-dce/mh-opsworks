@@ -5,32 +5,13 @@
 The list below represents the cluster configuration level changes necessary to
 connect a cluster to zadara (or perhaps other) external storage.
 
+1. Run './bin/rake cluster:new' and choose one of the zadara variants. If you
+   don't know the path to volume you're exporting or the IP to the zadara NFS
+   server, that's fine. Enter anything that looks like a path or IP address and
+   you can use `./bin/rake cluster:edit` to fix it later.
 1. Create your VPC via `./bin/rake vpc:init`
 1. Now create your zadara storage volumes (see below). Come back and continue
    with the next step when that's done.
-1. Remove the storage layer entirely in your cluster configuration.
-1. Move the `mh-opsworks-recipes::nfs-client` recipe to the `setup` lifecycle
-   event for the Admin, Engage, and Workers layers after the
-   "mh-opsworks-recipes::create-matterhorn-user" recipe. Technically this is
-   optional, but it's highly recommended as there's no need to restart autofs as
-   nodes come online: the storage server is already ready for connections.
-1. Edit your cluster config use the external storage you created. It should
-   look something like:
-
-        ...
-        "stack": {
-          "chef": {
-            "custom_json": {
-              "storage": {
-                "export_root": "<the exported mount you created above>",
-                "type": "external",
-                "nfs_server_host": "<the nfs server host you created above>"
-              }
-            }
-          }
-        }
-        ...
-
 1. Provision the rest of your cluster: `./bin/rake admin:cluster:init` You
    should not see a "Storage" layer.
 1. Start your instances via `./bin/rake stack:instances:start`
@@ -43,22 +24,32 @@ monitoring and alerts for your external storage.
 Zadara VPSA creation is discussed in more detail
 [here](https://support.zadarastorage.com/entries/62983384-Getting-started-with-AWS-and-Zadara-).
 
+### First time:
+
 1. Create the VPSA in the main zadara web console with a controller and some drives
 1. Send an email to zadara with the AWS account name and account number, under
    the "my account" menu option in the aws web console.
-1. While you're waiting for the VPSA, create a virtual gateway.
+1. While you're waiting for the VPSA, create a virtual private gateway.
 1. Accept the virtual interface zadara created under "direct connect" in the
-   aws console and link to the virtual gateway you created above.
-1. Attach the virtual gateway to the VPC you created for your cluster.
-1. Allow the virtual gateway provided routes to propagate in all the route
-   tables of your VPC - both private and public subnets.
+   aws console and link to the virtual private gateway you created above.
+
+### Every VPC (and therefore cluster):
+
+1. Attach the virtual private gateway to the VPC you created for your cluster.
+1. Allow the virtual private gateway provided routes to propagate in all the
+   route tables of your VPC - both private and public subnets. This is under
+   "Route Tables", and then the "Route Propagation" tab. It probably makes sense
+   to filter by your VPC to make things easier.  There's a UI bug that makes it
+   look like routes are propagating but they may not be - switch to each route
+   and refresh the page to ensure you've actually made a change and that it's taken.
 1. Log in to the remote VPSA through an SSH tunnel over your VPC, something
    like `ssh -L 8080:<zadara hostname>:80 <external IP in your cluster>`. The
    VPSA gui should now be available on `http://localhost:8080`.  The easiest way
-   to do this might be to add a throwaway custom layer that contains a single
-   instance with a public IP and the default chef recipes. The instance in this
-   layer allows you to access the VPSA GUI from the correct VPC. After you've
-   configured the volume, you can remove the layer and the throwaway instance.
+   to do this is to add a throwaway custom layer that contains a single instance
+   with a public IP and the default chef recipes. Start up this instance and it
+   will allow you to access the VPSA GUI from the correct VPC. After you've
+   successfully connected your cluster, you can remove the layer and the
+   throwaway instance.
 1. Create a RAID group from your drives that'll be used to populate a pool.
 1. Create NAS users with username/UID mappings, probably for only for
    matterhorn, uid 2122.
@@ -71,4 +62,19 @@ Zadara VPSA creation is discussed in more detail
    subnets
 1. Attach the volume you created above to this server.
 1. You should now have the information you need to update your
-   cluster configuration for external storage.
+   cluster configuration for external storage. Return the previous section.
+
+## Removing a zadara-backed cluster
+
+Removing a zadara cluster is almost the same process as removing a normal
+cluster - `./bin/rake admin:cluster:delete`.
+
+The VPC will probably not delete cleanly - you should:
+
+1. manually detach the virtual private gateway,
+1. manually delete the VPC,
+1. remove the cloudformation stack, and then
+1. run `./bin/rak admin:cluster:delete` again.
+
+You might want to remove and/or reformat the volume you've exported to free up
+space.
