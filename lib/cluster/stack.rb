@@ -11,6 +11,20 @@ module Cluster
       stacks
     end
 
+    def self.update
+      vpc = VPC.find_existing
+
+      with_existing_stack do |stack|
+        parameters = stack_parameters(vpc)
+        [:region, :vpc_id].each do |to_remove|
+          parameters.delete(to_remove)
+        end
+        opsworks_client.update_stack(
+          parameters.merge(stack_id: stack.stack_id)
+        )
+      end
+    end
+
     def self.delete
       stack = find_existing
       if stack
@@ -66,33 +80,7 @@ module Cluster
       stack = find_existing_in(vpc)
       return construct_instance(stack.stack_id) if stack
 
-      service_role = ServiceRole.find_or_create
-      instance_profile = InstanceProfile.find_or_create
-
-      parameters = {
-        name: stack_config[:name],
-        region: root_config[:region],
-        vpc_id: vpc.vpc_id,
-        configuration_manager: {
-          name: 'Chef',
-          version: '11.10'
-        },
-        use_custom_cookbooks: true,
-        custom_cookbooks_source: stack_chef_config.fetch(:custom_cookbooks_source, {}),
-        chef_configuration: {
-          manage_berkshelf: true,
-          berkshelf_version: '3.2.0'
-        },
-        custom_json: json_encode(
-          stack_custom_json
-        ),
-        default_os: 'Ubuntu 14.04 LTS',
-        service_role_arn: service_role.arn,
-        default_instance_profile_arn: instance_profile.arn,
-        default_subnet_id: vpc.subnets.first.id,
-        default_root_device_type: stack_config.fetch(:default_root_device_type, 'ebs'),
-        default_ssh_key_name: stack_config.fetch(:default_ssh_key_name, '')
-      }
+      parameters = stack_parameters(vpc)
 
       stack = create_stack(parameters)
 
@@ -127,6 +115,35 @@ module Cluster
         break if stack != nil
       end
       stack
+    end
+
+    def self.stack_parameters(vpc)
+      service_role = ServiceRole.find_or_create
+      instance_profile = InstanceProfile.find_or_create
+      {
+        name: stack_config[:name],
+        region: root_config[:region],
+        vpc_id: vpc.vpc_id,
+        configuration_manager: {
+          name: 'Chef',
+          version: '11.10'
+        },
+        use_custom_cookbooks: true,
+        custom_cookbooks_source: stack_chef_config.fetch(:custom_cookbooks_source, {}),
+        chef_configuration: {
+          manage_berkshelf: true,
+          berkshelf_version: '3.2.0'
+        },
+        custom_json: json_encode(
+          stack_custom_json
+        ),
+        default_os: 'Ubuntu 14.04 LTS',
+        service_role_arn: service_role.arn,
+        default_instance_profile_arn: instance_profile.arn,
+        default_subnet_id: vpc.subnets.first.id,
+        default_root_device_type: stack_config.fetch(:default_root_device_type, 'ebs'),
+        default_ssh_key_name: stack_config.fetch(:default_ssh_key_name, '')
+      }
     end
 
     def self.construct_instance(stack_id)

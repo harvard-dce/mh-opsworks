@@ -13,6 +13,12 @@ namespace :stack do
     end
   end
 
+  desc 'update AWS stack and app configuration based on the current configuration'
+  task update: ['cluster:configtest', 'cluster:config_sync_check'] do
+    Cluster::Stack.update
+    Cluster::App.update
+  end
+
   desc 'Initialize a stack within a vpc'
   task init: ['cluster:configtest', 'cluster:config_sync_check'] do
     stack = Cluster::Stack.find_or_create

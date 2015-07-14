@@ -7,13 +7,13 @@ module Cluster
     include ClientHelpers
 
     def self.with_encoded_document
-      JSON.dump(
+      JSON.pretty_generate(
         yield
       )
     end
 
     def self.json_encode(string)
-      JSON.dump(string)
+      JSON.pretty_generate(string)
     end
 
     # Allows the construction of client interfaces at the instance level

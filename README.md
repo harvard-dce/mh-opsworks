@@ -156,6 +156,8 @@ in with the password you set in your cluster configuration files.
     ./bin/rake cluster:new
 
     # Edit the currently active cluster config with the editor specified in $EDITOR
+    # This also pushes relevant changes to the active cluster and app in AWS -
+    # for instance the revisions used for the custom chef repo and/or the application.
     ./bin/rake cluster:edit
 
     # See info about the currently active cluster

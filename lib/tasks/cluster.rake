@@ -28,7 +28,7 @@ namespace :cluster do
     Rake::Task['cluster:config_sync_check'].execute
   end
 
-  desc 'checks that the cluster config is up to date'
+  desc 'check that the cluster config is up to date and sync if necessary'
   task :config_sync_check do
     remote_config = Cluster::RemoteConfig.new
 
@@ -42,11 +42,13 @@ namespace :cluster do
     else
       puts "\nYour config is ahead of upstream - changes below:\n\n"
       puts remote_config.changeset
-      print "Sync these changes? (y or n): "
+      print "Sync these changes and publish to AWS? (y or n): "
       answer = STDIN.gets.chomp
 
       if ['y','Y'].include?(answer)
         remote_config.sync
+        Cluster::Stack.update
+        Cluster::App.update
       else
         puts "Quitting. Please resolve your config changes and try again."
         exit
