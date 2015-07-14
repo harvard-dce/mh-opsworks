@@ -27,7 +27,8 @@
                 "iam:*Role*",
                 "iam:*User*",
                 "sns:*",
-                "cloudwatch:*"
+                "cloudwatch:*",
+                "s3:*"
             ],
             "Resource": [
                 "*"
