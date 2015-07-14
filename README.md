@@ -276,6 +276,30 @@ If you'd like to use NFS storage provided by some other service - [zadara
 storage](http://www.zadarastorage.com), for instance, please see
 "README.zadara.md".
 
+### SSL for the engage node
+
+A dummy self-signed SSL cert is deployed by default to the engage node and
+linked into the nginx proxy by the
+`mh-opsworks-recipes::configure-engage-nginx-proxy` recipe.  The ssl certs are
+configured in your `secrets.json`:
+
+
+```
+{
+  "stack": {
+    "secrets": {
+      "ssl": {
+        "certificate": "a cert on a single line, all newlines replaced with \n",
+        "key": "a key on a single line, all newlines replace with \n",
+        "chain": "Ditto, only necessary if your cert uses a chain"
+      },
+    }
+  }
+}
+```
+
+If you'd like to disable SSL, just set `certificate` and `key` to empty strings.
+
 ### Metrics, alarms, and notifications
 
 We add and remove SNS-linked cloudwatch alarms when an instance is stopped and
