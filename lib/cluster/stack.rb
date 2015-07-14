@@ -12,9 +12,9 @@ module Cluster
     end
 
     def self.update
-      vpc = VPC.find_existing
-
-      with_existing_stack do |stack|
+      stack = find_existing
+      if stack
+        vpc = VPC.find_existing
         parameters = stack_parameters(vpc)
         [:region, :vpc_id].each do |to_remove|
           parameters.delete(to_remove)

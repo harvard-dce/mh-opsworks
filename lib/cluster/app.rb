@@ -10,14 +10,16 @@ module Cluster
     end
 
     def self.update
-      parameters = app_parameters
       app = find_existing
-      [:stack_id, :shortname].each do |key|
-        parameters.delete(key)
+      if app
+        parameters = app_parameters
+        [:stack_id, :shortname].each do |key|
+          parameters.delete(key)
+        end
+        opsworks_client.update_app(
+          parameters.merge(app_id: app.app_id)
+        )
       end
-      opsworks_client.update_app(
-        parameters.merge(app_id: app.app_id)
-      )
     end
 
     def self.find_or_create
