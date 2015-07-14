@@ -105,8 +105,10 @@ module Cluster
     end
 
     def user_has_no_configuration?(arn)
-      user_name = iam_users.find{|u| u.arn == arn }.user_name
-      ! configured_users.find { |u| u[:user_name] == user_name }
+      iam_user = iam_users.find{ |u| u.arn == arn }
+      return true if ! iam_user
+
+      ! configured_users.find { |u| u[:user_name] == iam_user.user_name }
     end
   end
 end
