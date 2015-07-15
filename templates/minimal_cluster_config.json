@@ -1,0 +1,17 @@
+{
+  "version": "0",
+  "region": "us-east-1",
+  "vpc": {
+  },
+  "stack": {
+    "name": "NOT A REAL CLUSTER",
+    "default_ssh_key_name":"",
+    "chef": {
+      "custom_json": { },
+      "custom_cookbooks_source": { }
+    },
+    "layers": [ ],
+    "app": { },
+    "users": []
+  }
+}

@@ -87,7 +87,7 @@ module Cluster
     end
 
     def negotiate_config_file
-      config_for('cluster','templates/cluster_config_default.json.erb', 'CLUSTER_CONFIG_FILE')
+      config_for('cluster','templates/minimal_cluster_config.json', 'CLUSTER_CONFIG_FILE')
     end
 
     def config_for(config_type, default_file, env_var)

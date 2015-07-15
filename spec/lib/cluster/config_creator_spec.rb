@@ -8,13 +8,15 @@ describe Cluster::ConfigCreator do
     variant_attributes = described_class::VARIANTS[variant]
     app_git_url = 'http://foobar'
     app_git_revision = 'unique_revision'
+    default_users = 'afoasdf'
 
     attributes = {
       name: name,
       cidr_block_root: cidr_block_root,
       app_git_url: app_git_url,
       variant: variant,
-      app_git_revision: app_git_revision
+      app_git_revision: app_git_revision,
+      default_users: default_users
     }
 
     creator = described_class.new(attributes)
@@ -26,6 +28,7 @@ describe Cluster::ConfigCreator do
     expect(output).to include(app_git_url)
     expect(output).to include(app_git_revision)
     expect(output).to include(variant_attributes[:storage_instance_type])
+    expect(output).to include(default_users)
   end
 
   it 'has multiple variants' do

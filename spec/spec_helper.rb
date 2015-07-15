@@ -11,7 +11,7 @@ RSpec.configure do |config|
 
   config.before(:all) do
     Aws.config[:stub_responses] = true
-    ENV['CLUSTER_CONFIG_FILE'] = 'templates/cluster_config_default.json.erb'
+    ENV['CLUSTER_CONFIG_FILE'] = 'templates/minimal_cluster_config.json'
     ENV['SECRETS_FILE'] = 'templates/secrets_example.json'
   end
 

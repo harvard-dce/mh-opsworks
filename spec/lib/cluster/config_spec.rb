@@ -12,14 +12,14 @@ describe Cluster::Config do
   end
 
 
-  it 'uses templates/cluster_config_default.json.erb as the config by default' do
+  it 'uses templates/minimal_cluster_config.json as the config by default' do
     with_no_mhopsworks_rc do
       with_modified_env(CLUSTER_CONFIG_FILE: nil) do
         allow(File).to receive(:read)
 
         described_class.new
 
-        expect(File).to have_received(:read).with('templates/cluster_config_default.json.erb')
+        expect(File).to have_received(:read).with('templates/minimal_cluster_config.json')
       end
     end
   end

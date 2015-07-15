@@ -40,4 +40,29 @@ describe Cluster::ConfigCreationSession do
       end
     end
   end
+
+  context '#compute_default_users' do
+    it 'includes the correct user accounts' do
+      local_user_name = ENV['USER']
+      remote_user_name = 'iam-user'
+      allow(Cluster::Base).to receive_message_chain(:iam_client, :get_user, :user, user_name: remote_user_name)
+
+      session = described_class.new
+
+      default_users = session.compute_default_users.map{ |u| u[:user_name]}
+      expect(default_users).to include(local_user_name, remote_user_name)
+    end
+
+    it 'does not include duplicate usernames' do
+      local_user_name = ENV['USER']
+      remote_user_name = local_user_name
+      allow(Cluster::Base).to receive_message_chain(:iam_client, :get_user, :user, user_name: remote_user_name)
+
+      session = described_class.new
+
+      default_users = session.compute_default_users.map{ |u| u[:user_name]}
+      expect(default_users).to include(local_user_name)
+      expect(default_users.length).to eq 1
+    end
+  end
 end

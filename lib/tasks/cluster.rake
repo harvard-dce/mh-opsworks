@@ -2,7 +2,7 @@ namespace :cluster do
   desc 'Sanity check your cluster configuration'
   task :configtest do
     config = Cluster::Config.new
-    if config.active_config == 'templates/cluster_config_default.json.erb'
+    if config.active_config == 'templates/minimal_cluster_config.json'
       puts "\nYou don't have a valid cluster active. You have two options:
 * Use 'cluster:switch' to switch into one, or
 * Run 'cluster:new' to create and switch into a new one.
@@ -82,7 +82,8 @@ namespace :cluster do
       app_git_url: session.git_url,
       app_git_revision: session.git_revision,
       export_root: session.export_root,
-      nfs_server_host: session.nfs_server_host
+      nfs_server_host: session.nfs_server_host,
+      default_users: JSON.pretty_generate(session.compute_default_users)
     )
     rc_file = Cluster::RcFileSwitcher.new(config_file: config_file)
     rc_file.write

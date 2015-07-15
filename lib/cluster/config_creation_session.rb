@@ -68,6 +68,34 @@ module Cluster
       @cidr_block_root = find_unused_cidr_block_root
     end
 
+    def compute_default_users
+      local_user_account = ENV['USER']
+      iam_user_account = Cluster::Base.iam_client.get_user.user.user_name
+      optimal_keyfile = find_optimal_keyfile
+      ssh_public_key =
+        if optimal_keyfile
+          File.read(optimal_keyfile)
+        end
+
+      users = [
+        {
+          user_name: local_user_account,
+          level: 'manage',
+          allow_ssh: true,
+          allow_sudo: true,
+          ssh_public_key: ssh_public_key
+        }
+      ]
+      if local_user_account != iam_user_account
+        users << {
+          user_name: iam_user_account,
+          level: 'manage'
+        }
+      end
+
+      users
+    end
+
     def get_git_url
       print "\nThe URL to the git repository: "
       git_url = STDIN.gets.chomp
@@ -91,6 +119,13 @@ module Cluster
     end
 
     private
+
+    def find_optimal_keyfile
+      home = ENV['HOME']
+      [%Q|#{home}/.ssh/id_rsa.pub|, %Q|#{home}/.ssh/id_dsa.pub|].find do |file|
+        File.exists?(file)
+      end
+    end
 
     def find_unused_cidr_block_root
       active_blocks = Cluster::VPC.all.map { |vpc| vpc.cidr_block }

@@ -22,14 +22,14 @@ module Cluster
       end
     end
 
-    def deny_privileges_for_unconfigured_users
+    def read_only_privileges_for_unconfigured_users
       opsworks_permissions.each do |permission|
         if user_has_no_configuration?(permission.iam_user_arn) &&
           is_not_me?(permission.iam_user_arn)
           self.class.opsworks_client.set_permission(
             iam_user_arn: permission.iam_user_arn,
             stack_id: stack_id,
-            level: 'deny'
+            level: 'show'
           )
         end
       end

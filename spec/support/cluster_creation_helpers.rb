@@ -4,7 +4,8 @@ module ClusterCreationHelpers
       name: '',
       cidr_block_root: '',
       app_git_url: '',
-      app_git_revision: ''
+      app_git_revision: '',
+      default_users: ''
     }
   end
 end

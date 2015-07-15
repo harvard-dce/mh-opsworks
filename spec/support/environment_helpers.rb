@@ -46,7 +46,7 @@ module EnvironmentHelpers
 
   def with_valid_json_config
     with_modified_env(
-      CLUSTER_CONFIG_FILE: 'templates/cluster_config_default.json.erb'
+      CLUSTER_CONFIG_FILE: 'templates/minimal_cluster_config.json'
     ) do
       yield
     end
@@ -54,7 +54,7 @@ module EnvironmentHelpers
 
   def base_config
     @base_config ||= JSON.parse(
-      File.read('templates/cluster_config_default.json.erb'),
+      File.read('templates/minimal_cluster_config.json'),
       symbolize_names: true
     )
   end

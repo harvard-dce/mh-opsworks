@@ -297,14 +297,6 @@
         "revision": "<%= app_git_revision %>"
       }
     },
-    "users": [
-      {
-        "user_name": "FILL_ME_IN",
-        "level": "FILL_ME_IN: one of: deny show deploy manage iam_only",
-        "allow_ssh": true,
-        "allow_sudo": true,
-        "ssh_public_key": "The public key for this user"
-      }
-    ]
+    "users": <%= default_users %>
   }
 }
