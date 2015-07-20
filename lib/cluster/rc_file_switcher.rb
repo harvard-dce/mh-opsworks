@@ -8,6 +8,10 @@ module Cluster
     end
 
     def write
+      # Ensure we allow the correct file to load when we've switched configs
+      ENV.delete('SECRETS_FILE')
+      ENV.delete('CLUSTER_CONFIG_FILE')
+
       File.open(RC_FILE, 'w') do |f|
         f.write "cluster=#{@config_file}\n"
         f.write "secrets=#{@secrets_file}\n"

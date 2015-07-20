@@ -83,11 +83,15 @@ module Cluster
     end
 
     def negotiate_secrets_file
-      config_for('secrets','secrets.json','SECRETS_FILE')
+      config_for('secrets','secrets.json','SECRETS_FILE').tap do |secrets_file|
+        ENV['SECRETS_FILE'] = secrets_file
+      end
     end
 
     def negotiate_config_file
-      config_for('cluster','templates/minimal_cluster_config.json', 'CLUSTER_CONFIG_FILE')
+      config_for('cluster','templates/minimal_cluster_config.json', 'CLUSTER_CONFIG_FILE').tap do |config_file|
+        ENV['CLUSTER_CONFIG_FILE'] = config_file
+      end
     end
 
     def config_for(config_type, default_file, env_var)
