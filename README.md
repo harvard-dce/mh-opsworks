@@ -322,6 +322,10 @@ The Admin, Engage, and Workers layers include a chef recipe to add an rsyslog
 drain to loggly for matterhorn logs. Update `secrets.json` to add your loggly
 URL and token, and ensure matterhorn is logging to syslog.
 
+If you are using your cluster for dev work but you still wish to log to loggly,
+consider setting up a separate ["free tier"](https://www.loggly.com/plans-and-pricing/)
+loggly account.
+
 Log entries are tagged with:
 
 * Stack name,
