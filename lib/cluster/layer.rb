@@ -11,6 +11,8 @@ module Cluster
       custom_security_group_ids = []
       if private_layer?
         custom_security_group_ids << get_security_group_for_private_layer
+      else
+        custom_security_group_ids << get_security_group_for_public_layer
       end
 
       layer_parameters = {
@@ -25,10 +27,18 @@ module Cluster
         custom_recipes: params.fetch(:custom_recipes, {}),
         volume_configurations: params.fetch(:volume_configurations, {}),
         use_ebs_optimized_instances: params.fetch(:use_ebs_optimized_instances, false),
-        custom_security_group_ids: custom_security_group_ids
+        custom_security_group_ids: custom_security_group_ids.compact
       }
       layer = opsworks_client.create_layer(layer_parameters)
       construct_instance(layer.layer_id)
+    end
+
+    def get_security_group_for_public_layer
+      public_network_sg = ec2_client.describe_security_groups.inject([]){ |memo, page| memo + page.security_groups }.find do |group|
+        # This is tightly coupled to the implementation in templates/OpsWorksinVPC.template
+        group.group_name.match(/#{vpc_name}-DirectAccessToMatterhornDaemon/)
+      end
+      public_network_sg && public_network_sg.group_id
     end
 
     def get_security_group_for_private_layer
@@ -36,7 +46,7 @@ module Cluster
         # This is tightly coupled to the implementation in templates/OpsWorksinVPC.template
         group.group_name.match(/#{vpc_name}-OpsWorksSecurityGroup/)
       end
-      private_network_sg.group_id
+      private_network_sg && private_network_sg.group_id
     end
 
     def private_layer?
