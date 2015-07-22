@@ -225,22 +225,21 @@
       }
     },
 
-    "NATIPAddress" : {
-      "Type" : "AWS::EC2::EIP",
-      "Properties" : {
-        "Domain" : "vpc",
-        "InstanceId" : { "Ref" : "NATDevice" }
-      }
-    },
-
     "NATDevice" : {
       "Type" : "AWS::EC2::Instance",
       "Properties" : {
         "InstanceType" : "t2.micro",
-        "SubnetId" : { "Ref" : "PublicSubnet" },
         "SourceDestCheck" : "false",
         "ImageId" : { "Fn::FindInMap" : [ "AWSNATAMI", { "Ref" : "AWS::Region" }, "AMI" ]},
-        "SecurityGroupIds" : [{ "Ref" : "NATSecurityGroup" }],
+        "NetworkInterfaces": [
+          {
+            "AssociatePublicIpAddress": "true",
+            "DeviceIndex": "0",
+            "DeleteOnTermination": "true",
+            "GroupSet": [ { "Ref" : "NATSecurityGroup" } ],
+            "SubnetId" : { "Ref" : "PublicSubnet" }
+          }
+        ],
         "Tags" : [
           { "Key" : "Name", "Value" : { "Fn::Join" : [ " ", [ { "Ref" : "AWS::StackName" }, "NAT instance" ] ] } }
         ]
