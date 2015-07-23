@@ -396,6 +396,7 @@ other) UIs.
 ## Contributors
 
 * Dan Collis-Puro - [djcp](https://github.com/djcp)
+* Jay Luker - [lbjay](https://github.com/lbjay)
 
 ## License
 
