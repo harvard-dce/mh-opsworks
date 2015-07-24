@@ -316,6 +316,43 @@ metrics automatically as nodes are added and removed. You can log in to ganglia
 with the username / password set in your `secrets.json` configuration. The url is
 `<your public admin node hostname>/ganglia`.
 
+### Deploying to a different region than the default of us-east-1
+
+We currently support:
+
+* us-east-1
+* us-west-1
+* us-west-2
+
+By default, clusters are deployed to `us-east-1`. If you'd like to use a
+different region:
+
+1. Run `./bin/rake cluster:new` to generate your cluster config
+
+1. Change the `region` to one of the supported options via `./bin/rake
+   cluster:edit`.
+
+You must do this before creating your cluster via `./bin/rake admin:cluster:init`.
+
+### Supporting a new region
+
+If you'd like to deploy clusters to a currently unsupported region:
+
+1. find a NAT instance AMI in that region in the "community AMIs" section of
+   the EC2 AMI marketplace. Look for `Amazon Linux AMI VPC NAT x86_64 HVM EBS`,
+   for instance.
+
+1. Update the AWSNATAMI mapping for your region in
+   `templates/OpsWorksInVPC.template` with the AMI image ID you found above.
+
+1. Edit your cluster config to use the new region
+
+1. Run `./bin/rake admin:cluster:init`
+
+1. Work with the cluster as usual.
+
+Please submit a PR when you've confirmed everything works.
+
 ### Loggly
 
 The Admin, Engage, and Workers layers include a chef recipe to add an rsyslog

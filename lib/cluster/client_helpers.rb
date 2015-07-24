@@ -18,7 +18,7 @@ module Cluster
 
       def s3_client
         Aws::S3::Client.new(
-          region: config.parsed[:region],
+          region: 'us-east-1',
           credentials: config.credentials
         )
       end
@@ -46,7 +46,7 @@ module Cluster
 
       def opsworks_client
         Aws::OpsWorks::Client.new(
-          region: config.parsed[:region],
+          region: 'us-east-1',
           credentials: config.credentials
         )
       end
