@@ -97,7 +97,7 @@ module Cluster
     end
 
     def get_git_url
-      print "\nThe URL to the git repository: "
+      print "\nThe git URL to the matterhorn repo, e.g. git@bitbucket.org. . .: "
       git_url = STDIN.gets.chomp
 
       unless git_url.match(/^git@|https:\/\//i)
