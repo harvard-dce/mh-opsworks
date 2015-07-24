@@ -27,7 +27,7 @@ module Cluster
       return app if app
 
       app = opsworks_client.create_app(app_parameters)
-      wait_until_app_available(app.app_id)
+      wait_until_app_exists(app.app_id)
       find_existing
     end
 

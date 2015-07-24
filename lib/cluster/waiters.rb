@@ -21,12 +21,12 @@ module Cluster
         end
       end
 
-      def wait_until_app_available(app_id)
+      def wait_until_app_exists(app_id)
         opsworks_client.wait_until(
-          :app_available, app_ids: [app_id]
+          :app_exists, app_ids: [app_id]
         ) do |w|
           w.before_wait do |attempts, response|
-            puts "Waiting for app to be available: #{app_id}, attempt ##{attempts}"
+            puts "Waiting for app to exist: #{app_id}, attempt ##{attempts}"
           end
         end
 
@@ -65,20 +65,20 @@ module Cluster
           user_name: user_name
         ) do |w|
           w.before_wait do |attempts, response|
-            puts "Checking if user #{instance_profile_name} exists, attempt: ##{attempts}"
+            puts "Checking if user #{user_name} exists, attempt: ##{attempts}"
           end
         end
 
         yield if block_given?
       end
 
-      def wait_until_instance_profile_available(instance_profile_name)
+      def wait_until_instance_profile_exists(instance_profile_name)
         iam_client.wait_until(
-          :instance_profile_available,
+          :instance_profile_exists,
           instance_profile_name: instance_profile_name
         ) do |w|
           w.before_wait do |attempts, response|
-            puts "Checking if instance profile #{instance_profile_name} available, attempt: ##{attempts}"
+            puts "Checking if instance profile #{instance_profile_name} exists, attempt: ##{attempts}"
           end
         end
 

@@ -44,7 +44,7 @@ module Cluster
           instance_profile_name: instance_profile_name
         )
 
-        wait_until_instance_profile_available(instance_profile_name)
+        wait_until_instance_profile_exists(instance_profile_name)
       end
       construct_instance(instance_profile_name)
     end
