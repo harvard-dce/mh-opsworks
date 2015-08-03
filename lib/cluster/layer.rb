@@ -8,7 +8,8 @@ module Cluster
     end
 
     def create
-      custom_security_group_ids = []
+      custom_security_group_ids = default_security_group_ids
+
       if private_layer?
         custom_security_group_ids << get_security_group_for_private_layer
       else
@@ -33,20 +34,16 @@ module Cluster
       construct_instance(layer.layer_id)
     end
 
+    def default_security_group_ids
+      [ find_security_group_id_for_group_named("#{vpc_name}-InstancesAllowedToAccessEFS") ]
+    end
+
     def get_security_group_for_public_layer
-      public_network_sg = ec2_client.describe_security_groups.inject([]){ |memo, page| memo + page.security_groups }.find do |group|
-        # This is tightly coupled to the implementation in templates/OpsWorksinVPC.template
-        group.group_name.match(/#{vpc_name}-DirectAccessToMatterhornDaemon/)
-      end
-      public_network_sg && public_network_sg.group_id
+      find_security_group_id_for_group_named("#{vpc_name}-DirectAccessToMatterhornDaemon")
     end
 
     def get_security_group_for_private_layer
-      private_network_sg = ec2_client.describe_security_groups.inject([]){ |memo, page| memo + page.security_groups }.find do |group|
-        # This is tightly coupled to the implementation in templates/OpsWorksinVPC.template
-        group.group_name.match(/#{vpc_name}-OpsWorksSecurityGroup/)
-      end
-      private_network_sg && private_network_sg.group_id
+      find_security_group_id_for_group_named("#{vpc_name}-OpsWorksSecurityGroup")
     end
 
     def private_layer?
@@ -70,6 +67,14 @@ module Cluster
     end
 
     private
+
+    def find_security_group_id_for_group_named(name)
+      sg = ec2_client.describe_security_groups.inject([]){ |memo, page| memo + page.security_groups }.find do |group|
+        # This is tightly coupled to the implementation in templates/OpsWorksinVPC.template
+        group.group_name.match(/#{name}/)
+      end
+      sg && sg.group_id
+    end
 
     def layer_attributes
       self.class.config.parsed_secrets.fetch(

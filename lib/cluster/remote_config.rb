@@ -21,7 +21,7 @@ module Cluster
     end
 
     def initialize
-      @config = Cluster::Config.new
+      initialize_config_object
     end
 
     def local_version
@@ -92,19 +92,23 @@ module Cluster
       end
     end
 
+    def update_efs_server_hostname(hostname)
+      current_config = config
+      current_values = current_config.parsed
+
+      current_values[:stack][:chef][:custom_json][:storage][:nfs_server_host] = hostname
+      write_config_with(current_values)
+      initialize_config_object
+    end
+
     def sync
       current_config = config
-      current_json = current_config.parsed
+      current_values = current_config.parsed
 
       new_version = current_config.version + 1
-      current_json[:version] = new_version
+      current_values[:version] = new_version
 
-      json_output = JSON.pretty_generate(current_json)
-
-      File.open(current_config.active_config, 'w') do |fh|
-        fh.write json_output
-        fh.write "\n"
-      end
+      write_config_with(current_values)
 
       Cluster::Assets.publish_support_asset_to(
         file_name: current_config.active_config,
@@ -119,6 +123,19 @@ module Cluster
     private
 
     attr_reader :config
+
+    def initialize_config_object
+      @config = Cluster::Config.new
+    end
+
+    def write_config_with(config_values)
+      json_output = JSON.pretty_generate(config_values)
+
+      File.open(config.active_config, 'w') do |fh|
+        fh.write json_output
+        fh.write "\n"
+      end
+    end
 
     def parse_config(config)
       JSON.parse(config, symbolize_names: true)

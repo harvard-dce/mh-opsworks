@@ -22,13 +22,15 @@
                 "ec2:TerminateInstances",
                 "ec2:Describe*",
                 "ec2:ModifyInstanceAttribute",
+                "ec2:*NetworkInterface*",
                 "iam:*InstanceProfile*",
                 "iam:*Polic*",
                 "iam:*Role*",
                 "iam:*User*",
                 "sns:*",
                 "cloudwatch:*",
-                "s3:*"
+                "s3:*",
+                "elasticfilesystem:*"
             ],
             "Resource": [
                 "*"

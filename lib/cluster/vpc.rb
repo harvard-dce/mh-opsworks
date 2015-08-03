@@ -32,23 +32,32 @@ module Cluster
           raise VpcConflictsWithAnother
         end
 
+        parameters = [
+          {
+            parameter_key: 'CIDRBlock',
+            parameter_value: vpc_config[:cidr_block]
+          },
+          {
+            parameter_key: 'PublicCIDRBlock',
+            parameter_value: vpc_config[:public_cidr_block]
+          },
+          {
+            parameter_key: 'PrivateCIDRBlock',
+            parameter_value: vpc_config[:private_cidr_block]
+          }
+        ]
+
+        if supports_efs?
+          parameters << {
+            parameter_key: 'CreateEFS',
+            parameter_value: build_efs_resources?
+          }
+        end
+
         stack = cloudformation_client.create_stack(
           stack_name: vpc_name,
-          template_body: File.read('./templates/OpsWorksinVPC.template'),
-          parameters: [
-            {
-              parameter_key: 'CIDRBlock',
-              parameter_value: vpc_config[:cidr_block]
-            },
-            {
-              parameter_key: 'PublicCIDRBlock',
-              parameter_value: vpc_config[:public_cidr_block]
-            },
-            {
-              parameter_key: 'PrivateCIDRBlock',
-              parameter_value: vpc_config[:private_cidr_block]
-            },
-          ],
+          template_body: File.read(get_template_path),
+          parameters: parameters,
           timeout_in_minutes: 15,
           tags: [
             {
@@ -71,6 +80,22 @@ module Cluster
     end
 
     private
+
+    def self.get_template_path
+      if supports_efs?
+        './templates/OpsWorksinVPCWithEFS.template'
+      else
+        './templates/OpsWorksinVPC.template'
+      end
+    end
+
+    def self.build_efs_resources?
+      if is_using_efs_storage?
+        'yes'
+      else
+        'no'
+      end
+    end
 
     def self.construct_instance(vpc_id)
       Aws::EC2::Vpc.new(vpc_id, client: ec2_client)

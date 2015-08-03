@@ -41,6 +41,10 @@ module Cluster
         stack_config[:chef].fetch(:custom_json, {}).merge(stack_secrets)
       end
 
+      def storage_config
+        stack_custom_json.fetch(:storage, {})
+      end
+
       def cluster_config_bucket_name
         stack_secrets[:cluster_config_bucket_name]
       end

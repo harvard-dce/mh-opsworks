@@ -118,7 +118,73 @@ module Cluster
 
         matterhorn_root_size: '50',
         matterhorn_workspace_size: '500'
-      }
+      },
+
+      efs_small: {
+        template: './templates/cluster_config_efs.json.erb',
+
+        description: 'Only appropriate to smoke-test deployment and process very small videos. Uses efs storage, only works in us-west-2 for now',
+
+        database_instance_type: 't2.medium',
+        database_disk_size: '20',
+
+        admin_instance_type: 't2.medium',
+
+        workers_instance_type: 't2.medium',
+        workers_instance_count: 2,
+
+        engage_instance_type: 't2.medium',
+
+        ganglia_instance_type: 't2.medium',
+        ganglia_disk_size: '10',
+
+        matterhorn_root_size: '20',
+        matterhorn_workspace_size: '100'
+      },
+
+      efs_medium: {
+        template: './templates/cluster_config_efs.json.erb',
+
+        description: 'Appropriate for processing small workloads and testing capture agent integration. Uses efs storage, only works in us-west-2 for now',
+
+        database_instance_type: 'c4.large',
+        database_disk_size: '50',
+
+        admin_instance_type: 'c4.xlarge',
+
+        workers_instance_type: 'c4.xlarge',
+        workers_instance_count: 4,
+
+        engage_instance_type: 'c4.xlarge',
+
+        ganglia_instance_type: 't2.medium',
+        ganglia_disk_size: '50',
+
+        matterhorn_root_size: '50',
+        matterhorn_workspace_size: '500'
+      },
+
+      efs_large: {
+        template: './templates/cluster_config_efs.json.erb',
+
+        description: 'Appropriate for large workloads. Uses efs storage, only works in us-west-2 for now',
+
+        database_instance_type: 'c4.large',
+        database_disk_size: '100',
+
+        admin_instance_type: 'c4.8xlarge',
+
+        workers_instance_type: 'c4.8xlarge',
+        workers_instance_count: 5,
+
+        engage_instance_type: 'c4.8xlarge',
+
+        ganglia_instance_type: 'c4.large',
+        ganglia_disk_size: '100',
+
+        matterhorn_root_size: '50',
+        matterhorn_workspace_size: '500'
+      },
     }
 
     attr_reader :variant, :attributes

@@ -391,6 +391,13 @@ send from multiple `default_email_sender` addresses, though, say to segment
 email communication by cluster, you'll need to verify each address before
 using.
 
+### Experimental EFS support
+
+[Amazon Elastic File System](https://aws.amazon.com/efs/) is currently in
+preview and can only be deployed to the us-west-2 region.  You can create an
+efs-backed cluster by selecting one of the efs variants after running
+`./bin/rake cluster:new`.
+
 ### Potentially problematic aws resource limits
 
 The default aws resource limits are listed

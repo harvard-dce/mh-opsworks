@@ -20,6 +20,10 @@ module Cluster
       def service_role_name
         %Q|#{stack_shortname}-service-role|
       end
+
+      def efs_filesystem_name
+        %Q|#{vpc_name} efs filesystem|
+      end
     end
 
     def self.included(base)
