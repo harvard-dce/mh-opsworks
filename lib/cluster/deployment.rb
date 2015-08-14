@@ -1,5 +1,7 @@
 module Cluster
   class Deployment < Base
+    include Cluster::Waiters
+
     def self.all
       stack = Cluster::Stack.with_existing_stack
       opsworks_client.describe_deployments(
@@ -12,15 +14,18 @@ module Cluster
       app = App.find_or_create
       custom_json = deployment_config[:custom_json]
 
-      app && opsworks_client.create_deployment(
-        stack_id: stack.stack_id,
-        app_id: app.app_id,
-        instance_ids: deployable_instance_ids_in_layers(deployment_config[:to_layers]),
-        command: {
-          name: 'deploy'
-        },
-        custom_json: json_encode(custom_json)
-      )
+      if app
+        deployment = opsworks_client.create_deployment(
+          stack_id: stack.stack_id,
+          app_id: app.app_id,
+          instance_ids: deployable_instance_ids_in_layers(deployment_config[:to_layers]),
+          command: {
+            name: 'deploy'
+          },
+          custom_json: json_encode(custom_json)
+        )
+        wait_until_deployment_completed(deployment.deployment_id)
+      end
     end
 
     def self.execute_chef_recipes_on_instances(recipes: [], hostnames: [])
@@ -77,7 +82,7 @@ module Cluster
 
     def self.run_on_instance_ids(instance_ids: [], stack: nil, command: nil, args: {})
       if instance_ids.any?
-        opsworks_client.create_deployment(
+        deployment = opsworks_client.create_deployment(
           stack_id: stack.stack_id,
           instance_ids: instance_ids,
           command: {
@@ -85,6 +90,7 @@ module Cluster
             args: args
           }
         )
+        wait_until_deployment_completed(deployment.deployment_id)
       else
         raise Cluster::NoInstancesOnline
       end

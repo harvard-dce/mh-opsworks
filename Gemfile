@@ -1,6 +1,8 @@
 source "https://rubygems.org"
 
-gem 'aws-sdk', '~> 2.1.8'
+# gem 'aws-sdk', '~> 2.1.8'
+gem 'aws-sdk', git: 'https://github.com/harvard-dce/aws-sdk-ruby', branch: 'master'
+
 gem 'rake', '~> 10.4.2'
 
 gem 'rspec-core', '~> 3.3.0'
