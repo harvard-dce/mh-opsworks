@@ -44,6 +44,10 @@ module Cluster
           instance_profile_name: instance_profile_name
         )
 
+        # This seems an adequate amount of time to wait for the
+        # instance profile to propagate, unfortunately
+        # I can't find a way to test for propagation.
+        sleep 10
         wait_until_instance_profile_exists(instance_profile_name)
       end
       construct_instance(instance_profile_name)
