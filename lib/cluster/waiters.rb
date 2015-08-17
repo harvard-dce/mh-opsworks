@@ -59,7 +59,6 @@ module Cluster
         opsworks_client.wait_until(
           :instance_stopped, instance_ids: instance_ids
         ) do |w|
-          binding.pry
           ::Cluster::Instance.apply_wait_options(w)
         end
 
