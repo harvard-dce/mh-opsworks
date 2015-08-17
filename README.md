@@ -398,6 +398,29 @@ preview and can only be deployed to the us-west-2 region.  You can create an
 efs-backed cluster by selecting one of the efs variants after running
 `./bin/rake cluster:new`.
 
+### Cloudfront support
+
+This is currently a manual process, as generally you only want production and
+staging clusters to have cloudfront distribution.  Start by creating a
+cloudfront distribution with the external hostname of your engage node for both
+the "origin domain name" and "origin id". The path should be "/static".
+
+Once you've got your cloudfront domain, you include a key in your stack's
+`custom_json` to have matterhorn deliver assets over cloudfront:
+
+
+```
+{
+  "stack": {
+    "chef": {
+      "custom_json": {
+        "cloudfront_url": "yourcloudfrontdistribution.example.com"
+      },
+    }
+  }
+}
+```
+
 ### Potentially problematic aws resource limits
 
 The default aws resource limits are listed
@@ -423,6 +446,11 @@ of clusters you'd like to deploy in your account.
 Fortunately error messages are fairly clear when a resource limit is hit,
 either in the shell output of mh-opsworks or in the aws web cloudformation (or
 other) UIs.
+
+## TODO
+
+* Automate cloudfront distribution creation
+* Automate external fqdn assignment to engage and admin nodes
 
 ## Contributing or reporting problems
 
