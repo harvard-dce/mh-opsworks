@@ -76,9 +76,20 @@ module Cluster
           )
         end
       end
+      wait_for_users_to_propagate
     end
 
     private
+
+    def wait_for_users_to_propagate
+      puts 'Waiting for changes (if any) to propagate across the cluster'
+      sleep 10
+      user_deployment_command = Cluster::Deployment.all.find do |deployment|
+        deployment.command.args['recipes'].include?('ssh_users')
+      end
+      user_deployment_command &&
+        self.class.wait_until_deployment_completed(user_deployment_command.deployment_id)
+    end
 
     def create_user_profile(user_arn, ssh_key)
       self.class.opsworks_client.create_user_profile(
