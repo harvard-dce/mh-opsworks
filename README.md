@@ -421,6 +421,12 @@ Once you've got your cloudfront domain, you include a key in your stack's
 }
 ```
 
+### Live streaming support
+
+If you're using the DCE-specific matterhorn release, you should have live
+streaming support by default. Update the streaming-related keys in your
+`secrets.json` with the appropriate values before provisioning your cluster.
+
 ### Potentially problematic aws resource limits
 
 The default aws resource limits are listed
