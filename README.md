@@ -470,6 +470,9 @@ other) UIs.
 * [OpsWorks API reference](http://docs.aws.amazon.com/opsworks/latest/APIReference/Welcome.html)
 * [Aws ruby sdk](http://docs.aws.amazon.com/sdkforruby/api/Aws.html)
 * [OpsWorks docs](http://docs.aws.amazon.com/opsworks/latest/userguide/welcome.html)
+* Just starting out with ruby? [Just enough ruby for chef](https://docs.chef.io/ruby.html) | [try ruby](http://tryruby.org) | [beginners guide to ruby](https://hackhands.com/beginners-guide-ruby/)
+* See the [chef overview](http://docs.chef.io/chef_overview.html)
+* [Opsworks Cookbooks 101](https://docs.aws.amazon.com/opsworks/latest/userguide/cookbooks-101.html)
 
 ## Contributors
 
