@@ -47,8 +47,12 @@ namespace :cluster do
 
       if ['y','Y'].include?(answer)
         remote_config.sync
+        puts 'updating stack attributes in aws. . .'
         Cluster::Stack.update
+        puts 'updating app configuration in aws. . .'
         Cluster::App.update
+        puts 'updating layer configurations in aws. . .'
+        Cluster::Layers.update
       else
         puts "Quitting. Please resolve your config changes and try again."
         exit

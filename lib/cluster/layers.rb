@@ -5,9 +5,17 @@ module Cluster
       stack.layers
     end
 
-    def self.find_or_create
+    def self.update
+      stack = Stack.with_existing_stack
       layers_config.map do |layer|
-        Layer.find_or_create(layer)
+        Layer.update(stack, layer)
+      end
+    end
+
+    def self.find_or_create
+      stack = Stack.with_existing_stack
+      layers_config.map do |layer|
+        Layer.find_or_create(stack, layer)
       end
     end
   end

@@ -142,7 +142,7 @@ namespace :stack do
 
     desc 'init layers'
     task init: ['cluster:configtest', 'cluster:config_sync_check', 'stack:init'] do
-      layers = Cluster::Layers.find_or_create
+      layers = Cluster::Layers.update
       layers.each do |layer|
         puts %Q|Layer: "#{layer.name}" ready to serve!|
       end

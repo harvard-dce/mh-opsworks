@@ -7,7 +7,7 @@ module Cluster
       @params = params
     end
 
-    def create
+    def construct_layer_parameters
       custom_security_group_ids = default_security_group_ids
 
       if private_layer?
@@ -16,7 +16,7 @@ module Cluster
         custom_security_group_ids << get_security_group_for_public_layer
       end
 
-      layer_parameters = {
+      {
         stack_id: stack.stack_id,
         type: params.fetch(:type, 'custom'),
         enable_auto_healing: params.fetch(:enable_auto_healing, false),
@@ -30,6 +30,10 @@ module Cluster
         use_ebs_optimized_instances: params.fetch(:use_ebs_optimized_instances, false),
         custom_security_group_ids: custom_security_group_ids.compact
       }
+    end
+
+    def create
+      layer_parameters = construct_layer_parameters
       layer = opsworks_client.create_layer(layer_parameters)
       construct_instance(layer.layer_id)
     end
@@ -51,22 +55,45 @@ module Cluster
         params.fetch(:auto_assign_elastic_ips, false) == false
     end
 
-    def self.find_or_create(params)
-      layer = find_existing_by_name(params[:name])
-      return construct_instance(layer.layer_id) if layer
-
-      layer = new(Stack.find_or_create, params)
-      layer.create
+    def update
+      layer = self.class.find_existing_by_name(stack, params[:name])
+      if layer
+        layer_parameters = construct_layer_parameters
+        [:name, :shortname, :stack_id, :type].each do |to_remove|
+          layer_parameters.delete(to_remove)
+        end
+        layer_parameters[:layer_id] = layer.layer_id
+        opsworks_client.update_layer(layer_parameters)
+        construct_instance(layer.layer_id)
+      else
+        self.class.create_layer(stack, params)
+      end
     end
 
-    def self.find_existing_by_name(name)
-      stack = Stack.with_existing_stack
+    def self.update(stack, params)
+      layer = new(stack, params)
+      layer.update
+    end
+
+    def self.find_or_create(stack, params)
+      layer = find_existing_by_name(stack, params[:name])
+      return construct_instance(layer.layer_id) if layer
+
+      create_layer(stack, params)
+    end
+
+    def self.find_existing_by_name(stack, name)
       stack.layers.find do |layer|
         layer.name == name
       end
     end
 
     private
+
+    def self.create_layer(stack, params)
+      layer = new(stack, params)
+      layer.create
+    end
 
     def find_security_group_id_for_group_named(name)
       sg = ec2_client.describe_security_groups.inject([]){ |memo, page| memo + page.security_groups }.find do |group|
