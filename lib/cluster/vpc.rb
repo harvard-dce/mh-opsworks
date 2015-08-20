@@ -12,12 +12,11 @@ module Cluster
     end
 
     def self.delete
-      vpc = find_existing
-      if vpc
-        stack = cloudformation_client.describe_stacks.inject([]){ |memo, page| memo + page.stacks }.find do |stack|
-          stack.stack_name == vpc_name
-        end
+      stack = cloudformation_client.describe_stacks.inject([]){ |memo, page| memo + page.stacks }.find do |stack|
+        stack.stack_name == vpc_name
+      end
 
+      if stack
         cloudformation_client.delete_stack(
           stack_name: stack.stack_id
         )
