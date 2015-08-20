@@ -159,6 +159,7 @@ in with the password you set in your cluster configuration files.
     # This also pushes relevant changes to the active cluster, layers and app in AWS -
     # for instance the revisions used for the custom chef repo and/or the application.
     # This is recommended way to edit your cluster config.
+    # DO NOT EDIT YOUR STACK NAME. IT WILL CAUSE MANY, MANY PROBLEMS.
     ./bin/rake cluster:edit
 
     # See info about the currently active cluster
@@ -206,6 +207,15 @@ in with the password you set in your cluster configuration files.
     ./bin/rake admin:cluster:delete
 
 ## Notes
+
+### Do not edit your stack name
+
+We use your stack name as a seed to calculate names for other resources -
+instance profiles, VPCs, cloudformation stacks and templates, instance names,
+etc. We use your stack name to interrogate the AWS APIs to find resources
+related to your opsworks stack: changing your stack name will most definitely
+make your life difficult in a thousand little ways. Don't do it, via
+`mh-opsworks` or the AWS console.
 
 ### Chef
 

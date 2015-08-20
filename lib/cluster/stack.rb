@@ -16,7 +16,7 @@ module Cluster
       if stack
         vpc = VPC.find_existing
         parameters = stack_parameters(vpc)
-        [:region, :vpc_id].each do |to_remove|
+        [:region, :vpc_id, :name].each do |to_remove|
           parameters.delete(to_remove)
         end
         opsworks_client.update_stack(
