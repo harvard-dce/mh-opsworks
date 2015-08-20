@@ -7,13 +7,13 @@ namespace :stack do
   end
 
   desc 'delete stack. You must remove all instances and apps first'
-  task delete: ['cluster:configtest', 'cluster:config_sync_check'] do
+  task delete: ['cluster:configtest', 'cluster:config_sync_check', 'cluster:production_failsafe'] do
     Cluster::Stack.with_existing_stack do |stack|
       Cluster::Stack.delete
     end
   end
 
-  desc 'update AWS stack and app configuration based on the current configuration'
+  desc 'update AWS stack, app, and layer based on the current configuration'
   task update: ['cluster:configtest', 'cluster:config_sync_check'] do
     Cluster::Stack.update
     Cluster::App.update
@@ -113,12 +113,12 @@ namespace :stack do
     end
 
     desc 'stop and delete all instances in the stack'
-    task delete: ['cluster:configtest', 'cluster:config_sync_check'] do
+    task delete: ['cluster:configtest', 'cluster:config_sync_check', 'cluster:production_failsafe'] do
       Cluster::Instances.delete
     end
 
     desc 'stop all instances in the configured stack'
-    task stop: ['cluster:configtest', 'cluster:config_sync_check'] do
+    task stop: ['cluster:configtest', 'cluster:config_sync_check', 'cluster:production_failsafe'] do
       Cluster::Stack.stop_all
     end
 

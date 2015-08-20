@@ -1,4 +1,21 @@
 namespace :cluster do
+  task :production_failsafe do
+    config = Cluster::Config.new
+    stack_name = config.parsed[:stack][:name]
+    if stack_name.match(/prod|prd|stage|stg/i)
+      puts
+      puts "CAUTION! You've chosen a destructive action that could lead to downtime or permanent data loss."
+      puts "Type the full stack name below and hit enter to confirm, or just hit enter to abort."
+      puts
+      print "CONFIRM: "
+      answer = STDIN.gets.chomp
+
+      if answer != stack_name
+        exit 1
+      end
+    end
+  end
+
   desc 'Sanity check your cluster configuration'
   task :configtest do
     config = Cluster::Config.new

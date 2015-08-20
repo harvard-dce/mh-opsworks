@@ -29,7 +29,7 @@ namespace :admin do
     end
 
     desc 'Delete a matterhorn cluster using the policies defined in your cluster configuration'
-    task delete: ['cluster:configtest', 'cluster:config_sync_check'] do
+    task delete: ['cluster:configtest', 'cluster:config_sync_check', 'cluster:production_failsafe'] do
       puts 'deleting app'
       Cluster::App.delete
 

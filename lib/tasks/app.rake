@@ -6,7 +6,7 @@ namespace :app do
   end
 
   desc 'Delete app'
-  task delete: ['cluster:configtest', 'cluster:config_sync_check'] do
+  task delete: ['cluster:configtest', 'cluster:config_sync_check', 'cluster:production_failsafe'] do
     Cluster::App.delete
   end
 end

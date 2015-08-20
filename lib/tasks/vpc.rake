@@ -12,7 +12,7 @@ namespace :vpc do
   end
 
   desc 'Remove the configured VPC'
-  task delete: ['cluster:configtest', 'cluster:config_sync_check'] do
+  task delete: ['cluster:configtest', 'cluster:config_sync_check', 'cluster:production_failsafe'] do
     Cluster::VPC.delete
   end
 end
