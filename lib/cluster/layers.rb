@@ -6,9 +6,11 @@ module Cluster
     end
 
     def self.update
-      stack = Stack.with_existing_stack
-      layers_config.map do |layer|
-        Layer.update(stack, layer)
+      stack = Stack.find_existing
+      if stack
+        layers_config.map do |layer|
+          Layer.update(stack, layer)
+        end
       end
     end
 
