@@ -97,11 +97,12 @@ module Cluster
     end
 
     def self.deployable_instance_ids_in_layers(layers)
+      stack = Cluster::Stack.with_existing_stack
       instances = []
       online_instances = Cluster::Instances.online
 
       layers.each do |name|
-        layer = Layer.find_existing_by_name(name)
+        layer = Layer.find_existing_by_name(stack, name)
         instances += online_instances.find_all{|instance| instance.layer_ids.include?(layer.layer_id) }
       end
       instances.map(&:instance_id)
