@@ -14,6 +14,12 @@ module Cluster
       end
     end
 
+    def self.find_by_shortnames(names = [])
+      all.find_all do |layer|
+        names.include?(layer.shortname)
+      end
+    end
+
     def self.find_or_create
       stack = Stack.with_existing_stack
       layers_config.map do |layer|

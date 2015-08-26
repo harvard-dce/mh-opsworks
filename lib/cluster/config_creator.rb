@@ -23,7 +23,7 @@ module Cluster
         ganglia_disk_size: '10',
 
         matterhorn_root_size: '20',
-        matterhorn_workspace_size: '100'
+        matterhorn_workspace_size: '50'
       },
 
       medium: {
@@ -48,7 +48,7 @@ module Cluster
         ganglia_disk_size: '50',
 
         matterhorn_root_size: '50',
-        matterhorn_workspace_size: '500'
+        matterhorn_workspace_size: '50'
       },
 
       large: {
@@ -73,7 +73,7 @@ module Cluster
         ganglia_disk_size: '100',
 
         matterhorn_root_size: '50',
-        matterhorn_workspace_size: '500'
+        matterhorn_workspace_size: '50'
       },
 
       zadara_medium: {
@@ -95,7 +95,7 @@ module Cluster
         ganglia_disk_size: '50',
 
         matterhorn_root_size: '50',
-        matterhorn_workspace_size: '500'
+        matterhorn_workspace_size: '50'
       },
 
       zadara_large: {
@@ -117,7 +117,7 @@ module Cluster
         ganglia_disk_size: '100',
 
         matterhorn_root_size: '50',
-        matterhorn_workspace_size: '500'
+        matterhorn_workspace_size: '50'
       },
 
       efs_small: {
@@ -139,7 +139,7 @@ module Cluster
         ganglia_disk_size: '10',
 
         matterhorn_root_size: '20',
-        matterhorn_workspace_size: '100'
+        matterhorn_workspace_size: '50'
       },
 
       efs_medium: {
@@ -161,7 +161,7 @@ module Cluster
         ganglia_disk_size: '50',
 
         matterhorn_root_size: '50',
-        matterhorn_workspace_size: '500'
+        matterhorn_workspace_size: '50'
       },
 
       efs_large: {
@@ -183,7 +183,7 @@ module Cluster
         ganglia_disk_size: '100',
 
         matterhorn_root_size: '50',
-        matterhorn_workspace_size: '500'
+        matterhorn_workspace_size: '50'
       },
     }
 

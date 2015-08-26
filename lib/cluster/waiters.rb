@@ -54,6 +54,25 @@ module Cluster
         yield if block_given?
       end
 
+      def wait_until_all_configure_events_complete
+        instance_ids = Cluster::Instances.online.map(&:instance_id)
+        print "Waiting for configuration events to propagate across the entire cluster: "
+
+        sleep 30
+        loop do
+          incomplete_configures = []
+          instance_ids.each do |instance_id|
+            incomplete_configures << opsworks_client.describe_commands(instance_id: instance_id).commands.find_all do |c|
+              c.type == 'configure' && (c.status == 'pending') && (Time.now() - Time.parse(c.created_at) < 600)
+            end
+          end
+          print '.'
+          break if incomplete_configures.flatten.compact.empty?
+          sleep 5
+        end
+        puts " done!"
+      end
+
       def wait_until_opsworks_instances_stopped(instance_ids = [])
         print "Ensuring #{instance_ids.length} instances are stopped: "
         opsworks_client.wait_until(

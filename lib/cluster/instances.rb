@@ -55,6 +55,10 @@ module Cluster
       instances
     end
 
+    def self.find_existing_always_on_instances
+      find_existing.find_all{ |instance| instance.auto_scaling_type.nil? }
+    end
+
     def self.online
       find_existing.reject{|instance| instance.status != 'online'}
     end

@@ -82,7 +82,7 @@ module Cluster
               "Action" =>  [
                 "ec2:*",
                 "iam:PassRole",
-                "cloudwatch:GetMetricStatistics",
+                "cloudwatch:*",
                 "elasticloadbalancing:*",
                 "rds:*"
               ],
