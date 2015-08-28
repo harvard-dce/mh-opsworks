@@ -50,6 +50,5 @@ module Cluster
   class VpcConflictsWithAnother < StandardError; end
   class StackConflictsWithAnother < StandardError; end
   class StackNotInitialized < StandardError; end
-  class NoInstancesOnline < StandardError; end
   class NoRecipesToRun < StandardError; end
 end

@@ -91,8 +91,6 @@ module Cluster
           }
         )
         wait_until_deployment_completed(deployment.deployment_id)
-      else
-        raise Cluster::NoInstancesOnline
       end
     end
 
