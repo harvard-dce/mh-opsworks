@@ -457,8 +457,8 @@ of clusters you'd like to deploy in your account.
 
 * VPCs per region
 * Internet gateways per region
-* Cloudformation Stack limit
-* Opsworks Stack Limit
+* Cloudformation Stack limit per region
+* Opsworks Stack Limit for the entire account, not limited per region.
 
 Fortunately error messages are fairly clear when a resource limit is hit,
 either in the shell output of mh-opsworks or in the aws web cloudformation (or
