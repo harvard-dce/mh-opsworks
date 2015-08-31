@@ -28,7 +28,12 @@ module Cluster
         custom_recipes: params.fetch(:custom_recipes, {}),
         volume_configurations: params.fetch(:volume_configurations, {}),
         use_ebs_optimized_instances: params.fetch(:use_ebs_optimized_instances, false),
-        custom_security_group_ids: custom_security_group_ids.compact
+        custom_security_group_ids: custom_security_group_ids.compact,
+        lifecycle_event_configuration: {
+          shutdown: {
+            execution_timeout: 60 * 10 # 10 minutes
+          }
+        }
       }
     end
 
