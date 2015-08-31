@@ -40,7 +40,7 @@ module Cluster
         admin_instance_type: 'c4.xlarge',
 
         workers_instance_type: 'c4.xlarge',
-        workers_instance_count: 4,
+        workers_instance_count: 2,
 
         engage_instance_type: 'c4.xlarge',
 
@@ -65,7 +65,7 @@ module Cluster
         admin_instance_type: 'c4.8xlarge',
 
         workers_instance_type: 'c4.8xlarge',
-        workers_instance_count: 5,
+        workers_instance_count: 2,
 
         engage_instance_type: 'c4.8xlarge',
 
@@ -87,7 +87,7 @@ module Cluster
         admin_instance_type: 'c4.xlarge',
 
         workers_instance_type: 'c4.xlarge',
-        workers_instance_count: 4,
+        workers_instance_count: 2,
 
         engage_instance_type: 'c4.xlarge',
 
@@ -109,7 +109,7 @@ module Cluster
         admin_instance_type: 'c4.8xlarge',
 
         workers_instance_type: 'c4.8xlarge',
-        workers_instance_count: 5,
+        workers_instance_count: 2,
 
         engage_instance_type: 'c4.8xlarge',
 
@@ -153,7 +153,7 @@ module Cluster
         admin_instance_type: 'c4.xlarge',
 
         workers_instance_type: 'c4.xlarge',
-        workers_instance_count: 4,
+        workers_instance_count: 2,
 
         engage_instance_type: 'c4.xlarge',
 
@@ -175,7 +175,7 @@ module Cluster
         admin_instance_type: 'c4.8xlarge',
 
         workers_instance_type: 'c4.8xlarge',
-        workers_instance_count: 5,
+        workers_instance_count: 2,
 
         engage_instance_type: 'c4.8xlarge',
 

@@ -40,6 +40,7 @@ module Cluster
     def create
       layer_parameters = construct_layer_parameters
       layer = opsworks_client.create_layer(layer_parameters)
+      AutoScalingConfig.set_auto_scaling_params(layer.layer_id, params)
       construct_instance(layer.layer_id)
     end
 
@@ -69,6 +70,7 @@ module Cluster
         end
         layer_parameters[:layer_id] = layer.layer_id
         opsworks_client.update_layer(layer_parameters)
+        AutoScalingConfig.set_auto_scaling_params(layer.layer_id, params)
         construct_instance(layer.layer_id)
       else
         self.class.create_layer(stack, params)

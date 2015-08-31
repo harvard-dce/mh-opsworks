@@ -5,6 +5,10 @@ module Cluster
         name.downcase.gsub(/[^a-z\d\-]/,'-')
       end
 
+      def topic_name
+        stack_config[:name].downcase.gsub(/[^a-z\d\-_]/,'_')
+      end
+
       def stack_shortname
         calculate_name(stack_config[:name])
       end

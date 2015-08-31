@@ -2,12 +2,17 @@ module Cluster
   class InstanceSyncer < Base
     include Waiters
 
-    attr_reader :layer, :instances_config, :desired_number_of_instances
+    attr_reader :layer, :instances_config, :desired_number_of_instances, :type
 
-    def initialize(layer: nil, instances_config: nil)
+    def initialize(layer: nil, instances_config: nil, type: nil)
       @layer = layer
       @instances_config = instances_config
-      @desired_number_of_instances = instances_config.fetch(:number_of_instances, 0).to_i
+      @type = type
+      if type == 'always on'
+        @desired_number_of_instances = instances_config.fetch(:number_of_instances, 0).to_i
+      else
+        @desired_number_of_instances = instances_config[:scaling].fetch(:number_of_scaling_instances, 0).to_i
+      end
     end
 
     def remove_excess_instances
@@ -28,14 +33,14 @@ module Cluster
 
     def create_new_instances
       instance_count_delta.times.map do
-        Cluster::Instance.find_or_create_in_layer(layer, instances_config)
+        Cluster::Instance.find_or_create_in_layer(layer, instances_config, type)
       end
     end
 
     private
 
     def instances_in_layer
-      Instances.get_instances_in(layer) || []
+      Instances.get_instances_in(layer, type) || []
     end
 
     def get_oldest_instance

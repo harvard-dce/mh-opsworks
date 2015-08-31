@@ -35,12 +35,10 @@ module Cluster
       instances = []
       Layers.find_or_create.each do |layer|
         instances_config = instances_config_in_layer(layer.shortname)
-        syncer = InstanceSyncer.new(
-          layer: layer,
-          instances_config: instances_config
-        )
-        removed_instances = syncer.remove_excess_instances
-        syncer.create_new_instances
+        create_instances_for(layer, instances_config, 'always on')
+        if instances_config.has_key?(:scaling)
+          create_instances_for(layer, instances_config, 'load based')
+        end
         instances += get_instances_in(layer)
       end
       instances
@@ -65,8 +63,24 @@ module Cluster
 
     private
 
-    def self.get_instances_in(layer)
-      opsworks_client.describe_instances(layer_id: layer.layer_id).inject([]){ |memo, page| memo + page.instances }
+    def self.create_instances_for(layer, instances_config, type)
+      syncer = InstanceSyncer.new(
+        layer: layer,
+        instances_config: instances_config,
+        type: type
+      )
+      removed_instances = syncer.remove_excess_instances
+      syncer.create_new_instances
+    end
+
+    def self.get_instances_in(layer, type = nil)
+      opsworks_client.describe_instances(layer_id: layer.layer_id).inject([]){ |memo, page| memo + page.instances }.find_all do |i|
+        if type == 'always on'
+          i.auto_scaling_type == nil
+        elsif type == 'load based'
+          i.auto_scaling_type == 'load'
+        end
+      end
     end
   end
 end

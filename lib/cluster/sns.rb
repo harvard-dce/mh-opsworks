@@ -41,10 +41,6 @@ module Cluster
       end
     end
 
-    def self.topic_name
-      stack_config[:name].downcase.gsub(/[^a-z\d\-_]/,'_')
-    end
-
     def self.get_topic_arn
       # create_topic is idempotent
       sns_client.create_topic(name: topic_name).topic_arn

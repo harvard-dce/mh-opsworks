@@ -21,7 +21,8 @@ matterhorn cluster.
 * The ability to create and destroy matterhorn clusters completely, including all attached resources,
 * Tagged matterhorn logging to [loggly](http://loggly.com),
 * A set of high-level rake tasks designed to make managing your OpsWorks matterhorn cluster easier,
-* A way to switch between existing clusters to make collaboration easier.
+* A way to switch between existing clusters to make collaboration easier,
+* Automatic horizontal worker scaling.
 
 ## Getting started
 
@@ -122,27 +123,13 @@ the AWS web console. Starting the entire cluster takes about 30 minutes the
 first time because you're installing a bunch of base packages.  Subsequent
 instance restarts go significantly faster.
 
-### Step 7 - Start matterhorn
+Matterhorn is started automatically, and instances start in the correct order
+to ensure dependent services are available for a properly provisioned cluster.
 
-We've built chef recipes to manage cluster-wide matterhorn startup and
-shutdown, so we'll use the "execute recipe" facilities built into OpsWorks to
-start matterhorn on the relevant instances - Admin, Engage, and Workers.
-
-    ./bin/rake matterhorn:restart
-
-The "mh-opsworks-recipes::restart-matterhorn" recipe (run under the covers by
-the `matterhorn:start` rake task) is safe for both cold starts and warm
-restarts.
-
-You can also start matterhorn via the OpsWorks web UI under "Stack -> Run
-Command". Select the correct instances, choose "Execute Recipes" and enter
-"mh-opsworks-recipes::restart-matterhorn". The rake task above does essentially
-the same thing, but with more precision.
-
-### Step 8 - Log in!
+### Step 7 - Log in!
 
 Find the public hostname for your admin node and visit it in your browser.  Log
-in with the password you set in your cluster configuration files.
+in with the password you set in your `secrets.json` file.
 
 ### Other
 
@@ -188,8 +175,8 @@ in with the password you set in your cluster configuration files.
     # Stop matterhorn:
     ./bin/rake matterhorn:stop
 
-    # Start matterhorn
-    ./bin/rake matterhorn:start
+    # Restart matterhorn - this is not order intelligent, the instances are restarted as opsworks gets to them.
+    ./bin/rake matterhorn:restart
 
     # Execute a chef recipe against a set of layers
     ./bin/rake stack:commands:execute_recipes_on_layers layers="Admin,Engage,Workers" recipes="mh-opsworks-recipes::some-excellent-recipe"
@@ -437,6 +424,46 @@ Once you've got your cloudfront domain, you include a key in your stack's
 If you're using the DCE-specific matterhorn release, you should have live
 streaming support by default. Update the streaming-related keys in your
 `secrets.json` with the appropriate values before provisioning your cluster.
+
+### Horizontal worker scaling
+
+Basic automatic horizontal worker scaling is accomplished through a combination
+of opsworks built-ins and custom metrics and alarms.
+
+You can disable this by editing your cluster config and setting "enable" to
+`false` in the scaling section of the workers layer.
+
+The `mh-opsworks-recipes::install-job-queued-metrics` recipe creates a
+"MatterhornJobsQueued" metric bound to your Ganglia monitoring instance. This
+metric is then used in the `<your_cluster_name>_jobs_queued_high` alarm. When
+this alarm fires, the workers are scaled up according to the parameters set in
+your cluster config.
+
+Workers are scaled down less aggressively when the workers-wide CPU drops below
+20%.  You will probably need to tweak these levels for your workload.
+
+You can change the number of queued jobs that trigger the alarm in your cluster
+config's `custom_json`:
+
+```
+{
+  "stack": {
+    "chef": {
+      "custom_json": {
+        "scale_up_when_queued_jobs_gt": 4
+      },
+    }
+  }
+}
+```
+
+After modifying this setting, you'll need to execute the
+`mh-opsworks-recipes::install-job-queued-metrics` recipe against your Ganglia
+monitoring instance.
+
+You can modify scaling behavior by editing the `scaling` section of the worker
+layer's `instances` configuration. Options (except for `alarm_suffix`) are
+passed directly through to the ruby SDK.
 
 ### Potentially problematic aws resource limits
 

@@ -26,7 +26,7 @@ module Cluster
       )
     end
 
-    def self.find_or_create_in_layer(layer, instances_config)
+    def self.find_or_create_in_layer(layer, instances_config, type)
       vpc = Cluster::VPC.find_existing
       subnet =
         if layer.auto_assign_public_ips == false &&
@@ -43,7 +43,8 @@ module Cluster
         layer_ids: [layer.layer_id],
         subnet_id: subnet.subnet_id,
         root_device_type: instances_config.fetch(:root_device_type, 'instance-store'),
-        instance_type: instances_config.fetch(:instance_type, 't2.micro')
+        instance_type: instances_config.fetch(:instance_type, 't2.micro'),
+        auto_scaling_type: (type == 'load based') ? 'load' : nil
       }
       opsworks_client.create_instance(instance_params)
     end

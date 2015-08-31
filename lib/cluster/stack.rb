@@ -56,9 +56,9 @@ module Cluster
       new_stack = false
 
       with_existing_stack do |stack|
-        start_all_in_layers(['storage','db-master','monitoring-master'])
+        start_all_in_layers(['storage','db-master'])
         start_all_in_layers(['admin'])
-        start_all_in_layers(['workers', 'engage'])
+        start_all_in_layers(['workers', 'engage','monitoring-master'])
         start_all_other_instances
       end
     end
