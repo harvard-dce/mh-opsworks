@@ -1,15 +1,3 @@
-GIT
-  remote: https://github.com/harvard-dce/aws-sdk-ruby
-  revision: ffe1373a699bf4a6d9d370e9525a3c1dad8cb614
-  branch: master
-  specs:
-    aws-sdk (2.1.14)
-      aws-sdk-resources (= 2.1.14)
-    aws-sdk-core (2.1.14)
-      jmespath (~> 1.0)
-    aws-sdk-resources (2.1.14)
-      aws-sdk-core (= 2.1.14)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -19,6 +7,12 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
+    aws-sdk (2.1.18)
+      aws-sdk-resources (= 2.1.18)
+    aws-sdk-core (2.1.18)
+      jmespath (~> 1.0)
+    aws-sdk-resources (2.1.18)
+      aws-sdk-core (= 2.1.18)
     climate_control (0.0.3)
       activesupport (>= 3.0)
     coderay (1.1.0)
@@ -61,7 +55,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  aws-sdk!
+  aws-sdk (~> 2.1.18)
   climate_control
   diffy (~> 3.0.7)
   erubis (~> 2.7.0)

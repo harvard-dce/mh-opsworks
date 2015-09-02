@@ -1,7 +1,6 @@
 source "https://rubygems.org"
 
-# gem 'aws-sdk', '~> 2.1.8'
-gem 'aws-sdk', git: 'https://github.com/harvard-dce/aws-sdk-ruby', branch: 'master'
+gem 'aws-sdk', '~> 2.1.18'
 
 gem 'rake', '~> 10.4.2'
 
