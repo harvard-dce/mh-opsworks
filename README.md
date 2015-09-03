@@ -52,7 +52,7 @@ would be "jane".
 
 You must have ruby 2 installed, ideally through something like rbenv or rvm,
 though if your system ruby is >= 2 you should be fine. `./bin/setup` installs
-prerequisites and sets up an empty `secrets.json`.
+prerequisites and sets up a template `secrets.json`.
 
     git clone https://github.com/harvard-dce/mh-opsworks mh-opsworks/
     cd mh-opsworks
@@ -63,10 +63,8 @@ assume you're in repo root.
 
 ### Step 3 - Choose (or create) your configuration files.
 
-First, be sure you have a `secrets.json` with the correct values in it. The
-most important ones are `access_key_id`, `secret_access_key`,
-`shared_asset_bucket_name`, and `cluster_config_bucket_name`. This file lives
-in the root of the repository by default.
+First, be sure you have a `secrets.json` with the correct values in it. This
+file lives in the root of the repository by default.
 
 Once you've set up your `secrets.json` correctly, you can start working with
 clusters.
@@ -129,7 +127,7 @@ to ensure dependent services are available for a properly provisioned cluster.
 ### Step 7 - Log in!
 
 Find the public hostname for your admin node and visit it in your browser.  Log
-in with the password you set in your `secrets.json` file.
+in with the password you set in your cluster configuration.
 
 ### Other
 
@@ -264,6 +262,15 @@ immediately.
 If your local version is ahead of the remote authoritative version you'll get a
 chance to see the differences and then publish your local changes.
 
+### Base secrets
+
+If you'd like to share common secrets among your cluster configurations, create
+a file named `base-secrets.json` in the bucket defined by
+`cluster_config_bucket_name`. The contents of this file are included
+automatically in `stack` -> `chef` -> `custom_json` during cluster creation.
+See the example `base-secrets.json` file in `templates/base-secrets.json`.
+This should save you some time during cluster creation.
+
 ### NFS storage options
 
 The default cluster configuration assumes you're using NFS storage provided by
@@ -281,24 +288,27 @@ storage](http://www.zadarastorage.com), for instance, please see
 A dummy self-signed SSL cert is deployed by default to the engage node and
 linked into the nginx proxy by the
 `mh-opsworks-recipes::configure-engage-nginx-proxy` recipe.  The ssl certs are
-configured in your `secrets.json`:
+configured in your cluster configuration:
 
 
 ```
 {
   "stack": {
-    "secrets": {
-      "ssl": {
-        "certificate": "a cert on a single line, all newlines replaced with \n",
-        "key": "a key on a single line, all newlines replace with \n",
-        "chain": "Ditto, only necessary if your cert uses a chain"
-      },
+    "chef": {
+      "custom_json": {
+        "ssl": {
+          "certificate": "a cert on a single line, all newlines replaced with \n",
+          "key": "a key on a single line, all newlines replace with \n",
+          "chain": "Ditto, only necessary if your cert uses a chain"
+        }
+      }
     }
   }
 }
 ```
 
-If you'd like to disable SSL, just set `certificate` and `key` to empty strings.
+If you'd like to disable SSL, just set `certificate` and `key` to empty strings
+or don't include this stanza at all.
 
 ### Metrics, alarms, and notifications
 
@@ -354,8 +364,9 @@ Please submit a PR when you've confirmed everything works.
 ### Loggly
 
 The Admin, Engage, and Workers layers include a chef recipe to add an rsyslog
-drain to loggly for matterhorn logs. Update `secrets.json` to add your loggly
-URL and token, and ensure matterhorn is logging to syslog.
+drain to loggly for matterhorn logs. Update the stack's `custom_json` section
+of your cluster configuration to add your loggly URL and token, and ensure
+matterhorn is logging to syslog.
 
 If you are using your cluster for dev work but you still wish to log to loggly,
 consider setting up a separate ["free tier"](https://www.loggly.com/plans-and-pricing/)
@@ -370,14 +381,15 @@ Log entries are tagged with:
 
 If you don't want to log to loggly, remove the
 `mh-opsworks-recipes::rsyslog-to-loggly` recipe from your cluster config and
-remove the "loggly" stanza from `secrets.json`.
+remove the "loggly" stanza from your stack's `custom_json`.
 
 ### SMTP via amazon SES
 
 If you're starting from scratch, you need to create SMTP credentials in the SES
-section of the AWS console so you can populate the `stack` -> `secrets` ->
-`smtp_auth` stanza of your `secrets.json` file.  If you're starting with an
-existing `secrets.json`, this has probably already been done for you.
+section of the AWS console. Then use these values to populate the `stack` ->
+`chef` -> `custom_json` -> `smtp_auth` stanza of your `secrets.json` file.  If
+you're starting with an existing `secrets.json`, this has probably already been
+done for you.
 
 You also need to verify the `default_email_sender` address in the amazon SES
 console. This means the `default_email_sender` must be deliverable to pick up
@@ -422,8 +434,10 @@ Once you've got your cloudfront domain, you include a key in your stack's
 ### Live streaming support
 
 If you're using the DCE-specific matterhorn release, you should have live
-streaming support by default. Update the streaming-related keys in your
-`secrets.json` with the appropriate values before provisioning your cluster.
+streaming support by default. Update the streaming-related keys in your cluster
+configuration with the appropriate values before provisioning your cluster.
+These keys include `live_streaming_url` and `live_streaming_suffix` and are
+used in the various `deploy-*` recipes.
 
 ### Horizontal worker scaling
 
@@ -495,6 +509,7 @@ other) UIs.
 
 * Automate cloudfront distribution creation
 * Automate external fqdn assignment to engage and admin nodes
+* Automate wowza media server provisioning
 
 ## Contributing or reporting problems
 

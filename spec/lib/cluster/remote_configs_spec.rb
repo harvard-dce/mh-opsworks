@@ -9,7 +9,8 @@ describe Cluster::RemoteConfigs do
           :list_objects,
           {
             contents: [
-              { key: 'foobar' }
+              { key: 'cluster_config-foobar' },
+              { key: 'not_a_config' }
             ]
           }
         )
@@ -17,7 +18,7 @@ describe Cluster::RemoteConfigs do
 
       objects = described_class.all
 
-      expect(objects).to eq ['foobar']
+      expect(objects).to eq ['cluster_config-foobar']
     end
   end
 

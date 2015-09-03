@@ -276,11 +276,7 @@ describe Cluster::RemoteConfig do
       }
     )
     stub_secrets_to_include(
-      stack: {
-        secrets: {
-          cluster_config_bucket_name: bucket
-        }
-      }
+      cluster_config_bucket_name: bucket
     )
   end
 

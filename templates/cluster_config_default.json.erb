@@ -19,7 +19,7 @@
           "network": "<%= cidr_block_root %>.0/24",
           "layer_shortname": "storage"
         },
-        "scale_up_when_queued_jobs_gt": 3
+        "scale_up_when_queued_jobs_gt": 3<%= base_secrets_content %>
       },
       "custom_cookbooks_source": {
         "type": "git",
@@ -369,5 +369,5 @@
       }
     },
     "users": <%= default_users %>
-  }
+}
 }

@@ -199,13 +199,25 @@ module Cluster
       template = variant_attributes[:template]
 
       erb = Erubis::Eruby.new(File.read(template))
+      base_secrets = %Q|, #{get_base_secrets_content}|
 
-      all_attributes = attributes.merge(variant_attributes)
+      all_attributes = attributes.merge(variant_attributes).merge(base_secrets_content: base_secrets)
 
       erb.result(all_attributes)
     end
 
     private
+
+    def get_base_secrets_content
+      begin
+        Cluster::Assets.get_support_asset(
+          file_name: 'base-secrets.json',
+          bucket: Cluster::Base.cluster_config_bucket_name
+        )
+      rescue => e
+        File.read('templates/base-secrets.json')
+      end
+    end
 
     def get_variant
       if VARIANTS.has_key?("#{attributes[:variant]}".to_sym)

@@ -5,7 +5,7 @@ module Cluster
 
     class BucketConfigs < Base
       def self.sane?
-        if stack_secrets.fetch(:shared_asset_bucket_name, '') == ''
+        if stack_custom_json.fetch(:shared_asset_bucket_name, '') == ''
           raise NoSharedAssetBucketName.new('You must define a shared_asset_bucket_name in your custom stack json')
         end
 

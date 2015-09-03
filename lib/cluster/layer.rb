@@ -111,7 +111,7 @@ module Cluster
     end
 
     def layer_attributes
-      self.class.config.parsed_secrets.fetch(
+      self.class.stack_custom_json.fetch(
         %Q|#{params[:shortname]}-attributes|.to_sym, {}
       )
     end

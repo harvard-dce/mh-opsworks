@@ -12,7 +12,7 @@ module Cluster
       find_or_create_bucket(bucket)
 
       s3_client.put_object(
-        acl: 'public-read',
+        acl: 'bucket-owner-full-control',
         bucket: bucket,
         body: File.open(file_name),
         key: file_name
@@ -56,7 +56,7 @@ module Cluster
       return construct_bucket(bucket_name) if asset_bucket
 
       s3_client.create_bucket(
-        acl: 'public-read',
+        acl: 'private',
         bucket: bucket_name
       )
       construct_bucket(bucket_name)
