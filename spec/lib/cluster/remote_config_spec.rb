@@ -22,6 +22,7 @@ describe Cluster::RemoteConfig do
     end
 
     it 'writes the config to a file named with a calculated version of the cluster name' do
+      allow(Cluster::Assets).to receive(:get_support_asset)
       cluster_name = 'A Test Cluster'
 
       file_double = double('file handle')
@@ -30,7 +31,7 @@ describe Cluster::RemoteConfig do
 
       described_class.create(dummy_cluster_attributes.merge(name: cluster_name))
 
-      expect(File).to have_received(:open).with('cluster_config-a-test-cluster.json', 'w')
+      expect(File).to have_received(:open).with('cluster_config-a-test-cluster.json', 'w', 0600)
     end
   end
 
@@ -43,7 +44,7 @@ describe Cluster::RemoteConfig do
           remote_config.download
 
           expect(remote_config).to have_received(:remote_config_contents)
-          expect(File).to have_received(:open).with(Cluster::Config.new.active_config, 'w')
+          expect(File).to have_received(:open).with(Cluster::Config.new.active_config, 'w', 0600)
         end
       end
     end

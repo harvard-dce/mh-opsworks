@@ -12,7 +12,7 @@ module Cluster
       creator = ConfigCreator.new(attributes)
       templatted_output = creator.create
 
-      File.open(config_file_name, 'w') do |fh|
+      File.open(config_file_name, 'w', 0600) do |fh|
         fh.write JSON.pretty_generate(JSON.parse(templatted_output))
         fh.write "\n"
       end
@@ -87,7 +87,7 @@ module Cluster
     def download
       contents = remote_config_contents
 
-      File.open(config.active_config, 'w') do |fh|
+      File.open(config.active_config, 'w', 0600) do |fh|
         fh.write contents
       end
     end
@@ -131,7 +131,7 @@ module Cluster
     def write_config_with(config_values)
       json_output = JSON.pretty_generate(config_values)
 
-      File.open(config.active_config, 'w') do |fh|
+      File.open(config.active_config, 'w', 0600) do |fh|
         fh.write json_output
         fh.write "\n"
       end

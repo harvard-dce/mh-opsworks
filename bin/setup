@@ -21,6 +21,7 @@ bundle install --binstubs
 
 if [ ! -f "./secrets.json" ]; then
   cp templates/secrets_example.json ./secrets.json
+  chmod 600 ./secrets.json
   echo 'Creating a new ./secrets.json file, be sure to fill it in with your credentials and other "secrets".'
 else
   echo 'Using existing ./secrets.json file'
