@@ -31,7 +31,7 @@ module Cluster
         custom_security_group_ids: custom_security_group_ids.compact,
         lifecycle_event_configuration: {
           shutdown: {
-            execution_timeout: 60 * 10 # 10 minutes
+            execution_timeout: 60 * 2 # 2 minutes
           }
         }
       }
