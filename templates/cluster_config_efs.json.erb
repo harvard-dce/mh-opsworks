@@ -20,8 +20,7 @@
           "type": "external",
           "subtype": "efs",
           "nfs_server_host": ""
-        },
-        "scale_up_when_queued_jobs_gt": 3<%= base_secrets_content %>
+        }<%= base_secrets_content %>
       },
       "custom_cookbooks_source": {
         "type": "git",
@@ -195,28 +194,7 @@
         "instances": {
           "number_of_instances": "<%= workers_instance_count %>",
           "instance_type": "<%= workers_instance_type %>",
-          "root_device_type": "ebs",
-          "scaling": {
-            "enable": true,
-            "number_of_scaling_instances": "8",
-            "up": {
-              "instance_count": 1,
-              "thresholds_wait_time": 1,
-              "ignore_metrics_time": 2,
-              "cpu_threshold": -1,
-              "memory_threshold": -1,
-              "load_threshold": -1,
-              "alarm_suffix": "_jobs_queued_high"
-            },
-            "down": {
-              "instance_count": 1,
-              "thresholds_wait_time": 10,
-              "ignore_metrics_time": 20,
-              "cpu_threshold": 20.0,
-              "memory_threshold": -1,
-              "load_threshold": -1
-            }
-          }
+          "root_device_type": "ebs"
         }
       },
       {
@@ -295,7 +273,6 @@
             "mh-opsworks-recipes::install-utils",
             "mh-opsworks-recipes::enable-postfix-smarthost",
             "mh-opsworks-recipes::install-custom-metrics",
-            "mh-opsworks-recipes::install-job-queued-metrics",
             "mh-opsworks-recipes::create-alerts-from-opsworks-metrics",
             "mh-opsworks-recipes::clean-up-package-cache"
           ],

@@ -268,8 +268,11 @@ If you'd like to share common secrets among your cluster configurations, create
 a file named `base-secrets.json` in the bucket defined by
 `cluster_config_bucket_name`. The contents of this file are included
 automatically in `stack` -> `chef` -> `custom_json` during cluster creation.
+
 See the example `base-secrets.json` file in `templates/base-secrets.json`.
-This should save you some time during cluster creation.
+This should save you some time during cluster creation. It's important that
+this file have a limited ACL in s3 - `bucket-owner-full-control` is probably
+right.
 
 ### NFS storage options
 
@@ -441,20 +444,58 @@ used in the various `deploy-*` recipes.
 
 ### Horizontal worker scaling
 
-Basic automatic horizontal worker scaling is accomplished through a combination
-of opsworks built-ins and custom metrics and alarms.
+EXPERIMENTAL: Basic automatic horizontal worker scaling can be accomplished
+through a combination of opsworks built-ins and custom metrics and alarms.
 
 You can disable this by editing your cluster config and setting "enable" to
 `false` in the scaling section of the workers layer.
 
 The `mh-opsworks-recipes::install-job-queued-metrics` recipe creates a
-"MatterhornJobsQueued" metric bound to your Ganglia monitoring instance. This
-metric is then used in the `<your_cluster_name>_jobs_queued_high` alarm. When
-this alarm fires, the workers are scaled up according to the parameters set in
-your cluster config.
+"MatterhornJobsQueued" metric bound to your Ganglia monitoring instance. You
+need to add this recipe to the "setup" lifecycle event on the monitoring
+instance. This metric is then used in the
+`<your_cluster_name>_jobs_queued_high` alarm. When this alarm fires, the
+workers are scaled up according to the parameters set in your cluster config.
 
 Workers are scaled down less aggressively when the workers-wide CPU drops below
 20%.  You will probably need to tweak these levels for your workload.
+
+You can modify scaling behavior by editing the `scaling` section of the worker
+layer's `instances` configuration. Options (except for `alarm_suffix`) are
+passed directly through to the ruby SDK.
+
+Example config, in the "workers" layer:
+
+
+```
+    "instances": {
+      "number_of_instances": 4,
+
+      .... more stuff
+
+      "scaling": {
+        "enable": true,
+        "number_of_scaling_instances": "8",
+        "up": {
+          "instance_count": 2,
+          "thresholds_wait_time": 1,
+          "ignore_metrics_time": 2,
+          "cpu_threshold": -1,
+          "memory_threshold": -1,
+          "load_threshold": -1,
+          "alarm_suffix": "_jobs_queued_high"
+        },
+        "down": {
+          "instance_count": 1,
+          "thresholds_wait_time": 10,
+          "ignore_metrics_time": 20,
+          "cpu_threshold": 20.0,
+          "memory_threshold": -1,
+          "load_threshold": -1
+        }
+      }
+    }
+```
 
 You can change the number of queued jobs that trigger the alarm in your cluster
 config's `custom_json`:
@@ -474,10 +515,6 @@ config's `custom_json`:
 After modifying this setting, you'll need to execute the
 `mh-opsworks-recipes::install-job-queued-metrics` recipe against your Ganglia
 monitoring instance.
-
-You can modify scaling behavior by editing the `scaling` section of the worker
-layer's `instances` configuration. Options (except for `alarm_suffix`) are
-passed directly through to the ruby SDK.
 
 ### Potentially problematic aws resource limits
 
