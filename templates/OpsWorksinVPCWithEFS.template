@@ -157,6 +157,7 @@
     "PrivateSubnet" : {
       "Type" : "AWS::EC2::Subnet",
       "Properties" : {
+        "AvailabilityZone": { "Fn::GetAtt": ["PublicSubnet", "AvailabilityZone"] },
         "VpcId" : { "Ref" : "VPC" },
         "CidrBlock" : { "Ref" : "PrivateCIDRBlock" },
         "Tags" : [
