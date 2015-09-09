@@ -1,18 +1,18 @@
 module Cluster
   class Assets < Base
     def self.list_objects_in(bucket: '')
-      find_or_create_bucket(bucket)
+      find_or_create_bucket(name: bucket)
 
       s3_client.list_objects(
         bucket: bucket
       ).contents.map(&:key)
     end
 
-    def self.publish_support_asset_to(file_name: '', bucket: '')
-      find_or_create_bucket(bucket)
+    def self.publish_support_asset_to(file_name: '', bucket: '', permissions: 'private')
+      find_or_create_bucket(name: bucket, permissions: permissions)
 
       s3_client.put_object(
-        acl: 'bucket-owner-full-control',
+        acl: (permissions == 'private') ? 'bucket-owner-full-control' : 'public-read',
         bucket: bucket,
         body: File.open(file_name),
         key: file_name
@@ -23,7 +23,7 @@ module Cluster
 
     # This is not efficient and should only be used for small objects
     def self.get_support_asset(file_name: '', bucket: '')
-      find_or_create_bucket(bucket)
+      find_or_create_bucket(name: bucket)
 
       response = nil
       begin
@@ -38,7 +38,7 @@ module Cluster
     end
 
     def self.delete_support_asset(file_name: '', bucket: '')
-      find_or_create_bucket(bucket)
+      find_or_create_bucket(name: bucket)
       s3_client.delete_object(
         bucket: bucket,
         key: file_name
@@ -48,18 +48,18 @@ module Cluster
 
     private
 
-    def self.find_or_create_bucket(bucket_name)
+    def self.find_or_create_bucket(name: '', permissions: 'private')
       asset_bucket = s3_client.list_buckets.inject([]){ |memo, page| memo + page.buckets }.find do |bucket|
-        bucket.name == bucket_name
+        bucket.name == name
       end
 
-      return construct_bucket(bucket_name) if asset_bucket
+      return construct_bucket(name) if asset_bucket
 
       s3_client.create_bucket(
-        acl: 'private',
-        bucket: bucket_name
+        acl: (permissions == 'private') ? 'private' : 'public-read',
+        bucket: name
       )
-      construct_bucket(bucket_name)
+      construct_bucket(name)
     end
 
     def self.construct_bucket(name)
