@@ -320,6 +320,9 @@ started. These alarms monitor the load, available RAM and all local disk
 mounts for free space.  You can subscribe to get notifications for these alarms
 in the amazon SNS console under the topic named for your cluster.
 
+All alarms and metrics are sent to `us-east-1` (regardless of the region of
+your opsworks stack) to keep parity with how the default opsworks metrics work.
+
 ### Monitoring
 
 [Ganglia](http://ganglia.sourceforge.net) provides very deep instance-level
@@ -441,6 +444,31 @@ streaming support by default. Update the streaming-related keys in your cluster
 configuration with the appropriate values before provisioning your cluster.
 These keys include `live_streaming_url` and `live_streaming_suffix` and are
 used in the various `deploy-*` recipes.
+
+### MySQL backups
+
+The MySQL database is dumped to the `backups/mysql` directory on your nfs mount
+every hour via the `mh-opsworks-recipes::install-mysql-backups` recipe. This
+recipe also adds a cloudwatch metric and alarm to ensure the dumps are
+happening correctly.
+
+You can tweak the minute of the hour the dumps run by setting:
+
+
+```
+{
+  "stack": {
+    "chef": {
+      "custom_json": {
+        "run_mysql_dump_on_the": 5
+      },
+    }
+  }
+}
+```
+
+So, like your local radio weatherman, we run the mysql dump on the "5s", or the
+"2s", or the "10s" or whatever. The default is `2`.
 
 ### Horizontal worker scaling
 
