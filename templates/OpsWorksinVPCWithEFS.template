@@ -241,7 +241,7 @@
     "NATDevice" : {
       "Type" : "AWS::EC2::Instance",
       "Properties" : {
-        "InstanceType" : "t2.micro",
+        "InstanceType" : "t2.medium",
         "SourceDestCheck" : "false",
         "ImageId" : { "Fn::FindInMap" : [ "AWSNATAMI", { "Ref" : "AWS::Region" }, "AMI" ]},
         "NetworkInterfaces": [
