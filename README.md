@@ -320,8 +320,16 @@ started. These alarms monitor the load, available RAM and all local disk
 mounts for free space.  You can subscribe to get notifications for these alarms
 in the amazon SNS console under the topic named for your cluster.
 
-All alarms and metrics are sent to `us-east-1` (regardless of the region of
-your opsworks stack) to keep parity with how the default opsworks metrics work.
+#### Monitoring the NAT instance
+
+A cloudformation template is used to spin up / tear down the VPC and other
+associated infrastructure.  A NAT instance is hooked up to the private subnet
+to allow instances with no public IP egress routes to the world at large -
+including the opsworks API (which makes the NAT instance pretty important).
+
+We've created a cloudwatch alarm on the NAT instance against the default status
+checks that EC2 creates. Be sure to subscribe to the SNS topic as described
+above.
 
 ### Monitoring
 

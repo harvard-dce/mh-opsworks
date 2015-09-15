@@ -43,6 +43,10 @@ module Cluster
           {
             parameter_key: 'PrivateCIDRBlock',
             parameter_value: vpc_config[:private_cidr_block]
+          },
+          {
+            parameter_key: 'SNSTopicName',
+            parameter_value: topic_name
           }
         ]
 
