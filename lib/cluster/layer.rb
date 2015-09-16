@@ -8,12 +8,13 @@ module Cluster
     end
 
     def construct_layer_parameters
-      custom_security_group_ids = default_security_group_ids
+      vpc = VPC.find_existing
+      custom_security_group_ids = default_security_group_ids_in(vpc)
 
       if private_layer?
-        custom_security_group_ids << get_security_group_for_private_layer
+        custom_security_group_ids << get_security_group_for_private_layer_in(vpc)
       else
-        custom_security_group_ids << get_security_group_for_public_layer
+        custom_security_group_ids << get_security_group_for_public_layer_in(vpc)
       end
 
       {
@@ -44,16 +45,19 @@ module Cluster
       construct_instance(layer.layer_id)
     end
 
-    def default_security_group_ids
-      [ find_security_group_id_for_group_named("#{vpc_name}-InstancesAllowedToAccessEFS") ]
+    def default_security_group_ids_in(vpc)
+      [
+        find_security_group_id_for_group_named("#{vpc_name}-InstancesAllowedToAccessEFS",vpc),
+        find_security_group_id_for_group_named("AWS-OpsWorks-Custom-Server",vpc)
+      ]
     end
 
-    def get_security_group_for_public_layer
-      find_security_group_id_for_group_named("#{vpc_name}-DirectAccessToMatterhornDaemon")
+    def get_security_group_for_public_layer_in(vpc)
+      find_security_group_id_for_group_named("#{vpc_name}-DirectAccessToMatterhornDaemon", vpc)
     end
 
-    def get_security_group_for_private_layer
-      find_security_group_id_for_group_named("#{vpc_name}-OpsWorksSecurityGroup")
+    def get_security_group_for_private_layer_in(vpc)
+      find_security_group_id_for_group_named("#{vpc_name}-OpsWorksSecurityGroup",vpc)
     end
 
     def private_layer?
@@ -102,10 +106,10 @@ module Cluster
       layer.create
     end
 
-    def find_security_group_id_for_group_named(name)
+    def find_security_group_id_for_group_named(name, vpc)
       sg = ec2_client.describe_security_groups.inject([]){ |memo, page| memo + page.security_groups }.find do |group|
         # This is tightly coupled to the implementation in templates/OpsWorksinVPC.template
-        group.group_name.match(/#{name}/)
+        group.group_name.match(/#{name}/) && group.vpc_id == vpc.vpc_id
       end
       sg && sg.group_id
     end
