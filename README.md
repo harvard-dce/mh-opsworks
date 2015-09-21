@@ -478,6 +478,28 @@ You can tweak the minute of the hour the dumps run by setting:
 So, like your local radio weatherman, we run the mysql dump on the "5s", or the
 "2s", or the "10s" or whatever. The default is `2`.
 
+### Static ffmpeg installation
+
+Currently we support the ffmpeg encoder through the use of a static build.  See
+[this repository](https://github.com/harvard-dce/static-ffmpeg-build) for how
+we're building ffmpeg.
+
+1. Create a statically built ffmpeg. Upload it to the bucket linked to your
+   `shared_asset_bucket_name` with a name matching the pattern
+   `ffmpeg-<ffmpeg_version>-static.tgz`. This is done automatically by the repo
+   linked to above.
+
+1. Update the `ffmpeg_version` opsworks stack `custom_json` value to the
+   `ffmpeg_version` that you used above - 2.7.2, 2.8, etc.
+
+1. Run the recipe "mh-opsworks-recipes::install-ffmpeg" on instances of concern
+   to re-deploy a new ffmpeg.  If everything is set up properly, ffmpeg will be
+   installed the first time an instance starts as well.
+
+1. Ensure your matterhorn `config.properties` points to the correct path -
+   `/usr/local/bin/ffmpeg`. This is configured automatically in
+   `mh-opsworks-recipes`.
+
 ### Horizontal worker scaling
 
 EXPERIMENTAL: Basic automatic horizontal worker scaling can be accomplished
