@@ -552,6 +552,31 @@ After modifying this setting, you'll need to execute the
 `mh-opsworks-recipes::install-job-queued-metrics` recipe against your Ganglia
 monitoring instance.
 
+### Custom engage and admin node hostnames
+
+Update your stack's custom json to include two keys:
+
+```
+{
+  "stack": {
+    "chef": {
+      "custom_json": {
+        "public_engage_hostname": "engage.example.com",
+        "public_admin_hostname": "admin.example.com"
+      },
+    }
+  }
+}
+```
+
+These hostnames will be used as the custom engage or admin node hostnames - you
+should ensure they're set up as a CNAME back to your auto-generated aws public
+hostname or possibly the EIP.  If you're using SSL for your engage node, make
+sure your cert matches the `public_engage_hostname` you use here.
+
+If you don't set either of these keys, we'll use the auto created AWS public
+DNS and glue everything together for you.
+
 ### Potentially problematic aws resource limits
 
 The default aws resource limits are listed
