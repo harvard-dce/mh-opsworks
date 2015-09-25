@@ -59,8 +59,8 @@ module Cluster
         storage_instance_type: 'c4.8xlarge',
         storage_disk_size: '2000',
 
-        database_instance_type: 'c4.large',
-        database_disk_size: '100',
+        database_instance_type: 'c4.2xlarge',
+        database_disk_size: '250',
 
         admin_instance_type: 'c4.8xlarge',
 
@@ -103,8 +103,8 @@ module Cluster
 
         description: 'Appropriate for large workloads. Uses zadara storage - see README.zadara.md for instructions. ',
 
-        database_instance_type: 'c4.large',
-        database_disk_size: '100',
+        database_instance_type: 'c4.2xlarge',
+        database_disk_size: '250',
 
         admin_instance_type: 'c4.8xlarge',
 
@@ -169,8 +169,8 @@ module Cluster
 
         description: 'Appropriate for large workloads. Uses efs storage, only works in us-west-2 for now',
 
-        database_instance_type: 'c4.large',
-        database_disk_size: '100',
+        database_instance_type: 'c4.2xlarge',
+        database_disk_size: '250',
 
         admin_instance_type: 'c4.8xlarge',
 
