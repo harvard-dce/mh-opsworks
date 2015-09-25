@@ -45,7 +45,13 @@ module Cluster
               "Action" =>  [
                 "s3:GetObject",
                 "cloudwatch:*",
-                "sns:CreateTopic"
+                "sns:CreateTopic",
+                "opsworks:DescribeInstances",
+                "opsworks:DescribeStacks",
+                "opsworks:StartInstance",
+                "opsworks:StopInstance",
+                "ec2:DescribeAccountAttributes",
+                "ec2:DescribeInstances"
               ],
               "Effect" => "Allow",
               "Resource" => [
