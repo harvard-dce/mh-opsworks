@@ -450,7 +450,7 @@ Once you've got your cloudfront domain, you include a key in your stack's
 If you're using the DCE-specific matterhorn release, you should have live
 streaming support by default. Update the streaming-related keys in your cluster
 configuration with the appropriate values before provisioning your cluster.
-These keys include `live_streaming_url` and `live_streaming_suffix` and are
+These keys include `live_streaming_url` and `live_stream_name` and are
 used in the various `deploy-*` recipes.
 
 ### MySQL backups
