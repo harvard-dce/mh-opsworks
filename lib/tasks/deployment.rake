@@ -4,6 +4,15 @@ namespace :deployment do
     Cluster::Deployment.deploy_app
   end
 
+  desc 'force deploy the most recent commit on the configured app revision'
+  task redeploy_app: ['cluster:configtest', 'cluster:config_sync_check'] do
+    Cluster::Deployment.redeploy_app
+  end
+
+  task rollback_app: ['cluster:configtest', 'cluster:config_sync_check'] do
+    Cluster::Deployment.rollback_app
+  end
+
   desc 'list recent deployments'
   task list: ['cluster:configtest', 'cluster:config_sync_check'] do
     puts 'Deployments: '

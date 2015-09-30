@@ -163,9 +163,20 @@ in with the password you set in your cluster configuration.
     # Use an alternate config file, overriding whatever's set in .mhopsworks.rc
     CLUSTER_CONFIG_FILE="./some_other_cluster_config.json" ./bin/rake cluster:configtest
 
-    # Deploy a new revision from the repo / branch linked in your app. Be sure to restart
+    # Deploy a new revision from the repo linked in your app. Be sure to restart
     # matterhorn after the deployment is complete.
     ./bin/rake deployment:deploy_app
+
+    # Force deploy the latest app revision. This should only be useful when
+    # working with chef recipe development. See the "force_deploy" action
+    # in the chef deploy resource documentation for details on what this does.
+    ./bin/rake deployment:deploy_app
+
+    # Rollback to the last successful deployment. This is tricky - if a node
+    # is new or has been frequently brought online / shutdown the concept of
+    # "last" may not be the same on all instances.  You probably want to
+    # avoid this and test your releases more thoroughly in isolated clusters.
+    ./bin/rake deployment:rollback_app
 
     # View the status of the deployment (it'll be the first at the top):
     ./bin/rake deployment:list

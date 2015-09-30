@@ -9,10 +9,18 @@ module Cluster
       ).inject([]){ |memo, page| memo + page.deployments }
     end
 
-    def self.deploy_app
+    def self.rollback_app
+      deploy_app(deploy_action: :rollback)
+    end
+
+    def self.redeploy_app
+      deploy_app(deploy_action: :force_deploy)
+    end
+
+    def self.deploy_app(custom_json_overrides = {})
       stack = Cluster::Stack.with_existing_stack
       app = App.find_or_create
-      custom_json = deployment_config[:custom_json]
+      custom_json = deployment_config[:custom_json].merge(custom_json_overrides)
 
       if app
         deployment = opsworks_client.create_deployment(
