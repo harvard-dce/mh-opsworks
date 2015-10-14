@@ -550,6 +550,17 @@ sure your cert matches the `public_engage_hostname` you use here.
 If you don't set either of these keys, we'll use the auto created AWS public
 DNS and glue everything together for you.
 
+### Ubuntu 14.04 Enhanced networking
+
+"Enhanced networking" allows your instances to take full advantage of 10Gbps
+networking on aws. Opsworks ubuntu 14.04 instances have enhanced networking
+enabled, but unfortunately use a driver too old to get full networking speed.
+
+The `mh-opsworks-recipes::enable-enhanced-networking` recipe patches and
+installs the correct driver. This doubles multithreaded / multiprocess IO from
+around 5Gbps to 10Gbps and seems to have no deterimental effect on single
+threaded IO.
+
 ### Potentially problematic aws resource limits
 
 The default aws resource limits are listed
