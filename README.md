@@ -561,6 +561,52 @@ installs the correct driver. This doubles multithreaded / multiprocess IO from
 around 5Gbps to 10Gbps and seems to have no deterimental effect on single
 threaded IO.
 
+### Using a custom AMI for faster and more robust green instance deploys
+
+We've built tooling to create custom AMIs for faster and more robust green
+instance deploys. This tooling requires the official python aws-cli and that it
+be connected to a user with the appropriate rights.
+
+We create 2 amis for each region - a public and private instance AMI.  The
+process is relatively simple:
+
+* Generate a stack via `cluster:new` that uses the `ami_builder` cluster
+  variant.
+* Edit the stack via `cluster:edit` and change the region, if necessary. See
+  "Supporting a new region" if you're deploying somewhere other than
+  `us-east-1` for the first time before working with custom AMI building.
+* Run `./bin/rake admin:cluster:init stack:instances:start` to provision the
+  ami builder stack and build the custom AMI seed instances.
+* Log into each of the instances via `stack:instances:ssh_to` to accept the ssh
+  host verification messages and make additional customizations (these should
+  be done via chef, obviously).
+* Run the ami builder script included in this repository -
+  `./bin/build_ami.sh`. It uses the python aws-cli and bash to prepare and then
+  create the AMI images.
+* Wait. It takes around 15 minutes to create the AMIs.
+
+Once the AMIs are created in the region of concern, you can deploy other
+clusters using these images. Edit your stack's `custom_json` and include the
+following keys:
+
+```
+{
+  "stack": {
+    "chef": {
+      "custom_json": {
+        "base_private_ami_id": "ami-XXXXXX",
+        "base_public_ami_id": "ami-XXXXXX"
+      }
+    }
+  }
+}
+```
+
+You can include this in your `base-secrets.json` to make all subsequent cluster
+creations use these custom AMIs. If you're deploying multiple clusters in a
+bunch of different regions you'll need to manually edit the AMI ID when
+switching regions.
+
 ### Potentially problematic aws resource limits
 
 The default aws resource limits are listed

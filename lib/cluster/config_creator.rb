@@ -185,6 +185,31 @@ module Cluster
         matterhorn_root_size: '50',
         matterhorn_workspace_size: '50'
       },
+
+      ami_builder: {
+        template: './templates/cluster_config_ami_builder.json.erb',
+
+        description: 'Use this to build a custom AMI for use by other clusters',
+
+        storage_instance_type: 't2.medium',
+        storage_disk_size: '200',
+
+        database_instance_type: 't2.medium',
+        database_disk_size: '20',
+
+        admin_instance_type: 't2.medium',
+
+        workers_instance_type: 't2.medium',
+        workers_instance_count: 2,
+
+        engage_instance_type: 't2.medium',
+
+        ganglia_instance_type: 't2.medium',
+        ganglia_disk_size: '10',
+
+        matterhorn_root_size: '20',
+        matterhorn_workspace_size: '50'
+      }
     }
 
     attr_reader :variant, :attributes

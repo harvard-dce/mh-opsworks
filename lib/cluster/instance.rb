@@ -28,15 +28,25 @@ module Cluster
 
     def self.find_or_create_in_layer(layer, instances_config, type)
       vpc = Cluster::VPC.find_existing
-      subnet =
-        if layer.auto_assign_public_ips == false &&
-            layer.auto_assign_elastic_ips == false
-          # Private instance
-          vpc.subnets.find{|subnet| subnet.cidr_block == vpc_config[:private_cidr_block] }
-        else
-          # Public instance
-          vpc.subnets.find{|subnet| subnet.cidr_block == vpc_config[:public_cidr_block] }
+      subnet = nil
+      ami_info = {}
+
+      if layer.auto_assign_public_ips == false &&
+          layer.auto_assign_elastic_ips == false
+        # Private instance
+        subnet = vpc.subnets.find{|subnet| subnet.cidr_block == vpc_config[:private_cidr_block] }
+        if stack_custom_json[:base_private_ami_id]
+          ami_info[:os] = 'Custom'
+          ami_info[:ami_id] = stack_custom_json[:base_private_ami_id]
         end
+      else
+        # Public instance
+        subnet = vpc.subnets.find{|subnet| subnet.cidr_block == vpc_config[:public_cidr_block] }
+        if stack_custom_json[:base_public_ami_id]
+          ami_info[:os] = 'Custom'
+          ami_info[:ami_id] = stack_custom_json[:base_public_ami_id]
+        end
+      end
 
       instance_params = {
         stack_id: layer.stack_id,
@@ -45,7 +55,7 @@ module Cluster
         root_device_type: instances_config.fetch(:root_device_type, 'instance-store'),
         instance_type: instances_config.fetch(:instance_type, 't2.micro'),
         auto_scaling_type: (type == 'load based') ? 'load' : nil
-      }
+      }.merge(ami_info)
       opsworks_client.create_instance(instance_params)
     end
   end
