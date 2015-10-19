@@ -71,9 +71,9 @@ namespace :stack do
           if ! ['online', 'running_setup'].include?(instance.status)
             puts "#{hostname} is not online or ssh'able. You might try with the default stack key."
           elsif instance.public_dns == nil
-            puts "ssh -A -t #{ssh_user}#{a_public_host.public_dns} ssh -A #{ssh_user}#{hostname}"
+            puts "ssh -A -t #{ssh_user}#{a_public_host.public_dns} ssh -A -t #{ssh_user}#{hostname}"
           else
-            puts "ssh -A #{ssh_user}#{instance.public_dns}"
+            puts "ssh -A -t #{ssh_user}#{instance.public_dns}"
           end
         else
           layers = Cluster::Layers.find_or_create
