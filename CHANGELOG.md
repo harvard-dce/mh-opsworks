@@ -2,6 +2,9 @@
 
 ## TO BE RELEASED
 
+* Allow for cluster state to be turned into a "seed file" and applied to
+  another cluster.  See `README.cluster_seed_files.txt` for more information on
+  how this feature works.
 * Very minor - don't write to `templates/minimal_cluster_config.json`.
 
 ## 1.0.11 - 2/25/2016

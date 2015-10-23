@@ -147,6 +147,7 @@ namespace :stack do
       Cluster::Stack.with_existing_stack do |stack|
         layers = ENV['layers'].to_s.strip.split(/,[\s]?/)
         recipes = ENV['recipes'].to_s.strip.split(/,[\s]?/)
+        custom_json = ENV['custom_json'].to_s.strip
 
         if recipes.none?
           puts
@@ -157,7 +158,8 @@ namespace :stack do
         else
           Cluster::Deployment.execute_chef_recipes_on_layers(
             recipes: recipes,
-            layers: layers
+            layers: layers,
+            custom_json: custom_json
           )
         end
       end
@@ -168,6 +170,7 @@ namespace :stack do
       Cluster::Stack.with_existing_stack do |stack|
         hostnames = ENV['hostnames'].to_s.strip.split(/,[\s]?/)
         recipes = ENV['recipes'].to_s.strip.split(/,[\s]?/)
+        custom_json = ENV['custom_json'].to_s.strip
 
         if recipes.none? || hostnames.none?
           puts
@@ -178,7 +181,8 @@ namespace :stack do
         else
           Cluster::Deployment.execute_chef_recipes_on_instances(
             recipes: recipes,
-            hostnames: hostnames
+            hostnames: hostnames,
+            custom_json: custom_json
           )
         end
       end

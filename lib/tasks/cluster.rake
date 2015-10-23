@@ -16,6 +16,19 @@ namespace :cluster do
     end
   end
 
+  task :reset_or_seed_check do
+    unless Cluster::Base.dev_or_testing_cluster?
+      puts
+      puts "You're trying to create or apply a cluster seed and we're not certain"
+      puts "if you're on a development or testing cluster or not."
+      puts 
+      puts 'If you are, Please set "cluster_env" to "development" or "test" in your'
+      puts "cluster configuration's custom_json and try again."
+      puts
+      exit 1
+    end
+  end
+
   desc Cluster::RakeDocs.new('cluster:configtest').desc
   task :configtest do
     config = Cluster::Config.new
@@ -80,6 +93,83 @@ namespace :cluster do
   desc Cluster::RakeDocs.new('cluster:console').desc
   task console: [:configtest, :config_sync_check, :production_failsafe] do
     Cluster::Console.run
+  end
+
+  desc Cluster::RakeDocs.new('cluster:reset').desc
+  task reset: [:configtest, :config_sync_check, :production_failsafe, :reset_or_seed_check] do
+    recipes = %W|mh-opsworks-recipes::stop-matterhorn
+    mh-opsworks-recipes::reset-database
+    mh-opsworks-recipes::remove-all-matterhorn-files
+    mh-opsworks-recipes::create-matterhorn-directories
+    mh-opsworks-recipes::remove-admin-indexes
+    mh-opsworks-recipes::remove-engage-indexes|
+    layers = ['Admin','Engage','Workers']
+    custom_json='{"do_it":true}'
+
+    Cluster::Deployment.execute_chef_recipes_on_layers(
+      recipes: recipes,
+      layers: layers,
+      custom_json: custom_json
+    )
+
+    Rake::Task['matterhorn:start'].execute
+  end
+
+  desc Cluster::RakeDocs.new('cluster:create_seed_file').desc
+  task create_seed_file: [:configtest, :config_sync_check, :production_failsafe, :reset_or_seed_check] do
+    recipes = ['mh-opsworks-recipes::stop-matterhorn', 'mh-opsworks-recipes::create-cluster-seed-file']
+    layers = ['Admin','Engage','Workers']
+    custom_json ='{"do_it":true}'
+
+    Cluster::Deployment.execute_chef_recipes_on_layers(
+      recipes: recipes,
+      layers: layers,
+      custom_json: custom_json
+    )
+
+    Rake::Task['matterhorn:start'].execute
+  end
+
+  desc Cluster::RakeDocs.new('cluster:apply_seed_file').desc
+  task apply_seed_file: [:configtest, :config_sync_check, :production_failsafe, :reset_or_seed_check] do
+
+    chooser = Cluster::SeedFileChooser.new(
+      seed_file: ENV['seed_file'].to_s.strip,
+      bucket: Cluster::Base.cluster_seed_bucket_name
+    )
+
+    seed_file = if chooser.valid_seed_file?
+                  chooser.seed_file
+                else
+                  chooser.choose
+                end
+
+    if seed_file == ''
+      puts
+      puts "*" * 40
+      puts
+      puts Cluster::RakeDocs.new('cluster:apply_seed_file').desc
+      puts
+      exit 1
+    end
+
+    recipes = %W|mh-opsworks-recipes::stop-matterhorn
+    mh-opsworks-recipes::reset-database
+    mh-opsworks-recipes::remove-all-matterhorn-files
+    mh-opsworks-recipes::load-seed-data
+    mh-opsworks-recipes::create-matterhorn-directories
+    mh-opsworks-recipes::remove-admin-indexes
+    mh-opsworks-recipes::remove-engage-indexes|
+    layers = ['Admin','Engage','Workers']
+    custom_json=%Q|{"do_it":true, "cluster_seed_file":"#{seed_file}"}|
+
+    Cluster::Deployment.execute_chef_recipes_on_layers(
+      recipes: recipes,
+      layers: layers,
+      custom_json: custom_json
+    )
+
+    Rake::Task['matterhorn:start'].execute
   end
 
   desc Cluster::RakeDocs.new('cluster:new').desc

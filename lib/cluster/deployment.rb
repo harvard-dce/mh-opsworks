@@ -40,23 +40,25 @@ module Cluster
       end
     end
 
-    def self.execute_chef_recipes_on_instances(recipes: [], hostnames: [])
+    def self.execute_chef_recipes_on_instances(recipes: [], hostnames: [], custom_json: '')
       raise NoRecipesToRun if recipes.none?
 
       run_command_on_instances(
         command: 'execute_recipes',
         args: { recipes: recipes },
-        hostnames: hostnames
+        hostnames: hostnames,
+        custom_json: custom_json
       )
     end
 
-    def self.execute_chef_recipes_on_layers(recipes: [], layers: [])
+    def self.execute_chef_recipes_on_layers(recipes: [], layers: [], custom_json: '')
       raise NoRecipesToRun if recipes.none?
 
       run_command_on_layers(
         command: 'execute_recipes',
         args: { recipes: recipes },
-        layers: layers
+        layers: layers,
+        custom_json: custom_json
       )
     end
 
@@ -70,17 +72,23 @@ module Cluster
 
     private
 
-    def self.run_command_on_instances(hostnames: [], command: nil, args: {})
+    def self.run_command_on_instances(hostnames: [], command: nil, args: {}, custom_json: '')
       Cluster::Stack.with_existing_stack do |stack|
         instance_ids = Cluster::Instances.online.find_all do |instance|
           hostnames.include?(instance.hostname)
         end.map(&:instance_id)
 
-        run_on_instance_ids(instance_ids: instance_ids, stack: stack, command: command, args: args)
+        run_on_instance_ids(
+          instance_ids: instance_ids,
+          stack: stack,
+          command: command,
+          args: args,
+          custom_json: custom_json
+        )
       end
     end
 
-    def self.run_command_on_layers(layers: [], command: nil, args: {})
+    def self.run_command_on_layers(layers: [], command: nil, args: {}, custom_json: '')
       Cluster::Stack.with_existing_stack do |stack|
         instance_ids = []
         if layers.any?
@@ -88,11 +96,19 @@ module Cluster
         else
           instance_ids = Cluster::Instances.online.map(&:instance_id)
         end
-        run_on_instance_ids(instance_ids: instance_ids, stack: stack, command: command, args: args)
+        run_on_instance_ids(
+          instance_ids: instance_ids,
+          stack: stack,
+          command: command,
+          args: args,
+          custom_json: custom_json
+        )
       end
     end
 
-    def self.run_on_instance_ids(instance_ids: [], stack: nil, command: nil, args: {})
+    def self.run_on_instance_ids(
+      instance_ids: [], stack: nil, command: nil, args: {}, custom_json: ''
+    )
       if instance_ids.any?
         deployment = opsworks_client.create_deployment(
           stack_id: stack.stack_id,
@@ -100,7 +116,8 @@ module Cluster
           command: {
             name: command,
             args: args
-          }
+          },
+          custom_json: custom_json
         )
         wait_until_deployment_completed(deployment.deployment_id)
       end

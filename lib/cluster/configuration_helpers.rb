@@ -54,6 +54,14 @@ module Cluster
         stack_config[:chef].fetch(:custom_json, {})
       end
 
+      def dev_or_testing_cluster?
+        ['development', 'test'].include?(stack_custom_json[:cluster_env])
+      end
+
+      def cluster_seed_bucket_name
+        stack_custom_json[:cluster_seed_bucket_name]
+      end
+
       def storage_config
         stack_custom_json.fetch(:storage, {})
       end
