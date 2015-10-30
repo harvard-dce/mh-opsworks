@@ -19,6 +19,8 @@ module Cluster
 
         engage_instance_type: 't2.medium',
 
+        asset_server_instance_type: 't2.medium',
+
         ganglia_instance_type: 't2.medium',
         ganglia_disk_size: '10',
 
@@ -43,6 +45,8 @@ module Cluster
         workers_instance_count: 2,
 
         engage_instance_type: 'c4.xlarge',
+
+        asset_server_instance_type: 'c4.xlarge',
 
         ganglia_instance_type: 't2.medium',
         ganglia_disk_size: '50',
@@ -69,6 +73,8 @@ module Cluster
 
         engage_instance_type: 'c4.8xlarge',
 
+        asset_server_instance_type: 'c4.8xlarge',
+
         ganglia_instance_type: 'c4.large',
         ganglia_disk_size: '100',
 
@@ -90,6 +96,8 @@ module Cluster
         workers_instance_count: 2,
 
         engage_instance_type: 'c4.xlarge',
+
+        asset_server_instance_type: 'c4.xlarge',
 
         ganglia_instance_type: 't2.medium',
         ganglia_disk_size: '50',
@@ -113,6 +121,8 @@ module Cluster
 
         engage_instance_type: 'c4.8xlarge',
 
+        asset_server_instance_type: 'c4.8xlarge',
+
         ganglia_instance_type: 'c4.large',
         ganglia_disk_size: '100',
 
@@ -134,6 +144,8 @@ module Cluster
         workers_instance_count: 2,
 
         engage_instance_type: 't2.medium',
+
+        asset_server_instance_type: 't2.medium',
 
         ganglia_instance_type: 't2.medium',
         ganglia_disk_size: '10',
@@ -157,6 +169,8 @@ module Cluster
 
         engage_instance_type: 'c4.xlarge',
 
+        asset_server_instance_type: 'c4.xlarge',
+
         ganglia_instance_type: 't2.medium',
         ganglia_disk_size: '50',
 
@@ -178,6 +192,8 @@ module Cluster
         workers_instance_count: 2,
 
         engage_instance_type: 'c4.8xlarge',
+
+        asset_server_instance_type: 'c4.8xlarge',
 
         ganglia_instance_type: 'c4.large',
         ganglia_disk_size: '100',
@@ -203,6 +219,8 @@ module Cluster
         workers_instance_count: 2,
 
         engage_instance_type: 't2.medium',
+
+        asset_server_instance_type: 't2.medium',
 
         ganglia_instance_type: 't2.medium',
         ganglia_disk_size: '10',

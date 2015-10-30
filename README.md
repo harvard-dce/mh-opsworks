@@ -433,12 +433,21 @@ preview and can only be deployed to the us-west-2 region.  You can create an
 efs-backed cluster by selecting one of the efs variants after running
 `./bin/rake cluster:new`.
 
+### Static asset server
+
+Clusters get a static video and JPG asset server in the "Asset Server" layer.
+This machine is a tuned nginx video server that connects to the shared NFS
+mount.  The asset server is used by default when no Cloudfront distribution is
+registered.  If you're using cloudfront, the asset server instance is what you
+should set your origin to.
+
 ### Cloudfront support
 
 This is currently a manual process, as generally you only want production and
 staging clusters to have cloudfront distribution.  Start by creating a
-cloudfront distribution with the external hostname of your engage node for both
-the "origin domain name" and "origin id". The path should be "/static".
+cloudfront distribution with the external hostname of your asset server node
+for both the "origin domain name" and "origin id". The path should be
+"/static".
 
 Once you've got your cloudfront domain, you include a key in your stack's
 `custom_json` to have matterhorn deliver assets over cloudfront:
@@ -455,6 +464,8 @@ Once you've got your cloudfront domain, you include a key in your stack's
   }
 }
 ```
+
+You'll need to deploy to ensure the new cloudfront url is used.
 
 ### Live streaming support
 

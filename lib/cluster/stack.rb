@@ -57,7 +57,7 @@ module Cluster
 
       with_existing_stack do |stack|
         start_all_in_layers(['storage'])
-        start_all_in_layers(['db-master'])
+        start_all_in_layers(['db-master', 'asset_server'])
         start_all_in_layers(['admin'])
         start_all_in_layers(['workers', 'engage','monitoring-master'])
         start_all_other_instances
