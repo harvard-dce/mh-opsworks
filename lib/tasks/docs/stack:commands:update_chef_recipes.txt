@@ -1,0 +1,20 @@
+Update chef recipes on all instances
+
+Update custom chef recipes on all instances in the cluster. The recipes used
+are configured in the `custom_cookbooks_source` clause of your cluster
+configuration:
+
+      "custom_cookbooks_source": {
+        "type": "git",
+        "url": "https://github.com/harvard-dce/mh-opsworks-recipes",
+        "revision": "branch,tag,or git SHA"
+      }
+
+You need to update the recipes when deploying new (or modified) recipes, or
+when developing new ones.  Updating your recipes does not run them.
+
+SEE ALSO:
+
+cluster:edit, stack:commands:update_chef_recipes,
+stack:commands:execute_recipes_on_instances,
+stack:commands:execute_recipes_on_layers

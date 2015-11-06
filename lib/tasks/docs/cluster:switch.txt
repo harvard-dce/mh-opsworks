@@ -1,0 +1,8 @@
+Work in a different cluster
+
+This will switch you into a different cluster. It will download the latest
+cluster config in the process.
+
+SEE ALSO:
+
+cluster:active, cluster:new

@@ -1,11 +1,11 @@
 namespace :deployment do
-  desc 'deploy the main application'
+  desc Cluster::RakeDocs.new('deployment:deploy_app').desc
   task deploy_app: ['cluster:configtest', 'cluster:config_sync_check'] do
     Cluster::Deployment.deploy_app
   end
 
-  desc 'force deploy the most recent commit on the configured app revision'
-  task redeploy_app: ['cluster:configtest', 'cluster:config_sync_check'] do
+  desc Cluster::RakeDocs.new('deployment:redeploy_app').desc
+  task redeploy_app: ['cluster:configtest', 'cluster:config_sync_check', 'cluster:production_failsafe'] do
     Cluster::Deployment.redeploy_app
   end
 
@@ -13,16 +13,20 @@ namespace :deployment do
     Cluster::Deployment.rollback_app
   end
 
-  desc 'list recent deployments'
+  desc Cluster::RakeDocs.new('deployment:list').desc
   task list: ['cluster:configtest', 'cluster:config_sync_check'] do
     puts 'Deployments: '
-    Cluster::Deployment.all.each do |deployment|
+    Cluster::Deployment.all.reverse.each do |deployment|
       recipe_output = ''
       if deployment.command.name == 'execute_recipes'
-        recipe_output = ' - ' + deployment.command.args['recipes'].join(',')
+        recipe_output = deployment.command.args['recipes'].join(', ')
       end
-      puts %Q|#{deployment.command.name}#{recipe_output}, #{deployment.status}, started: #{deployment.created_at}, duration: #{deployment.duration} seconds, by: #{deployment.iam_user_arn}|
+      puts %Q|#{deployment.created_at} - #{deployment.command.name} - #{deployment.status}
+  executed:	#{recipe_output}
+  duration:	#{deployment.duration} seconds
+  by:		#{deployment.iam_user_arn}
 
+|
     end
   end
 end

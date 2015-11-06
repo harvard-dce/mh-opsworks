@@ -1,0 +1,26 @@
+Edit the current cluster config file in $EDITOR and sync afterwards
+
+This wraps up a bunch of functionality and makes it easier and safer to edit
+your current cluster config. It requires that you've got an editor configured
+in your $EDITOR shell environment (see https://kb.iu.edu/d/acnc), typically by
+updating your .bashrc or .bash_profile.
+
+DO NOT EVER CHANGE A CLUSTER'S NAME. IT WILL CAUSE VERY BAD THINGS TO HAPPEN.
+
+It opens the current cluster config in your $EDITOR of choice allowing you to
+make changes.
+
+After you save and exit, it:
+
+* Runs 'cluster:configtest' to sanity check your config changes,
+* Shows you a diff of the changes, allowing you to confirm them,
+* Syncs the cluster config to the shared s3 bucket, and then
+* Syncs the configuration to the connected AWS environment
+
+It does not make every change implicit in your modifications (that would be
+quite a bit of work). If you changed the app revision you'd need to redeploy -
+if you changed users you'd need to run `stack:users:init` and so on.
+
+SEE ALSO:
+
+cluster:switch, cluster:active, cluster:config_sync_check

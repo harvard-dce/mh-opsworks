@@ -1,0 +1,27 @@
+SSH to a public or private instance in the current stack
+
+Create an SSH command with the proper key forwarding and SSH chaining to allow
+you to connect to both public and private instances in your cluster.
+
+It uses your defaultly configured ssh key, which (if you used `cluster:new`)
+should already be added to the cluster - check your cluster configuration via
+`cluster:edit`.
+
+By default, the ssh username is your current login username (so, the value of $USER).
+You can override this by passing in `ssh_user`.
+
+Example invocations:
+
+    ./bin/rake stack:instances:ssh_to hostname=hostname
+    ./bin/rake stack:instances:ssh_to ssh_user=dancp hostname=admin1
+
+If you wrap this command in $(), it'll actually execute the generated SSH
+command and (if everything is set up properly) get you into the cluster.
+Example:
+
+    $(./bin/rake stack:instances:ssh_to hostname=admin1)
+    $(./bin/rake stack:instances:ssh_to hostname=workers1)
+
+SEE ALSO:
+
+cluster:edit, cluster:new

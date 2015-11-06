@@ -1,0 +1,12 @@
+Delete the stack's VPC
+
+Hi. This is dangerous. This will delete the cloudformation stack that created
+the current cluster's VPC infrastructure. The VPC exists outside of opsworks,
+you could totally b0rk a cluster by removing its VPC from underneath it.
+
+VPCs are generally removed automatically - you'd only use this if you're
+developing new features deployed via cloudformation.
+
+SEE ALSO:
+
+vpc:init, vpc:list, admin:cluster:delete

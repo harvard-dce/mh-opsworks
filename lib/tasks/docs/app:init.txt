@@ -1,0 +1,9 @@
+Initialize app according to the current cluster config
+
+If you already have an app in the configured opsworks stack this does nothing.
+It's only used to initialize a new app.  You generally wouldn't use this in
+production as it happens automatically during `admin:cluster:init`.
+
+SEE ALSO:
+
+admin:cluster:init

@@ -1,0 +1,5 @@
+Update operating system packages
+
+Installs regular operating system and package updates. It should not lead to
+downtime, but it probably makes sense to be careful and test updates in a
+development or staging cluster.

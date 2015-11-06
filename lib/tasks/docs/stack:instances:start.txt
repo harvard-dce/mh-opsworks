@@ -1,0 +1,15 @@
+Start all instances in the current cluster
+
+Start instances in the proper order so that you end up with a correctly
+running matterhorn application. This is what you should use to start a
+cluster.
+
+It takes 45 minutes to an hour to start a cluster the first time. This is
+because we can't start them in parallel and because creating and formatting
+EBS volumes is relatively expensive.
+
+Subsequent starts go much faster, maybe 10 to 15 minutes.
+
+SEE ALSO:
+
+admin:cluster:init, stack:instances:stop

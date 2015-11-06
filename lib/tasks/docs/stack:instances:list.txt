@@ -1,0 +1,4 @@
+List all instances in the current stack
+
+This lists all instances and select metadata about them, including their ec2
+instance id, layer, and if they're online or not.

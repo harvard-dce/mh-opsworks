@@ -1,0 +1,16 @@
+Sanity check your current cluster config
+
+This runs a set of configuration checks to ensure your cluster config makes
+sense. It looks for things like:
+
+* Is there an admin layer?
+* Is there a database layer?
+* Is there no more than 1 admin or database instance?
+* Are there EBS volumes on relevant layers to ensure we can persist data on
+  scalable mount points?
+* Is the cluster config valid JSON?
+* Do we have a ganglia monitoring layer?
+
+They aren't perfect and there are a million ways we can mess up a cluster -
+but they do serve as a basic sanity check. This task is run automatically
+before most others.

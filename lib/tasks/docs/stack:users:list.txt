@@ -1,0 +1,11 @@
+List user rights in the current stack
+
+You control user rights to your stack by editing your cluster config via
+`cluster:edit` and adding a user's SSH key to it.
+
+Most users can at least "show" a stack - this right is necessary to allow for
+some intra-stack coordination on things like names.
+
+SEE ALSO:
+
+cluster:edit, stack:users:init

@@ -1,0 +1,5 @@
+list all IAM users
+
+This lists all IAM users in the current account. This is informational and may
+make it easier to understand what users you can grant rights to in your
+cluster.

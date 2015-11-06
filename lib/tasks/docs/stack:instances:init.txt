@@ -1,0 +1,16 @@
+Initialize instances in every layer of the current stack
+
+Use this after your edit your layer instance configurations to apply those
+changes to the currently active cluster.
+
+So, for instance, if you update a layer to have 5 instead of 2 instances,
+you'd run this to actually create the "stub" opsworks instances. Then you'd
+run `stack:instances:start` to actually start the instances (or let your
+horizontal scaling mechanism handle it).
+
+This isn't smart enough to do difficult things, like apply partition or
+network changes against running instances.
+
+SEE ALSO:
+
+cluster:edit, stack:instances:start

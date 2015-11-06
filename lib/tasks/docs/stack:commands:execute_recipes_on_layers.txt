@@ -1,0 +1,25 @@
+Run chef recipes on instances in specific layers
+
+This allows you to run chef recipes on all instances in the layers you
+specify.  If you do not specify a layer, the recipes will be run on all
+instances.
+
+This command will block until the recipes have run successfully on all hosts.
+It will exit with some relevant errors in case of a failure. More information
+is available in the AWS opsworks web UI, along with full error logs when an
+execution fails.
+
+Use the full layer name. You can specify multiple comma-separated recipes.
+
+EXAMPLES:
+
+    # Runs on only Admin and Workers instances
+    ./bin/rake stack:commands:execute_recipes_on_layers recipes="recipe1,recipe1" layers="Admin, Workers"
+
+    # Runs on all instances
+    ./bin/rake stack:commands:execute_recipes_on_layers recipes="recipe1,recipe1"
+
+SEE ALSO:
+
+stack:commands:update_chef_recipes,
+stack:commands:execute_recipes_on_instances, deployment:list

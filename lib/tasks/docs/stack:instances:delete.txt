@@ -1,0 +1,9 @@
+Stops and deletes all instances in the stack
+
+This stops and then deletes all instances in the currently configured cluster.
+It has a basic check to try and ensure it doesn't run against a production or
+staging cluster.
+
+SEE ALSO:
+
+stack:instances:init, stack:instances:start

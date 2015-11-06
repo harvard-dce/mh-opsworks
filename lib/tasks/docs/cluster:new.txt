@@ -1,0 +1,29 @@
+Initialize and switch into a new cluster
+
+Create a new opsworks cluster. You'll be prompted to answer a few questions
+allowing you to choose:
+
+* A name (which must be unique - we'll check for you!),
+* An appropriate size or "variant" for your cluster, and
+* The URL and branch, tag, or revision of the application you're deploying.
+
+NAMING SUGGESTIONS:
+
+<your initials> <2 to 4 word feature description> <ticket number>
+
+DO NOT EVER CHANGE A CLUSTER'S NAME. IT WILL CAUSE VERY BAD THINGS TO HAPPEN.
+
+Cluster names can be pretty big (255 char) and should be descriptive, but
+don't go nuts. We'll inflect on the cluster name to ensure all resources we
+create can easily be traced back to this cluster.
+
+After the initial questions are answered successfully, the config will be
+created and uploaded to the `cluster_config_bucket_name` s3 bucket as
+configured in your `secrets.json` file.
+
+You'll also be switched into the cluster you just created so that you can run
+`admin:cluster:init`.
+
+SEE ALSO:
+
+admin:cluster:init, cluster:switch

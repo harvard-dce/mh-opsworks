@@ -22,7 +22,8 @@ matterhorn cluster.
 * Tagged matterhorn logging to [loggly](http://loggly.com),
 * A set of high-level rake tasks designed to make managing your OpsWorks matterhorn cluster easier,
 * A way to switch between existing clusters to make collaboration easier,
-* Automatic horizontal worker scaling.
+* Automatic horizontal worker scaling,
+* Rake level docs for each task, accessed via "rake -D <task name>".
 
 ## Getting started
 
@@ -133,6 +134,12 @@ in with the password you set in your cluster configuration.
 
     # List the cluster-specific tasks available
     ./bin/rake -T
+
+    # Read detailed help about a set of rake tasks (i.e. "cluster" related tasks).
+    ./bin/rake -D cluster
+
+    # Read detailed help about a specific rake task
+    ./bin/rake -D cluster:switch
 
     # Switch into an already existing cluster
     ./bin/rake cluster:switch

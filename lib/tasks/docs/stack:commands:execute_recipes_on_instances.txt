@@ -1,0 +1,18 @@
+Run chef recipes on specific instances by hostname
+
+This allows you to run chef recipes on specific instances by their short
+hostname.
+
+This command will block until the recipes have run successfully on all hosts.
+It will exit with some relevant errors in case of a failure. More information
+is available in the AWS opsworks web UI, along with full error logs when an
+execution fails.
+
+EXAMPLES:
+
+    ./bin/rake stack:commands:execute_recipes_on_instances recipes="recipe1,recipe1" hostnames="admin1,workers1"
+
+SEE ALSO:
+
+stack:commands:update_chef_recipes, stack:commands:execute_recipes_on_layers,
+deployment:list

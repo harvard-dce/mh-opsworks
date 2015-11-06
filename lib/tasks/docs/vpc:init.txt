@@ -1,0 +1,18 @@
+Create the cluster's VPC infrastructure via cloudformation
+
+This will use the cluster's generated cloudformation template to create the
+VPC infrastructure. This infrastructure includes:
+
+* The VPC,
+* Public and private subnets,
+* A NAT instance glued to the private subnet with basic availability
+  monitoring,
+* If we're using EFS, the EFS mount automatically configured to connect to the
+  instances.
+
+This is generally done automatically - you'd only use this if you're
+developing new features deployed via cloudformation.
+
+SEE ALSO:
+
+vpc:delete, vpc:list, admin:cluster:init

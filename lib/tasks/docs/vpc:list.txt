@@ -1,0 +1,9 @@
+List all VPCs in the AWS account
+
+This will list all VPCs in the account, whether they're attached to opsworks
+clusters or not. This information can help you chose a CIDR block for your
+cluster if `cluster:new` gets it wrong when it guesses.
+
+SEE ALSO:
+
+cluster:new, admin:cluster:init, vpc:init, vpc:delete

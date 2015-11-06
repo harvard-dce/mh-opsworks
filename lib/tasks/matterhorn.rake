@@ -1,17 +1,17 @@
 namespace :matterhorn do
-  desc 'start matterhorn on all layers configured for app deployment'
+  desc Cluster::RakeDocs.new('matterhorn:start').desc
   task start: ['cluster:configtest', 'cluster:config_sync_check'] do
     Cluster::ExecuteRecipeOnDeploymentLayers.execute('mh-opsworks-recipes::start-matterhorn')
   end
 
-  desc 'restart matterhorn on all layers configured for app deployment'
+  desc Cluster::RakeDocs.new('matterhorn:restart').desc
   task restart: ['cluster:configtest', 'cluster:config_sync_check'] do
     # Here's where we can shim in logic to gracefully shut down based on
     # matterhorn activity
     Cluster::ExecuteRecipeOnDeploymentLayers.execute('mh-opsworks-recipes::restart-matterhorn')
   end
 
-  desc 'stop matterhorn on all layers configured for app deployment'
+  desc Cluster::RakeDocs.new('matterhorn:stop').desc
   task stop: ['cluster:configtest', 'cluster:config_sync_check'] do
     # Here's where we can shim in logic to gracefully shut down based on
     # matterhorn activity

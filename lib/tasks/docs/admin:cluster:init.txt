@@ -1,0 +1,19 @@
+Initialize a matterhorn cluster using the current cluster config
+
+This:
+
+* Creates the VPC, NAT, and EFS (if applicable) infrastructure via a
+  cloudformation template,
+* Creates the opsworks stack, layers, and instances, gluing everything
+  together correctly within the VPC, and
+* Creates the opsworks application that'll be deployed.
+
+It DOES NOT start instances (except the NAT instance). It just creates the
+infrastructure and the opsworks "stub" records that define your cluster.
+
+After this task, you may want to run `stack:instances:start` to actually start
+your cluster.
+
+SEE ALSO:
+
+cluster:new, stack:instances:start

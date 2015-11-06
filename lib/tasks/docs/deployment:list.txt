@@ -1,0 +1,19 @@
+List recent deployments and chef commands
+
+In opsworks land, a "deployment" is a chef recipe run or a stack command.
+
+A stack command is a built-in chef recipe that:
+
+* Updates the chef recipes for a stack,
+* Updates OS packages, or
+* Changes the users with rights to a cluster (among other tasks).
+
+This task lists deployments, chef recipe runs, and stack commands that've been
+executed against a cluster. You can see similar output in the opsworks AWS web
+UI under "Deployments."
+
+SEE ALSO:
+
+deployment:deploy_app, stack:commands:execute_recipes_on_layers,
+stack:commands:execute_recipes_on_instances,
+stack:commands:update_chef_recipes

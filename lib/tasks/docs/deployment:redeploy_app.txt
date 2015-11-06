@@ -1,0 +1,13 @@
+Force deploy the most recent app revision
+
+This recipe allows you to test deployments when working on chef recipes.
+
+This is similar to `deployment:deploy_app` except it forces the deployment
+recipes to run on every matterhorn node no matter what.
+
+This recipe potentially involves extended downtime to matterhorn and should
+only be used in development or staging clusters.
+
+SEE ALSO:
+
+deployment:deploy_app

@@ -1,0 +1,15 @@
+Sync the current cluster config with the remote configuration
+
+This will ensure the active cluster config is up-to-date with the remote,
+authoritative one. The authoritative config is stored in the
+`cluster_config_bucket_name` s3 bucket as configured in your `secrets.json`.
+
+If the local copy is ahead, you'll be prompted to review and then save the
+changes. If the local copy is behind, it'll be updated.
+
+This rake task is run automatically before most others to ensure you're not
+managing a cluster based on a stale config.
+
+SEE ALSO:
+
+cluster:edit

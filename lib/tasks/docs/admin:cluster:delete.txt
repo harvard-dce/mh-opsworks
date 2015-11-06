@@ -1,0 +1,18 @@
+Delete the current matterhorn cluster
+
+This undoes what `admin:cluster:init` does. It deletes:
+
+* The app,
+* The SNS topic and subscriptions
+* The instances,
+* The stack,
+* Various IAM roles and policies specific to your cluster,
+* The VPC infrastructure and NAT instance, and finally
+* The cluster configuration files locally and stored remotely in the cluster
+  configuration s3 bucket.
+
+It is not reversible. Be careful!
+
+SEE ALSO:
+
+admin:cluster:init, stack:instances:delete

@@ -3,7 +3,7 @@ Dir['./lib/tasks/*.rake'].each { |file| load file }
 
 namespace :admin do
   namespace :cluster do
-    desc 'Initialize a matterhorn cluster using the policies in your defined cluster configuration'
+    desc Cluster::RakeDocs.new('admin:cluster:init').desc
     task init: ['cluster:configtest', 'cluster:config_sync_check'] do
       stack = Cluster::Stack.find_or_create
 
@@ -28,7 +28,7 @@ namespace :admin do
       puts %Q|Initializing the cluster does not start instances. To start them, use "./bin/rake stack:instances:start"|
     end
 
-    desc 'Delete a matterhorn cluster using the policies defined in your cluster configuration'
+    desc Cluster::RakeDocs.new('admin:cluster:delete').desc
     task delete: ['cluster:configtest', 'cluster:config_sync_check', 'cluster:production_failsafe'] do
       puts 'deleting app'
       Cluster::App.delete
@@ -57,7 +57,7 @@ namespace :admin do
   end
 
   namespace :users do
-    desc 'list all IAM users'
+    desc Cluster::RakeDocs.new('admin:users:list').desc
     task list: ['cluster:configtest', 'cluster:config_sync_check'] do
       Cluster::IAMUser.all.each do |user|
         puts %Q|#{user.user_name} => #{user.arn}|
@@ -65,7 +65,7 @@ namespace :admin do
     end
   end
 
-  desc 'republish maven cache to s3'
+  desc Cluster::RakeDocs.new('admin:republish_maven_cache').desc
   task republish_maven_cache: ['cluster:configtest', 'cluster:config_sync_check'] do
     asset_bucket_name = Cluster::Base.shared_asset_bucket_name
 

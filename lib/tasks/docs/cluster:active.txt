@@ -1,0 +1,9 @@
+Displays the currently active cluster
+
+Most tasks effect only the currently active cluster. This task allows you to
+know which cluster is currently active and therefore which cluster any
+subsequent rake tasks will be run against.
+
+SEE ALSO:
+
+cluster:switch

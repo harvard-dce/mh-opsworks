@@ -1,0 +1,4 @@
+List all opsworks stacks
+
+This may include non mh-opworks managed stacks as well - it just lists stacks
+that have been created in the current AWS account.

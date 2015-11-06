@@ -1,0 +1,9 @@
+Republish the maven cache to s3
+
+This takes the maven cache from a currently running public instance (so
+probably an admin or engage node), creates a tarball and then uploads that
+tarball to the shared s3 asset bucket. This cache file is then used to build
+the various AMIs, making deployment quicker and more robust.
+
+This task is not something you use on a daily basis when managing a cluster,
+it's something a super-admin updates once in a while.

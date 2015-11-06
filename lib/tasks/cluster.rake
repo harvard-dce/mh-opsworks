@@ -16,7 +16,7 @@ namespace :cluster do
     end
   end
 
-  desc 'Sanity check your cluster configuration'
+  desc Cluster::RakeDocs.new('cluster:configtest').desc
   task :configtest do
     config = Cluster::Config.new
     if config.active_config == 'templates/minimal_cluster_config.json'
@@ -30,13 +30,13 @@ namespace :cluster do
     config.sane?
   end
 
-  desc "get info on the cluster we're currently working in"
+  desc Cluster::RakeDocs.new('cluster:active').desc
   task active: [:configtest ] do
     remote_config = Cluster::RemoteConfig.new
     puts %Q|\nCurrently managing: "#{Cluster::Base.stack_config[:name]}" : #{remote_config.active_cluster_config_name}\n|
   end
 
-  desc 'edit the active cluster configuration file in $EDITOR and sync afterwards'
+  desc Cluster::RakeDocs.new('cluster:edit').desc
   task :edit do
     remote_config = Cluster::RemoteConfig.new
     system %Q|$EDITOR #{remote_config.active_cluster_config_name}|
@@ -45,7 +45,7 @@ namespace :cluster do
     Rake::Task['cluster:config_sync_check'].execute
   end
 
-  desc 'check that the cluster config is up to date and sync if necessary'
+  desc Cluster::RakeDocs.new('cluster:config_sync_check').desc
   task :config_sync_check do
     remote_config = Cluster::RemoteConfig.new
 
@@ -77,12 +77,12 @@ namespace :cluster do
     end
   end
 
-  desc 'a ruby console'
+  desc Cluster::RakeDocs.new('cluster:console').desc
   task console: [:configtest, :config_sync_check] do
     Cluster::Console.run
   end
 
-  desc 'Initialize and switch into a new cluster config'
+  desc Cluster::RakeDocs.new('cluster:new').desc
   task :new do
     session = Cluster::ConfigCreationSession.new
     session.choose_variant
@@ -112,7 +112,7 @@ namespace :cluster do
     Cluster::RemoteConfig.new.sync
   end
 
-  desc 'switch to start working with a different cluster'
+  desc Cluster::RakeDocs.new('cluster:switch').desc
   task :switch do
     session = Cluster::ClusterSwitcherSession.new
 
@@ -122,16 +122,5 @@ namespace :cluster do
     end
 
     session.choose_cluster
-  end
-
-  task :migrate_legacy_config do
-    if File.exists?('cluster_config.json')
-      fixed_name = Cluster::RemoteConfig.new.active_cluster_config_name
-      FileUtils.mv('cluster_config.json', fixed_name)
-      rc_file = Cluster::RcFileSwitcher.new(config_file: fixed_name)
-      rc_file.write
-
-      Cluster::RemoteConfig.new.sync
-    end
   end
 end

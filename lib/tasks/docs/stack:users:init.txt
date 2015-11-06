@@ -1,0 +1,14 @@
+Update the users and rights in the current cluster
+
+This reinitializes the users and rights in the current cluster according to
+what's configured in your "users" JSON stanza. You must run this after editing
+your users via `cluster:edit` to have the changes actually take effect.
+
+If a user doesn't exist, they'll be created. If they do exist and their rights
+change their rights will be updated. If you modify the SSH key, that key will
+be modified as well.
+
+This runs on every node in a cluster and can take a few minutes.
+
+SEE ALSO:
+stack:users:list, cluster:edit

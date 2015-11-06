@@ -1,25 +1,24 @@
 namespace :stack do
-  desc 'list stacks'
+  desc Cluster::RakeDocs.new('stack:list').desc
   task list: ['cluster:configtest', 'cluster:config_sync_check'] do
     Cluster::Stack.all.each do |stack|
-      puts %Q|#{stack.name} => #{stack.vpc_id}|
+      puts %Q|#{stack.stack_id}	#{stack.vpc_id}	#{stack.name}|
     end
   end
 
-  desc 'delete stack. You must remove all instances and apps first'
+  desc Cluster::RakeDocs.new('stack:delete').desc
   task delete: ['cluster:configtest', 'cluster:config_sync_check', 'cluster:production_failsafe'] do
     Cluster::Stack.with_existing_stack do |stack|
       Cluster::Stack.delete
     end
   end
 
-  desc 'update AWS stack, app, and layer based on the current configuration'
   task update: ['cluster:configtest', 'cluster:config_sync_check'] do
     Cluster::Stack.update
     Cluster::App.update
   end
 
-  desc 'Initialize a stack within a vpc'
+  desc Cluster::RakeDocs.new('stack:init').desc
   task init: ['cluster:configtest', 'cluster:config_sync_check'] do
     stack = Cluster::Stack.find_or_create
     puts %Q|Stack "#{stack.name}" initialized, id: #{stack.stack_id}|
@@ -28,14 +27,16 @@ namespace :stack do
   end
 
   namespace :users do
-    desc 'list users in the configured stack'
+    desc Cluster::RakeDocs.new('stack:users:list').desc
     task list: ['cluster:configtest', 'cluster:config_sync_check'] do
+      output = []
       Cluster::User.all.each do |permission|
-        puts %Q|#{permission.iam_user_arn} => #{permission.level}|
+        output << %Q|#{permission.level}	#{permission.iam_user_arn}|
       end
+      puts output.sort
     end
 
-    desc 'init the users and rights in the configured cluster'
+    desc Cluster::RakeDocs.new('stack:users:init').desc
     task init: ['cluster:configtest', 'cluster:config_sync_check'] do
       Cluster::Stack.with_existing_stack do |stack|
         Cluster::User.reset_stack_user_permissions_for(
@@ -46,12 +47,12 @@ namespace :stack do
   end
 
   namespace :instances do
-    desc 'init instances in each layer'
+    desc Cluster::RakeDocs.new('stack:instances:init').desc
     task init: ['cluster:configtest', 'cluster:config_sync_check', 'stack:layers:init'] do
       Cluster::Instances.find_or_create
     end
 
-    desc 'ssh connection string'
+    desc Cluster::RakeDocs.new('stack:instances:ssh_to').desc
     task ssh_to: ['cluster:configtest'] do
       Cluster::Stack.with_existing_stack do |stack|
         ssh_user = ENV.fetch('ssh_user', %Q|#{ENV['USER']}|) + '@'
@@ -84,22 +85,15 @@ namespace :stack do
             end
           end
           puts
-          puts 'Please specify an instance name to connect to, thusly:'
+          puts "*" * 40
           puts
-          puts './bin/rake stack:instances:ssh_to hostname=<an instance name>'
+          puts Cluster::RakeDocs.new('stack:instances:ssh_to').desc
           puts
-          puts 'You can specific a username (if different than the default of $USER) for the SSH connection like so:'
-          puts
-          puts './bin/rake stack:instances:ssh_to ssh_user=<username in your cluster configuration>'
-          puts
-          puts 'You can also connect directly to a machine by executing the output of this task, thusly:'
-          puts
-          puts '$(./bin/rake stack:instances:ssh_to hostname=<an instance name>)'
         end
       end
     end
 
-    desc 'list instances in each layer'
+    desc Cluster::RakeDocs.new('stack:instances:list').desc
     task list: ['cluster:configtest', 'cluster:config_sync_check'] do
       Cluster::Stack.with_existing_stack do |stack|
         layers = Cluster::Layers.find_or_create
@@ -112,27 +106,25 @@ namespace :stack do
       end
     end
 
-    desc 'stop and delete all instances in the stack'
+    desc Cluster::RakeDocs.new('stack:instances:delete').desc
     task delete: ['cluster:configtest', 'cluster:config_sync_check', 'cluster:production_failsafe'] do
       Cluster::Instances.delete
     end
 
-    desc 'stop all instances in the configured stack'
+    desc Cluster::RakeDocs.new('stack:instances:stop').desc
     task stop: ['cluster:configtest', 'cluster:config_sync_check', 'cluster:production_failsafe'] do
       Cluster::Stack.stop_all
     end
 
-    desc 'start all instances in the configured stack'
+    desc Cluster::RakeDocs.new('stack:instances:start').desc
     task start: ['cluster:configtest', 'cluster:config_sync_check'] do
       Cluster::Stack.start_all
     end
   end
 
   namespace :layers do
-    desc 'list layers in configured stack'
+    desc Cluster::RakeDocs.new('stack:layers:list').desc
     task list: ['cluster:configtest', 'cluster:config_sync_check'] do
-      # find the layers from the stack object to ensure we're seeing
-      # what's actually there.
       Cluster::Stack.with_existing_stack do |stack|
         stack.layers.each do |layer|
           puts layer.name
@@ -140,7 +132,7 @@ namespace :stack do
       end
     end
 
-    desc 'init layers'
+    desc Cluster::RakeDocs.new('stack:layers:init').desc
     task init: ['cluster:configtest', 'cluster:config_sync_check', 'stack:init'] do
       layers = Cluster::Layers.update
       layers.each do |layer|
@@ -150,7 +142,7 @@ namespace :stack do
   end
 
   namespace :commands do
-    desc 'run chef recipes on instances in specific layers'
+    desc Cluster::RakeDocs.new('stack:commands:execute_recipes_on_layers').desc
     task execute_recipes_on_layers: ['cluster:configtest', 'cluster:config_sync_check'] do
       Cluster::Stack.with_existing_stack do |stack|
         layers = ENV['layers'].to_s.strip.split(/,[\s]?/)
@@ -158,10 +150,10 @@ namespace :stack do
 
         if recipes.none?
           puts
-          puts %Q|Please indicate the recipes you'd like to run.|
-          puts %Q|If you don't specify any layers, the recipes will be run on all layers.|
+          puts "*" * 40
           puts
-          puts './bin/rake stack:commands:execute_recipes_on_layers recipes="recipe1,recipe1" layers="Full Name,Full Name2"'
+          puts Cluster::RakeDocs.new('stack:commands:execute_recipes_on_layers').desc
+          puts
         else
           Cluster::Deployment.execute_chef_recipes_on_layers(
             recipes: recipes,
@@ -171,7 +163,7 @@ namespace :stack do
       end
     end
 
-    desc 'run chef recipes on specific instances by hostname'
+    desc Cluster::RakeDocs.new('stack:commands:execute_recipes_on_instances').desc
     task execute_recipes_on_instances: ['cluster:configtest', 'cluster:config_sync_check'] do
       Cluster::Stack.with_existing_stack do |stack|
         hostnames = ENV['hostnames'].to_s.strip.split(/,[\s]?/)
@@ -179,9 +171,10 @@ namespace :stack do
 
         if recipes.none? || hostnames.none?
           puts
-          puts %Q|Please indicate the recipes you'd like to run, along with a comma-separated list of hostnames|
+          puts "*" * 40
           puts
-          puts './bin/rake stack:commands:execute_recipes_on_instances recipes="recipe1,recipe1" hostnames="admin1,workers1"'
+          puts Cluster::RakeDocs.new('stack:commands:execute_recipes_on_instances').desc
+          puts
         else
           Cluster::Deployment.execute_chef_recipes_on_instances(
             recipes: recipes,
@@ -191,7 +184,7 @@ namespace :stack do
       end
     end
 
-    desc 'update all chef recipes'
+    desc Cluster::RakeDocs.new('stack:commands:update_chef_recipes').desc
     task update_chef_recipes: ['cluster:configtest', 'cluster:config_sync_check'] do
       Cluster::Deployment.update_chef_recipes
 
@@ -202,7 +195,7 @@ namespace :stack do
       end
     end
 
-    desc 'install updated OS packages'
+    desc Cluster::RakeDocs.new('stack:commands:update_packages').desc
     task update_packages: ['cluster:configtest', 'cluster:config_sync_check'] do
       Cluster::Deployment.update_dependencies
       puts 'Updating OS packages'

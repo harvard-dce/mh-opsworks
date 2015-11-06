@@ -1,0 +1,8 @@
+Stops all instances in the current cluster
+
+This shuts down matterhorn and then stops all instances in the cluster - it's
+useful to idle a cluster when you're not using it.
+
+SEE ALSO:
+
+stack:instances:init, stack:instances:start
