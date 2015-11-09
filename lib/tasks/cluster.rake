@@ -8,7 +8,7 @@ namespace :cluster do
       puts "Type the full stack name below and hit enter to confirm, or just hit enter to abort."
       puts
       print "CONFIRM: "
-      answer = STDIN.gets.chomp
+      answer = STDIN.gets.strip.chomp
 
       if answer != stack_name
         exit 1
@@ -60,7 +60,7 @@ namespace :cluster do
       puts "\nYour config is ahead of upstream - changes below:\n\n"
       puts remote_config.changeset
       print "Sync these changes and publish to AWS? (y or n): "
-      answer = STDIN.gets.chomp
+      answer = STDIN.gets.strip.chomp
 
       if ['y','Y'].include?(answer)
         remote_config.sync

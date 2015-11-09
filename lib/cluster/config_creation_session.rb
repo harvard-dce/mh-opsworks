@@ -11,7 +11,7 @@ module Cluster
         puts %Q|- #{key}: #{variant[:description]}|
       end
       print %Q|\nOne of #{keys.join(', ')}: |
-      variant_choice = STDIN.gets.chomp.to_sym
+      variant_choice = STDIN.gets.strip.chomp.to_sym
       return choose_variant unless keys.include?(variant_choice)
 
       @variant = variant_choice
@@ -23,7 +23,7 @@ module Cluster
 
     def get_export_root
       print "\nThe path to the volume you're exporting from zadara: "
-      export_root = STDIN.gets.chomp
+      export_root = STDIN.gets.strip.chomp
 
       if ! export_root.match(/^\/[a-z\d\-\/]+/)
         puts "Please enter an absolute unix path, something like:"
@@ -36,7 +36,7 @@ module Cluster
 
     def get_nfs_server_host
       print "\nThe IP address of the zadara NFS server: "
-      nfs_server_host = STDIN.gets.chomp
+      nfs_server_host = STDIN.gets.strip.chomp
 
       if ! nfs_server_host.match(/^\d+[\.\d]+/)
         puts 'Please enter something that looks like an IP address.'
@@ -48,7 +48,7 @@ module Cluster
 
     def get_cluster_name
       print "\nA name for your stack: "
-      name_choice = STDIN.gets.chomp
+      name_choice = STDIN.gets.strip.chomp
 
       @all_stack_names = Cluster::Stack.all.map { |stack| stack.name.downcase }
       if @all_stack_names.include?(name_choice.downcase)
@@ -98,7 +98,7 @@ module Cluster
 
     def get_git_url
       print "\nThe git URL to the matterhorn repo, e.g. git@bitbucket.org. . .: "
-      git_url = STDIN.gets.chomp
+      git_url = STDIN.gets.strip.chomp
 
       unless git_url.match(/^git@|https:\/\//i)
         return get_git_url
@@ -109,7 +109,7 @@ module Cluster
 
     def get_git_revision
       print "\nThe branch, tag, or revision to deploy (hit enter to default to master): "
-      git_revision = STDIN.gets.chomp
+      git_revision = STDIN.gets.strip.chomp
 
       if git_revision.match(/^\s?$/)
         @git_revision = 'master'

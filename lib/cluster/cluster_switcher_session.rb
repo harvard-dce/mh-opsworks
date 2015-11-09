@@ -15,7 +15,7 @@ module Cluster
       end
 
       print "\nCluster number: "
-      cluster_number_input = STDIN.gets.chomp
+      cluster_number_input = STDIN.gets.strip.chomp
       cluster_number = cluster_number_input.to_i
       cluster_name = configs[cluster_number]
       if cluster_number_input.match(/^\d+$/) && cluster_name
