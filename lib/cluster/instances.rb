@@ -14,6 +14,13 @@ module Cluster
       end
     end
 
+    def self.find_manageable_instances_by_layer_shortname(shortnames=[])
+      layer_ids = Cluster::Layers.find_by_shortnames(shortnames).map(&:layer_id)
+      Cluster::Instances.find_existing_always_on_instances.find_all do |instance|
+        layer_ids.include?(instance.layer_ids.first)
+      end
+    end
+
     # Stops and then deletes all instances.
     def self.delete
       instances = []

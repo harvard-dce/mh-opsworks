@@ -33,28 +33,21 @@ module Cluster
     end
 
     def self.stop_all
-      instance_ids = []
       with_existing_stack do |stack|
         puts 'turning on maintenance mode, stopping matterhorn on engage and workers. . . '
         Cluster::Deployment.execute_chef_recipes_on_layers(
           recipes: ['mh-opsworks-recipes::maintenance-mode-on', 'mh-opsworks-recipes::stop-matterhorn'],
           layers: ['Engage', 'Workers']
         )
-        instance_ids = Cluster::Instances.find_existing.map(&:instance_id)
-        opsworks_client.stop_stack(stack_id: stack.stack_id)
-      end
-      if instance_ids.any?
-        puts 'waiting for instances to stop. . .'
-        sleep 60
-        wait_until_opsworks_instances_stopped(instance_ids)
+        stop_all_in_layers(
+          ['db-master', 'asset_server', 'workers', 'admin', 'engage', 'monitoring-master']
+        )
+        stop_all_in_layers(['storage'])
+        stop_all_other_instances
       end
     end
 
     def self.start_all
-      instance_ids = []
-      ec2_instance_ids = []
-      new_stack = false
-
       with_existing_stack do |stack|
         start_all_in_layers(['storage'])
         start_all_in_layers(['db-master', 'asset_server'])
@@ -104,6 +97,17 @@ module Cluster
 
     private
 
+    def self.stop_all_other_instances
+      instance_ids = Cluster::Instances.find_existing_always_on_instances.find_all do |instance|
+        ! ['shutting_down', 'stopped', 'stopping', 'terminated', 'terminating'].include?(instance.status)
+      end.map(&:instance_id)
+
+      if instance_ids.any?
+        puts "Stopping #{instance_ids.length} other instances"
+        stop_and_wait_for_instances(instance_ids)
+      end
+    end
+
     def self.start_all_other_instances
       instance_ids = Cluster::Instances.find_existing_always_on_instances.find_all do |instance|
         instance.status != 'online'
@@ -118,16 +122,34 @@ module Cluster
       instance_ids.each do |instance_id|
         opsworks_client.start_instance(instance_id: instance_id)
       end
-      sleep 30
+      sleep 20
       wait_until_opsworks_instances_started(instance_ids)
       wait_until_all_configure_events_complete
     end
 
+    def self.stop_and_wait_for_instances(instance_ids)
+      instance_ids.each do |instance_id|
+        opsworks_client.stop_instance(instance_id: instance_id)
+      end
+      sleep 20
+      wait_until_opsworks_instances_stopped(instance_ids)
+    end
+
+    def self.stop_all_in_layers(shortnames=[])
+      instance_ids = Cluster::Instances.find_manageable_instances_by_layer_shortname(
+        shortnames
+      ).map(&:instance_id)
+
+      if instance_ids.any?
+        puts "Stopping #{shortnames.join(', ')} instances"
+        stop_and_wait_for_instances(instance_ids)
+      end
+    end
+
     def self.start_all_in_layers(shortnames=[])
-      layer_ids = Cluster::Layers.find_by_shortnames(shortnames).map(&:layer_id)
-      instance_ids = Cluster::Instances.find_existing_always_on_instances.find_all do |instance|
-        layer_ids.include?(instance.layer_ids.first) && (instance.status != 'online')
-      end.map(&:instance_id)
+      instance_ids = Cluster::Instances.find_manageable_instances_by_layer_shortname(
+        shortnames
+      ).find_all { |instance| instance.status != 'online' }.map(&:instance_id)
 
       if instance_ids.any?
         puts "Starting #{shortnames.join(', ')} instances"
