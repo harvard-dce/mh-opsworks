@@ -46,14 +46,18 @@ to manage clusters.
 
 It's easier if your IAM cluster manager account username doesn't match the one
 you'd like to use to SSH into your clusters. If your name is "Jane Smith", your
-IAM cluster manager user might be "janesmith" while your stack SSH username
-would be "jane".
+IAM cluster manager user might be "janesmith-cluster-manager" while your stack
+SSH username would be "janesmith".
 
 ### Step 2 - Install mh-opsworks
 
 You must have ruby 2 installed, ideally through something like rbenv or rvm,
 though if your system ruby is >= 2 you should be fine. `./bin/setup` installs
 prerequisites and sets up a template `secrets.json`.
+
+You should fill in the template `secrets.json` with the cluster manager user
+credentials you created previously and a `cluster_config_bucket_name` you'll
+use for your team to store your cluster configuration files.
 
     git clone https://github.com/harvard-dce/mh-opsworks mh-opsworks/
     cd mh-opsworks
@@ -64,10 +68,7 @@ assume you're in repo root.
 
 ### Step 3 - Choose (or create) your configuration files.
 
-First, be sure you have a `secrets.json` with the correct values in it. This
-file lives in the root of the repository by default.
-
-Once you've set up your `secrets.json` correctly, you can start working with
+Assuming you've set up your `secrets.json` correctly, you can start working with
 clusters.
 
 If you'd like to work in an existing cluster, run:
@@ -81,7 +82,7 @@ If you'd like to create a new cluster entirely, run:
 and follow the prompts.
 
 Be sure to set up the "users" stanza with your desired SSH username, rights,
-and public key.  Following the example set in Step 1, it'd be "jane".
+and public key.  Following the example set in Step 1, it'd be "janesmith".
 
 It's easiest if your SSH user matches your default local unix username as
 the `stack:instances:ssh_to` rake task will work out of the box.
@@ -119,8 +120,7 @@ policies](https://docs.aws.amazon.com/opsworks/latest/userguide/workingcookbook-
 
 You can watch the process via `./bin/rake stack:instances:list` or (better) via
 the AWS web console. Starting the entire cluster takes about 30 minutes the
-first time because you're installing a bunch of base packages.  Subsequent
-instance restarts go significantly faster.
+first time.  Subsequent instance restarts go significantly faster.
 
 Matterhorn is started automatically, and instances start in the correct order
 to ensure dependent services are available for a properly provisioned cluster.
@@ -334,9 +334,10 @@ or don't include this stanza at all.
 ### Metrics, alarms, and notifications
 
 We add and remove SNS-linked cloudwatch alarms when an instance is stopped and
-started. These alarms monitor the load, available RAM and all local disk
-mounts for free space.  You can subscribe to get notifications for these alarms
-in the amazon SNS console under the topic named for your cluster.
+started. These alarms monitor (among other things) the load, available RAM and
+all local disk mounts for free space.  You can subscribe to get notifications
+for these alarms in the amazon SNS console under the topic named for your
+cluster.
 
 #### Monitoring the NAT instance
 
@@ -509,14 +510,14 @@ So, like your local radio weatherman, we run the mysql dump on the "5s", or the
 
 ### Static ffmpeg installation
 
-Currently we support the ffmpeg encoder through the use of a static build.  See
-[this repository](https://github.com/harvard-dce/static-ffmpeg-build) for how
+Currently we support the ffmpeg encoder through the use of a customized build.
+See [this repository](https://github.com/harvard-dce/ffmpeg-build) for how
 we're building ffmpeg.
 
-1. Create a statically built ffmpeg. Upload it to the bucket linked to your
+1. Create an ffmpeg. Upload it to the bucket linked to your
    `shared_asset_bucket_name` with a name matching the pattern
    `ffmpeg-<ffmpeg_version>-static.tgz`. This is done automatically by the repo
-   linked to above.
+   linked above.
 
 1. Update the `ffmpeg_version` opsworks stack `custom_json` value to the
    `ffmpeg_version` that you used above - 2.7.2, 2.8, etc.
@@ -546,6 +547,7 @@ your stack's `custom_json` and re-run the recipe above.
 ### Custom engage and admin node hostnames
 
 Update your stack's custom json to include two keys:
+
 
 ```
 {
@@ -607,6 +609,7 @@ Once the AMIs are created in the region of concern, you can deploy other
 clusters using these images. Edit your stack's `custom_json` and include the
 following keys:
 
+
 ```
 {
   "stack": {
@@ -645,6 +648,7 @@ of clusters you'd like to deploy in your account.
 * VPCs per region
 * Internet gateways per region
 * Cloudformation Stack limit per region
+* Elastic IPs - each cluster uses three
 * Opsworks Stack Limit for the entire account, not limited per region.
 
 Fortunately error messages are fairly clear when a resource limit is hit,
@@ -655,7 +659,6 @@ other) UIs.
 
 * Automate cloudfront distribution creation
 * Automate external fqdn assignment to engage and admin nodes
-* Automate wowza media server provisioning
 
 ## Contributing or reporting problems
 

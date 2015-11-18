@@ -24,6 +24,12 @@ configured in your `secrets.json` file.
 You'll also be switched into the cluster you just created so that you can run
 `admin:cluster:init`.
 
+SSH CONFIG:
+
+We'll find your default ssh key and fill in a user account that matches your
+current username - this should make ssh'ing into your new cluster easier. You
+probably want to share the same ssh key on all machines you work from.
+
 SEE ALSO:
 
 admin:cluster:init, cluster:switch
