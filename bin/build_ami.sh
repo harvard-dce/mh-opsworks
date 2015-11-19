@@ -16,6 +16,7 @@ build_ami() {
   # See https://docs.aws.amazon.com/opsworks/latest/userguide/workinginstances-custom-ami.html
   $ssh_connection sudo /etc/init.d/monit stop &&
     $ssh_connection sudo /etc/init.d/opsworks-agent stop &&
+    $ssh_connection sudo aptitude purge -y opsworks-agent-ruby opsworks-berkshelf opsworks-ruby2.0 &&
     $ssh_connection sudo rm -rf /etc/aws/opsworks/ /opt/aws/opsworks/ /var/log/aws/opsworks/ \
       /var/lib/aws/opsworks/ /etc/monit.d/opsworks-agent.monitrc \
       /etc/monit/conf.d/opsworks-agent.monitrc /var/lib/cloud/ &&

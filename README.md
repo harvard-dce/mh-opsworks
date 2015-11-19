@@ -595,6 +595,8 @@ process is relatively simple:
 * Edit the stack via `cluster:edit` and change the region, if necessary. See
   "Supporting a new region" if you're deploying somewhere other than
   `us-east-1` for the first time before working with custom AMI building.
+* Edit the stack config to remove the pre-existing `base_private_ami_id` and
+  `base_public_ami_id` settings, as we want to start from a clean image.
 * Run `./bin/rake admin:cluster:init stack:instances:start` to provision the
   ami builder stack and build the custom AMI seed instances.
 * Log into each of the instances via `stack:instances:ssh_to` to accept the ssh
@@ -602,7 +604,8 @@ process is relatively simple:
   be done via chef, obviously).
 * Run the ami builder script included in this repository -
   `./bin/build_ami.sh`. It uses the python aws-cli and bash to prepare and then
-  create the AMI images.
+  create the AMI images. Pass in an aws credential profile if the correct
+  access / secret key isn't in the default one.
 * Wait. It takes around 15 minutes to create the AMIs.
 
 Once the AMIs are created in the region of concern, you can deploy other
