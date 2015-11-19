@@ -70,7 +70,7 @@ namespace :admin do
     asset_bucket_name = Cluster::Base.shared_asset_bucket_name
 
     a_public_host = Cluster::Instances.online.find do |instance|
-      instance.public_dns != nil
+      (instance.public_dns != nil) && instance.hostname.match(/admin/)
     end
 
     system %Q|ssh -C #{a_public_host.public_dns} 'sudo bash -c "cd /root && tar cvfz - .m2/"' > maven_cache.tgz|
