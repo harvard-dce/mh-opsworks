@@ -1,8 +1,6 @@
 /cluster_config.json
 /cluster_config*.json
-/secrets.json
-/secrets*.json
-/base-secrets.json
+/*secrets*.json
 tmp/
 *.bk
 .mhopsworks.rc

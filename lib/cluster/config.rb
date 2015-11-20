@@ -5,6 +5,7 @@ module Cluster
     def initialize
       json_file = negotiate_config_file
       secrets_file = negotiate_secrets_file
+      puts "Secrets file: #{secrets_file}"
       @config_content = File.read(json_file)
       @secrets_content = File.read(secrets_file)
     end

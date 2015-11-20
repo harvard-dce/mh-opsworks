@@ -1,5 +1,5 @@
 describe Cluster::RcFileSwitcher do
-  it 'unsets ENV when a config is written' do
+  it 'unsets ENV["CLUSTER_CONFIG_FILE"] when a config is written' do
     ENV['SECRETS_FILE'] = 'something'
     ENV['CLUSTER_CONFIG_FILE'] = 'another thing'
 
@@ -13,7 +13,7 @@ describe Cluster::RcFileSwitcher do
 
     switcher.write
 
-    expect(ENV['SECRETS_FILE']).not_to be
+    expect(ENV['SECRETS_FILE']).to eq 'something'
     expect(ENV['CLUSTER_CONFIG_FILE']).not_to be
   end
 end
