@@ -168,6 +168,7 @@ in with the password you set in your cluster configuration.
     SECRETS_FILE="./some_other_secrets_file.json" ./bin/rake cluster:configtest
 
     # Use an alternate config file, overriding whatever's set in .mhopsworks.rc
+    # You should probably not use this unless you know what you're doing.
     CLUSTER_CONFIG_FILE="./some_other_cluster_config.json" ./bin/rake cluster:configtest
 
     # Deploy a new revision from the repo linked in your app. Be sure to restart
@@ -253,19 +254,27 @@ s3 bucket defined in `cluster_config_bucket_name` and lets you choose from
 them.
 
 When you switch into a cluster, the file `.mhopsworks.rc` is written. This file
-defines the cluster and secrets file you're working with.
+defines the cluster you're working with.
 
-The order of cluster config (and secrets.json) file location resolution is:
+### Using different secrets files
 
-- If you define `CLUSTER_CONFIG_FILE` or `SECRETS_FILE` ENV on the command
-  line, they take precedent.
-- The config in `.mhopsworks.rc` is next, and finally
-- If the cluster config or secrets file location isn't found in the environment
-  or in `.mhopsworks.rc`, they default to `templates/cluster_config_default.json.erb` or
-  `secrets.json`.  The default cluster config template does not work and shouldn't be used.
+Given that a secrets files defines your AWS key and cluster config bucket, it's
+the thing that lets you manage clusters in multiple AWS accounts. The cluster
+config bucket stores the canonical cluster configurations for your specific
+account.
 
-The best way to deal with cluster switching is to use `cluster:new` and
-`cluster:switch`.
+If you want to use an alternate secrets file (and therefore clusters in a
+different AWS account), pass it as an environment variable. The default is the
+file `secrets.json`.
+
+
+```
+# Uses the default 'secrets.json'
+./bin/rake cluster:switch
+
+# Uses 'prod-secrets.json'
+SECRETS_FILE=prod-secrets.json ./bin/rake cluster:switch
+```
 
 ### Cluster configuration syncing
 
@@ -648,10 +657,9 @@ among numerous other resources. This may change in future releases.
 For now, you should ensure the following limits are raised to equal the number
 of clusters you'd like to deploy in your account.
 
-* VPCs per region
-* Internet gateways per region
-* Cloudformation Stack limit per region
-* Elastic IPs - each cluster uses three
+* VPCs per region,
+* Cloudformation Stack limit per region,
+* Elastic IPs - each cluster uses three, and
 * Opsworks Stack Limit for the entire account, not limited per region.
 
 Fortunately error messages are fairly clear when a resource limit is hit,
