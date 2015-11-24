@@ -51,15 +51,15 @@ Zadara VPSA creation is discussed in more detail
    successfully connected your cluster, you can remove the layer and the
    throwaway instance.
 1. Create a RAID group from your drives that'll be used to populate a pool.
-1. Create NAS users with username/UID mappings, probably for only for
-   matterhorn, uid 2122.
-1. Create NAS groups with group name / GID mappings, probably only for
-   matterhorn, gid 2122.
+1. Create NAS users with username/UID mappings, for matterhorn, uid 2122 and
+   `custom_metrics` uid 997
+1. Create NAS groups with group name / GID mappings, for matterhorn, gid 2122
+   and `custom_metrics` uid 997
 1. Carve a NAS volume from the pool you previously created. The export name is
    set by the volume, as an NFS server can have multiple exports. Use a name
    that makes sense for your cluster.
 1. Create a server with a CIDR block that matches your VPC and/or relevant
-   subnets
+   subnets. Ensure that "root squash" is enabled.
 1. Attach the volume you created above to this server.
 1. You should now have the information you need to update your
    cluster configuration for external storage. Return the previous section.
