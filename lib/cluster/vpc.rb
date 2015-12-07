@@ -27,6 +27,8 @@ module Cluster
     def self.find_or_create
       vpc = find_existing
       if ! vpc
+        az_picker = Cluster::AZPicker.new
+
         if requested_vpc_has_conflicts_with_existing_one?
           raise VpcConflictsWithAnother
         end
@@ -45,8 +47,20 @@ module Cluster
             parameter_value: vpc_config[:private_cidr_block]
           },
           {
+            parameter_key: 'DbCIDRBlock',
+            parameter_value: vpc_config[:db_cidr_block]
+          },
+          {
             parameter_key: 'SNSTopicName',
             parameter_value: topic_name
+          },
+          {
+            parameter_key: 'PrimaryAZ',
+            parameter_value: az_picker.primary_az
+          },
+          {
+            parameter_key: 'SecondaryAZ',
+            parameter_value: az_picker.secondary_az
           }
         ]
 

@@ -22,6 +22,24 @@
       "Default": "",
       "ConstraintDescription": "the CIDR block for the private part of this VPC, e.g. 10.1.1.64/26"
     },
+    "DbCIDRBlock": {
+      "Description":"The db subnet CIDR block",
+      "Type": "String",
+      "Default": "",
+      "ConstraintDescription": "the CIDR block for the DB subnet in a separate AZ, e.g. 10.1.1.128/28"
+    },
+    "PrimaryAZ": {
+      "Description":"Primary AZ",
+      "Type": "String",
+      "Default": "",
+      "ConstraintDescription": "The AZ for all opsworks EC2 instances"
+    },
+    "SecondaryAZ": {
+      "Description":"Secondary AZ",
+      "Type": "String",
+      "Default": "",
+      "ConstraintDescription": "The secondary AZ for future expansion and RDS replication"
+    },
     "SNSTopicName": {
       "Description":"The SNS Topic for this stack, used to trigger cloudwatch alarms for NAT instance",
       "Type": "String",
@@ -54,6 +72,7 @@
     "PublicSubnet" : {
       "Type" : "AWS::EC2::Subnet",
       "Properties" : {
+        "AvailabilityZone": { "Ref": "PrimaryAZ" },
         "VpcId" : { "Ref" : "VPC" },
         "CidrBlock" : { "Ref" : "PublicCIDRBlock" },
         "Tags" : [
@@ -150,10 +169,22 @@
       }
     },
 
+    "DbSubnet" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "AvailabilityZone": { "Ref": "SecondaryAZ" },
+        "VpcId" : { "Ref" : "VPC" },
+        "CidrBlock" : { "Ref" : "DbCIDRBlock" },
+        "Tags" : [
+          { "Key" : "Name", "Value" : { "Fn::Join" : [ " ", [ { "Ref" : "AWS::StackName" }, "db subnet" ] ] } }
+        ]
+      }
+    },
+
     "PrivateSubnet" : {
       "Type" : "AWS::EC2::Subnet",
       "Properties" : {
-        "AvailabilityZone": { "Fn::GetAtt": ["PublicSubnet", "AvailabilityZone"] },
+        "AvailabilityZone": { "Ref": "PrimaryAZ" },
         "VpcId" : { "Ref" : "VPC" },
         "CidrBlock" : { "Ref" : "PrivateCIDRBlock" },
         "Tags" : [
