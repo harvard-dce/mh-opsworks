@@ -8,6 +8,14 @@
     "db_cidr_block": "<%= cidr_block_root %>.128/28",
     "_cidr_block_comment": "10.1.1.0/24 gives you 254 ips"
   },
+  "rds": {
+    "db_name": "matterhorn",
+    "db_instance_class": "<%= database_instance_type %>",
+    "allocated_storage": "<%= database_disk_size %>",
+    "master_username": "root",
+    "master_user_password": "<%= master_user_password %>",
+    "backup_retention_period": 1
+  },
   "stack": {
     "name": "<%= name %>",
     "default_ssh_key_name":"",
@@ -112,33 +120,6 @@
         "instances": {
           "number_of_instances": 0,
           "instance_type": "<%= storage_instance_type %>",
-          "root_device_type": "ebs"
-        }
-      },
-      {
-        "name": "MySQL db",
-        "shortname": "db-master",
-        "enable_auto_healing": true,
-        "install_updates_on_boot": true,
-        "type": "db-master",
-        "use_ebs_optimized_instances": true,
-        "custom_recipes": {
-          "setup": [ ],
-          "deploy": [ ],
-          "shutdown": [ ]
-        },
-        "volume_configurations": [
-          {
-            "mount_point": "/vol/mysql",
-            "raid_level": 1,
-            "number_of_disks": 2,
-            "size": "<%= database_disk_size %>",
-            "volume_type": "gp2"
-          }
-        ],
-        "instances": {
-          "number_of_instances": 0,
-          "instance_type": "<%= database_instance_type %>",
           "root_device_type": "ebs"
         }
       },
@@ -257,7 +238,7 @@
       "name": "Matterhorn",
       "type": "other",
       "deployment": {
-        "to_layers": ["Admin", "Engage", "Workers", "MySQL db"],
+        "to_layers": ["Admin", "Engage", "Workers"],
         "custom_json": { }
       },
       "app_source": {

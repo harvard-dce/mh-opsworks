@@ -5,16 +5,17 @@ module Cluster
     def initialize(stack, params)
       @stack = stack
       @params = params
+      @vpc = VPC.find_existing
+      @sg_finder = SecurityGroupFinder.new(@vpc)
     end
 
     def construct_layer_parameters
-      vpc = VPC.find_existing
-      custom_security_group_ids = default_security_group_ids_in(vpc)
+      custom_security_group_ids = default_security_group_ids
 
       if private_layer?
-        custom_security_group_ids << get_security_group_for_private_layer_in(vpc)
+        custom_security_group_ids << get_security_group_for_private_layer
       else
-        custom_security_group_ids << get_security_group_for_public_layer_in(vpc)
+        custom_security_group_ids << get_security_group_for_public_layer
       end
 
       {
@@ -45,19 +46,19 @@ module Cluster
       construct_instance(layer.layer_id)
     end
 
-    def default_security_group_ids_in(vpc)
+    def default_security_group_ids
       [
-        find_security_group_id_for_group_named("#{vpc_name}-InstancesAllowedToAccessEFS",vpc),
-        find_security_group_id_for_group_named("AWS-OpsWorks-Custom-Server",vpc)
+        security_group_id_for("#{vpc_name}-InstancesAllowedToAccessEFS"),
+        security_group_id_for("AWS-OpsWorks-Custom-Server")
       ]
     end
 
-    def get_security_group_for_public_layer_in(vpc)
-      find_security_group_id_for_group_named("#{vpc_name}-DirectAccessToMatterhornDaemon", vpc)
+    def get_security_group_for_public_layer
+      security_group_id_for("#{vpc_name}-DirectAccessToMatterhornDaemon")
     end
 
-    def get_security_group_for_private_layer_in(vpc)
-      find_security_group_id_for_group_named("#{vpc_name}-OpsWorksSecurityGroup",vpc)
+    def get_security_group_for_private_layer
+      security_group_id_for("#{vpc_name}-OpsWorksSecurityGroup")
     end
 
     def private_layer?
@@ -106,12 +107,8 @@ module Cluster
       layer.create
     end
 
-    def find_security_group_id_for_group_named(name, vpc)
-      sg = ec2_client.describe_security_groups.inject([]){ |memo, page| memo + page.security_groups }.find do |group|
-        # This is tightly coupled to the implementation in templates/OpsWorksinVPC.template
-        group.group_name.match(/#{name}/) && group.vpc_id == vpc.vpc_id
-      end
-      sg && sg.group_id
+    def security_group_id_for(name)
+      @sg_finder.security_group_id_for(name)
     end
 
     def layer_attributes
@@ -122,10 +119,6 @@ module Cluster
 
     def opsworks_client
       self.class.opsworks_client
-    end
-
-    def ec2_client
-      self.class.ec2_client
     end
 
     def vpc_name

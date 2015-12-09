@@ -181,6 +181,14 @@
       }
     },
 
+    "DBSubnetGroup": {
+      "Type" : "AWS::RDS::DBSubnetGroup",
+      "Properties": {
+        "DBSubnetGroupDescription": { "Fn::Join" : [ " ", [ { "Ref" : "AWS::StackName" }, "db subnet group" ] ] },
+        "SubnetIds": [{ "Ref" : "DbSubnet" }, { "Ref" : "PrivateSubnet" }, { "Ref": "PublicSubnet" } ]
+      }
+    },
+
     "PrivateSubnet" : {
       "Type" : "AWS::EC2::Subnet",
       "Properties" : {

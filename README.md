@@ -22,7 +22,7 @@ matterhorn cluster.
 * Tagged matterhorn logging to [loggly](http://loggly.com),
 * A set of high-level rake tasks designed to make managing your OpsWorks matterhorn cluster easier,
 * A way to switch between existing clusters to make collaboration easier,
-* Automatic horizontal worker scaling,
+* A MySQL RDS database that's monitored with cloudwatch alarms, and
 * Rake level docs for each task, accessed via "rake -D <task name>".
 
 ## Getting started
@@ -516,6 +516,10 @@ You can tweak the minute of the hour the dumps run by setting:
 
 So, like your local radio weatherman, we run the mysql dump on the "5s", or the
 "2s", or the "10s" or whatever. The default is `2`.
+
+This means we're not using the default backups provided by RDS - this is to
+save money and it make it easier to coordinate a database dump with a
+filesystem snapshot. This may change at some point in the future.
 
 ### Static ffmpeg installation
 

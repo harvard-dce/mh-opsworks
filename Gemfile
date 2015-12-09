@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-gem 'aws-sdk', '~> 2.1.18'
+gem 'aws-sdk', '~> 2.2.5'
 
 gem 'rake', '~> 10.4.2'
 

@@ -40,7 +40,7 @@ module Cluster
           layers: ['Engage', 'Workers']
         )
         stop_all_in_layers(
-          ['db-master', 'asset_server', 'workers', 'admin', 'engage', 'monitoring-master']
+          ['asset_server', 'workers', 'admin', 'engage', 'monitoring-master']
         )
         stop_all_in_layers(['storage'])
         stop_all_other_instances
@@ -50,7 +50,7 @@ module Cluster
     def self.start_all
       with_existing_stack do |stack|
         start_all_in_layers(['storage'])
-        start_all_in_layers(['db-master', 'asset_server'])
+        start_all_in_layers(['asset_server'])
         start_all_in_layers(['admin'])
         start_all_in_layers(['workers', 'engage','monitoring-master'])
         start_all_other_instances

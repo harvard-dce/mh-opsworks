@@ -16,7 +16,7 @@ module Cluster
       private
 
       def self.base_layers
-        ['Admin', 'Engage', 'Workers', 'MySQL db']
+        ['Admin', 'Engage', 'Workers']
       end
     end
   end

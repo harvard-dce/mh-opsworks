@@ -9,7 +9,7 @@ module Cluster
         storage_instance_type: 't2.medium',
         storage_disk_size: '200',
 
-        database_instance_type: 't2.medium',
+        database_instance_type: 'db.t2.medium',
         database_disk_size: '20',
 
         admin_instance_type: 't2.medium',
@@ -36,7 +36,7 @@ module Cluster
         storage_instance_type: 'c4.xlarge',
         storage_disk_size: '500',
 
-        database_instance_type: 'c4.large',
+        database_instance_type: 'db.t2.large',
         database_disk_size: '50',
 
         admin_instance_type: 'c4.xlarge',
@@ -63,7 +63,7 @@ module Cluster
         storage_instance_type: 'c4.8xlarge',
         storage_disk_size: '2000',
 
-        database_instance_type: 'c4.2xlarge',
+        database_instance_type: 'db.m4.xlarge',
         database_disk_size: '250',
 
         admin_instance_type: 'c4.8xlarge',
@@ -87,7 +87,7 @@ module Cluster
 
         description: 'Appropriate for processing small workloads and testing capture agent integration. Uses zadara storage - see README.zadara.md for instructions. ',
 
-        database_instance_type: 'c4.large',
+        database_instance_type: 'db.t2.large',
         database_disk_size: '50',
 
         admin_instance_type: 'c4.xlarge',
@@ -111,7 +111,7 @@ module Cluster
 
         description: 'Appropriate for large workloads. Uses zadara storage - see README.zadara.md for instructions. ',
 
-        database_instance_type: 'c4.2xlarge',
+        database_instance_type: 'db.m4.xlarge',
         database_disk_size: '250',
 
         admin_instance_type: 'c4.8xlarge',
@@ -135,7 +135,7 @@ module Cluster
 
         description: 'Only appropriate to smoke-test deployment and process very small videos. Uses efs storage, only works in us-west-2 for now',
 
-        database_instance_type: 't2.medium',
+        database_instance_type: 'db.t2.medium',
         database_disk_size: '20',
 
         admin_instance_type: 't2.medium',
@@ -159,7 +159,7 @@ module Cluster
 
         description: 'Appropriate for processing small workloads and testing capture agent integration. Uses efs storage, only works in us-west-2 for now',
 
-        database_instance_type: 'c4.large',
+        database_instance_type: 'db.t2.large',
         database_disk_size: '50',
 
         admin_instance_type: 'c4.xlarge',
@@ -183,7 +183,7 @@ module Cluster
 
         description: 'Appropriate for large workloads. Uses efs storage, only works in us-west-2 for now',
 
-        database_instance_type: 'c4.2xlarge',
+        database_instance_type: 'db.m4.xlarge',
         database_disk_size: '250',
 
         admin_instance_type: 'c4.8xlarge',
@@ -210,7 +210,7 @@ module Cluster
         storage_instance_type: 't2.medium',
         storage_disk_size: '200',
 
-        database_instance_type: 't2.medium',
+        database_instance_type: 'db.t2.micro',
         database_disk_size: '20',
 
         admin_instance_type: 't2.medium',
@@ -244,12 +244,23 @@ module Cluster
       erb = Erubis::Eruby.new(File.read(template))
       base_secrets = %Q|, #{get_base_secrets_content}|
 
-      all_attributes = attributes.merge(variant_attributes).merge(base_secrets_content: base_secrets)
+      all_attributes = attributes.merge(variant_attributes).
+        merge(base_secrets_content: base_secrets).
+        merge(database_user_info)
 
       erb.result(all_attributes)
     end
 
     private
+
+    def database_user_info
+      password = ''
+      16.times do
+        password += (('a'..'z').to_a + (1..9).to_a + %W| ( ) $ [ ] -|).sample.to_s
+      end
+
+      { master_user_password: password }
+    end
 
     def get_base_secrets_content
       begin

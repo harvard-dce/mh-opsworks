@@ -16,6 +16,13 @@ module Cluster
         )
       end
 
+      def rds_client
+        Aws::RDS::Client.new(
+          region: config.parsed[:region],
+          credentials: config.credentials
+        )
+      end
+
       def cloudwatch_client
         Aws::CloudWatch::Client.new(
           region: config.parsed[:region],

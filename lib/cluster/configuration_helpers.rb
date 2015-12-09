@@ -9,6 +9,10 @@ module Cluster
         config.parsed
       end
 
+      def rds_config
+        config.parsed[:rds]
+      end
+
       def vpc_config
         config.parsed[:vpc]
       end
@@ -19,6 +23,15 @@ module Cluster
 
       def app_config
         stack_config[:app]
+      end
+
+      def get_account_number
+        iam_client.get_user.data.user.arn.match(/(\d+)/)[0]
+      end
+
+      def rds_db_instance_arn
+        region = config.parsed[:region]
+        %Q|arn:aws:rds:#{region}:#{get_account_number}:db:#{rds_name}|
       end
 
       def deployment_config

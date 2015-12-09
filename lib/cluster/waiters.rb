@@ -2,6 +2,26 @@ module Cluster
   module Waiters
     module ClassMethods
 
+      def wait_until_rds_instance_available(db_instance_identifier)
+        print "Waiting for RDS instance to be available: "
+        rds_client.wait_until(
+          :db_instance_available, db_instance_identifier: db_instance_identifier
+        ) do |w|
+          ::Cluster::Instance.apply_wait_options(w)
+        end
+        puts " done!"
+      end
+
+      def wait_until_rds_instance_deleted(db_instance_identifier)
+        print "Waiting for RDS instance to be deleted: "
+        rds_client.wait_until(
+          :db_instance_deleted, db_instance_identifier: db_instance_identifier
+        ) do |w|
+          ::Cluster::Instance.apply_wait_options(w)
+        end
+        puts " done!"
+      end
+
       def wait_until_deployment_completed(deployment_id)
         print "Waiting for deployment, command, or recipe to execute successfully: "
         opsworks_client.wait_until(

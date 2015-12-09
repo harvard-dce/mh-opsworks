@@ -13,6 +13,14 @@ module Cluster
         calculate_name(stack_config[:name])
       end
 
+      def db_subnet_group_name
+        %Q|#{stack_shortname}-db-subnet-group|
+      end
+
+      def rds_name
+        %Q|#{stack_shortname}-database|
+      end
+
       def vpc_name
         %Q|#{stack_shortname}-vpc|
       end

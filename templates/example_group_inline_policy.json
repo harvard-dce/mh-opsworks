@@ -30,7 +30,12 @@
                 "sns:*",
                 "cloudwatch:*",
                 "s3:*",
-                "elasticfilesystem:*"
+                "elasticfilesystem:*",
+                "rds:describe*",
+                "rds:createDBSubnetGroup",
+                "rds:deleteDBSubnetGroup",
+                "rds:createDBInstance",
+                "rds:deleteDBInstance"
             ],
             "Resource": [
                 "*"

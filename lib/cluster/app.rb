@@ -41,20 +41,24 @@ module Cluster
     private
 
     def self.app_parameters
-      stack = Stack.find_or_create
+      stack = Stack.find_existing
       app_source = app_config[:app_source]
 
       if deployment_private_ssh_key
         app_source[:ssh_key] = deployment_private_ssh_key
       end
 
+      data_source = {
+        type: 'RdsDbInstance',
+        database_name: rds_config[:db_name],
+        arn: rds_db_instance_arn
+      }
+
       {
         stack_id: stack.stack_id,
         name: app_config[:name],
         shortname: app_config[:shortname],
-        data_sources: [
-          { type: 'AutoSelectOpsworksMysqlInstance' }
-        ],
+        data_sources: [data_source],
         type: app_config[:type],
         app_source: app_source
       }

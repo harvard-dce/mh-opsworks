@@ -8,6 +8,14 @@
     "db_cidr_block": "<%= cidr_block_root %>.128/28",
     "_cidr_block_comment": "10.1.1.0/24 gives you 254 ips"
   },
+  "rds": {
+    "db_name": "matterhorn",
+    "db_instance_class": "<%= database_instance_type %>",
+    "allocated_storage": "<%= database_disk_size %>",
+    "master_username": "root",
+    "master_user_password": "<%= master_user_password %>",
+    "backup_retention_period": 1
+  },
   "stack": {
     "name": "<%= name %>",
     "default_ssh_key_name":"",
@@ -29,59 +37,6 @@
       }
     },
     "layers": [
-      {
-        "name": "MySQL db",
-        "shortname": "db-master",
-        "enable_auto_healing": true,
-        "install_updates_on_boot": true,
-        "type": "db-master",
-        "use_ebs_optimized_instances": true,
-        "custom_recipes": {
-          "setup": [
-            "mh-opsworks-recipes::set-timezone",
-            "mh-opsworks-recipes::fix-raid-mapping",
-            "mh-opsworks-recipes::set-bash-as-default-shell",
-            "mh-opsworks-recipes::install-utils",
-            "mh-opsworks-recipes::create-matterhorn-user",
-            "mh-opsworks-recipes::install-deploy-key",
-            "mh-opsworks-recipes::enable-postfix-smarthost",
-            "mh-opsworks-recipes::nfs-client",
-            "mh-opsworks-recipes::write-root-my-dot-cnf",
-            "mh-opsworks-recipes::install-custom-metrics",
-            "mh-opsworks-recipes::install-mysql-backups",
-            "mh-opsworks-recipes::create-alerts-from-opsworks-metrics",
-            "mh-opsworks-recipes::enable-enhanced-networking",
-            "mh-opsworks-recipes::convert-mysql-to-multiple-data-files",
-            "mh-opsworks-recipes::clean-up-package-cache"
-          ],
-          "deploy": [
-            "mh-opsworks-recipes::deploy-database"
-          ],
-          "shutdown": [
-            "mh-opsworks-recipes::remove-alarms"
-          ]
-        },
-        "volume_configurations": [
-          {
-            "mount_point": "/vol/mysql",
-            "raid_level": 1,
-            "number_of_disks": 2,
-            "size": "<%= database_disk_size %>",
-            "volume_type": "gp2"
-          },
-          {
-            "mount_point": "/opt/matterhorn",
-            "number_of_disks": 1,
-            "size": "<%= matterhorn_root_size %>",
-            "volume_type": "gp2"
-          }
-        ],
-        "instances": {
-          "number_of_instances": 1,
-          "instance_type": "<%= database_instance_type %>",
-          "root_device_type": "ebs"
-        }
-      },
       {
         "name": "Admin",
         "shortname": "admin",
@@ -108,6 +63,8 @@
             "mh-opsworks-recipes::enable-enhanced-networking",
             "mh-opsworks-recipes::rsyslog-to-loggly",
             "mh-opsworks-recipes::nfs-client",
+            "mh-opsworks-recipes::write-root-my-dot-cnf",
+            "mh-opsworks-recipes::install-mysql-backups",
             "mh-opsworks-recipes::clean-up-package-cache"
           ],
           "configure": [
@@ -326,6 +283,7 @@
             "mh-opsworks-recipes::create-alerts-from-opsworks-metrics",
             "mh-opsworks-recipes::enable-enhanced-networking",
             "mh-opsworks-recipes::install-ec2-scaling-manager",
+            "mh-opsworks-recipes::create-mysql-alarms",
             "mh-opsworks-recipes::clean-up-package-cache"
           ],
           "shutdown": [
@@ -352,7 +310,7 @@
       "name": "Matterhorn",
       "type": "other",
       "deployment": {
-        "to_layers": ["Admin", "Engage", "Workers", "MySQL db"],
+        "to_layers": ["Admin", "Engage", "Workers"],
         "custom_json": { }
       },
       "app_source": {

@@ -51,7 +51,8 @@ module Cluster
                 "opsworks:StartInstance",
                 "opsworks:StopInstance",
                 "ec2:DescribeAccountAttributes",
-                "ec2:DescribeInstances"
+                "ec2:DescribeInstances",
+                "rds:DescribeDBInstances"
               ],
               "Effect" => "Allow",
               "Resource" => [

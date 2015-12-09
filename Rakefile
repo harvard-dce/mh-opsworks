@@ -16,6 +16,10 @@ namespace :admin do
 
       puts %Q|Stack "#{stack.name}" initialized, id: #{stack.stack_id}|
       layers = Cluster::Layers.find_or_create
+
+      Cluster::RDS.find_or_create
+      Cluster::RegistersRDSInstance.register
+
       Cluster::Instances.find_or_create
       Cluster::App.find_or_create
       layers.each do |layer|
@@ -38,6 +42,9 @@ namespace :admin do
 
       puts 'deleting instances'
       Cluster::Instances.delete
+
+      puts 'deleting RDS instance'
+      Cluster::RDS.delete
 
       puts 'deleting stack'
       Cluster::Stack.delete

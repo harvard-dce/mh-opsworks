@@ -1,7 +1,7 @@
 Deploy the main application
 
 This will deploy the main application as configured in the cluster config to
-all matterhorn layers - currently Admin, Engage, MySQL db, and Workers.
+all matterhorn layers - currently Admin, Engage, and Workers.
 
 If the SHA resolved from the branch, tag, or revision has already been deployed
 this does nothing and exits cleanly.
