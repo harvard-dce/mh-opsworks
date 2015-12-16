@@ -256,7 +256,7 @@ module Cluster
     def database_user_info
       password = ''
       16.times do
-        password += (('a'..'z').to_a + (1..9).to_a + %W| ( ) $ [ ] -|).sample.to_s
+        password += (('a'..'z').to_a + (1..9).to_a).sample.to_s
       end
 
       { master_user_password: password }
