@@ -59,6 +59,13 @@ module Cluster
         acl: (permissions == 'private') ? 'private' : 'public-read',
         bucket: name
       )
+      s3_client.put_bucket_versioning(
+        bucket: name,
+        versioning_configuration: {
+          mfa_delete: 'Disabled',
+          status: 'Enabled'
+        }
+      )
       construct_bucket(name)
     end
 
