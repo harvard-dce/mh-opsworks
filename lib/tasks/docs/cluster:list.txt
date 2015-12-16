@@ -1,0 +1,8 @@
+List all known clusters
+
+This lists all known clusters in the current cluster config bucket. The
+currently selected active cluster will be noted with a "*".
+
+SEE ALSO:
+
+cluster:active, cluster:new, cluster:switch

@@ -112,6 +112,23 @@ namespace :cluster do
     Cluster::RemoteConfig.new.sync
   end
 
+  desc Cluster::RakeDocs.new('cluster:list').desc
+  task :list do
+    current_cluster_shortname = Cluster::Base.stack_shortname
+    puts "Current cluster configurations:"
+    puts
+    Cluster::RemoteConfigs.all_with_human_names.each do |config|
+      if current_cluster_shortname == config
+        print "*"
+      else
+        print "-"
+      end
+      puts %Q| #{config}|
+    end
+    puts
+    puts "* = selected cluster"
+  end
+
   desc Cluster::RakeDocs.new('cluster:switch').desc
   task :switch do
     session = Cluster::ClusterSwitcherSession.new
@@ -122,5 +139,6 @@ namespace :cluster do
     end
 
     session.choose_cluster
+    Cluster::RemoteConfig.new.sync
   end
 end
