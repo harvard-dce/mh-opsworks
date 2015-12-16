@@ -7,12 +7,20 @@ module Cluster
     end
 
     def choose_cluster
-      puts "Please choose a cluster by number:\n\n"
+      puts
+      puts "Please choose a cluster by number: (ctrl-c to quit)\n\n"
       configs.each_with_index do |config, index|
         config_name = config.gsub('cluster_config-', '')
         config_name.gsub!('.json', '')
-        puts %Q|#{index}. #{config_name}|
+        print %Q|#{index}. |
+        if Cluster::Base.stack_shortname == config_name
+          print '* '
+        end
+        puts config_name
       end
+
+      puts
+      puts "* = active cluster"
 
       print "\nCluster number: "
       cluster_number_input = STDIN.gets.strip.chomp

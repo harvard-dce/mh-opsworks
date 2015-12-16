@@ -126,7 +126,7 @@ namespace :cluster do
       puts %Q| #{config}|
     end
     puts
-    puts "* = selected cluster"
+    puts "* = active cluster"
   end
 
   desc Cluster::RakeDocs.new('cluster:switch').desc
