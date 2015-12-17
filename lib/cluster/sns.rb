@@ -4,10 +4,23 @@ module Cluster
       topic_arn = get_topic_arn
       delete_subscriptions_for(topic_arn)
       delete_alarms_for_instances
+      delete_rds_alarms
       sns_client.delete_topic(topic_arn: topic_arn)
     end
 
     private
+
+    def self.delete_rds_alarms
+      to_remove = cloudwatch_client.describe_alarms.inject([]){ |memo, page| memo + page.metric_alarms }.find_all do |alarm|
+        alarm.alarm_name.match(/^#{rds_name}/)
+      end
+
+      if to_remove.any?
+        cloudwatch_client.delete_alarms(
+          alarm_names: to_remove.map { |alarm| alarm.alarm_name }
+        )
+      end
+    end
 
     def self.delete_alarms_for_instances
       opsworks_instance_ids = Cluster::Instances.find_existing.map { |i| i.instance_id }
