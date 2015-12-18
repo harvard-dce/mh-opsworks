@@ -19,7 +19,8 @@ matterhorn cluster.
 * Security out of the box - instances can only be accessed via ssh keys and most instances are isolated to a private network,
 * Automated matterhorn git deployments via OpsWorks built-ins,
 * The ability to create and destroy matterhorn clusters completely, including all attached resources,
-* Tagged matterhorn logging to [loggly](http://loggly.com),
+* Optional tagged matterhorn logging to [loggly](http://loggly.com),
+* Optional newrelic integration,
 * A set of high-level rake tasks designed to make managing your OpsWorks matterhorn cluster easier,
 * A way to switch between existing clusters to make collaboration easier,
 * A MySQL RDS database that's monitored with cloudwatch alarms, and
@@ -402,6 +403,38 @@ If you'd like to deploy clusters to a currently unsupported region:
 1. Work with the cluster as usual.
 
 Please submit a PR when you've confirmed everything works.
+
+### New Relic
+
+You can enable newrelic integration by including a newrelic key in your
+cluster's `custom_json`.
+
+```
+{
+  "stack": {
+    "chef": {
+      "custom_json": {
+        "newrelic": {
+          "key": "your new relic API key"
+          }
+      },
+    }
+  }
+}
+```
+
+If you don't include the "newrelic" key, it isn't enabled.
+
+Chef enables newrelic app monitoring on the admin, worker and engage nodes.
+Each node is monitored separately and under an aggregate app named after your
+stack.
+
+This feature requires that your maven build downloads and unpacks the correct
+newrelic agent jar - this is done by default in the DCE matterhorn
+distribution.
+
+Instance-level new relic logs are stored in the same directory as your
+matterhorn logs.
 
 ### Loggly
 
