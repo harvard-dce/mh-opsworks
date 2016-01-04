@@ -347,6 +347,7 @@
           { "IpProtocol" : "tcp", "FromPort" : "443", "ToPort" : "443", "SourceSecurityGroupId" : { "Ref" : "OpsWorksSecurityGroup" } },
           { "IpProtocol" : "tcp", "FromPort" : "514", "ToPort" : "514", "SourceSecurityGroupId" : { "Ref" : "OpsWorksSecurityGroup" } },
           { "IpProtocol" : "tcp", "FromPort" : "6514", "ToPort" : "6514", "SourceSecurityGroupId" : { "Ref" : "OpsWorksSecurityGroup" } },
+          { "IpProtocol" : "tcp", "FromPort" : "8081",  "ToPort" : "8081",  "SourceSecurityGroupId" : { "Ref" : "OpsWorksSecurityGroup" }},
           { "IpProtocol" : "tcp", "FromPort" : "9418",  "ToPort" : "9418",  "SourceSecurityGroupId" : { "Ref" : "OpsWorksSecurityGroup" }},
           { "IpProtocol" : "tcp", "FromPort" : "11371",  "ToPort" : "11371",  "SourceSecurityGroupId" : { "Ref" : "OpsWorksSecurityGroup" }}
         ],
@@ -356,6 +357,7 @@
           { "IpProtocol" : "tcp", "FromPort" : "443", "ToPort" : "443", "CidrIp" : "0.0.0.0/0" },
           { "IpProtocol" : "tcp", "FromPort" : "514", "ToPort" : "514", "CidrIp" : "0.0.0.0/0" },
           { "IpProtocol" : "tcp", "FromPort" : "6514", "ToPort" : "6514", "CidrIp" : "0.0.0.0/0" },
+          { "IpProtocol" : "tcp", "FromPort" : "8081",  "ToPort" : "8081",  "CidrIp" : "0.0.0.0/0" },
           { "IpProtocol" : "tcp", "FromPort" : "9418",  "ToPort" : "9418",  "CidrIp" : "0.0.0.0/0" },
           { "IpProtocol" : "tcp", "FromPort" : "11371",  "ToPort" : "11371",  "CidrIp" : "0.0.0.0/0" }
         ],
