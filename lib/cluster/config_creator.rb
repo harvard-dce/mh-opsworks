@@ -79,7 +79,7 @@ module Cluster
         ganglia_disk_size: '100',
 
         matterhorn_root_size: '50',
-        matterhorn_workspace_size: '50'
+        matterhorn_workspace_size: '250'
       },
 
       zadara_medium: {
@@ -127,7 +127,7 @@ module Cluster
         ganglia_disk_size: '100',
 
         matterhorn_root_size: '50',
-        matterhorn_workspace_size: '50'
+        matterhorn_workspace_size: '250'
       },
 
       efs_small: {
