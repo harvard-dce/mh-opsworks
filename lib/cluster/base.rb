@@ -43,7 +43,7 @@ module Cluster
           "Statement" =>  [
             {
               "Action" =>  [
-                "s3:GetObject",
+                "s3:*",
                 "cloudwatch:*",
                 "sns:CreateTopic",
                 "opsworks:DescribeInstances",
