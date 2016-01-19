@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 1.0.3 - 1/19/2016
+
+* Give additional rights to the default instance profile to allow the engage
+  node to publish compiled assets to s3. This is part of the "seed from s3 to
+  cloudfront" feature implemented in MATT-1727
+
 ## 1.0.2 - 1/6/2016
 
 * Increase ebs workspace size for production-sized clusters
