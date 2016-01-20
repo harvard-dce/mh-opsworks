@@ -58,6 +58,9 @@ namespace :admin do
       puts 'deleting VPC'
       Cluster::VPC.delete
 
+      puts 'deleting S3 distribution bucket and assets'
+      Cluster::S3DistributionBucket.delete
+
       puts 'deleting configuration files'
       Cluster::RemoteConfig.new.delete
     end

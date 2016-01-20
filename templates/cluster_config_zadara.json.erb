@@ -24,6 +24,7 @@
         "matterhorn_repo_root": "/opt/matterhorn",
         "matterhorn_log_directory": "/opt/matterhorn/log",
         "local_workspace_root": "/var/matterhorn-workspace",
+        "s3_distribution_bucket_name": "<%= s3_distribution_bucket_name %>",
         "storage": {
           "export_root": "<%= export_root %>",
           "type": "external",
@@ -218,49 +219,6 @@
         "instances": {
           "number_of_instances": 1,
           "instance_type": "<%= engage_instance_type %>",
-          "root_device_type": "ebs"
-        }
-      },
-      {
-        "name": "Asset Server",
-        "shortname": "asset_server",
-        "type": "custom",
-        "enable_auto_healing": true,
-        "auto_assign_elastic_ips": true,
-        "install_updates_on_boot": true,
-        "auto_assign_public_ips": true,
-        "custom_recipes": {
-          "setup": [
-            "mh-opsworks-recipes::set-timezone",
-            "mh-opsworks-recipes::fix-raid-mapping",
-            "mh-opsworks-recipes::set-bash-as-default-shell",
-            "mh-opsworks-recipes::install-utils",
-            "mh-opsworks-recipes::create-matterhorn-user",
-            "mh-opsworks-recipes::enable-postfix-smarthost",
-            "mh-opsworks-recipes::configure-engage-nginx-proxy",
-            "mh-opsworks-recipes::install-custom-metrics",
-            "mh-opsworks-recipes::create-alerts-from-opsworks-metrics",
-            "mh-opsworks-recipes::enable-enhanced-networking",
-            "mh-opsworks-recipes::rsyslog-to-loggly",
-            "mh-opsworks-recipes::nfs-client",
-            "mh-opsworks-recipes::clean-up-package-cache"
-          ],
-          "configure": [
-
-          ],
-          "deploy": [
-
-          ],
-          "shutdown": [
-            "mh-opsworks-recipes::remove-alarms"
-          ]
-        },
-        "volume_configurations": [
-
-        ],
-        "instances": {
-          "number_of_instances": 1,
-          "instance_type": "<%= asset_server_instance_type %>",
           "root_device_type": "ebs"
         }
       },

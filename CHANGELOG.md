@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 1.0.4 - 1/21/2016
+
+* Remove the asset layer as it's replaced with the new s3 distribution.
+* Autocreate an s3 bucket config value based on the cluster name.
+
 ## 1.0.3 - 1/19/2016
 
 * Give additional rights to the default instance profile to allow the engage

@@ -19,8 +19,6 @@ module Cluster
 
         engage_instance_type: 't2.medium',
 
-        asset_server_instance_type: 't2.medium',
-
         ganglia_instance_type: 't2.medium',
         ganglia_disk_size: '10',
 
@@ -45,8 +43,6 @@ module Cluster
         workers_instance_count: 2,
 
         engage_instance_type: 'c4.xlarge',
-
-        asset_server_instance_type: 'c4.xlarge',
 
         ganglia_instance_type: 't2.medium',
         ganglia_disk_size: '50',
@@ -73,8 +69,6 @@ module Cluster
 
         engage_instance_type: 'c4.8xlarge',
 
-        asset_server_instance_type: 'c4.8xlarge',
-
         ganglia_instance_type: 'c4.large',
         ganglia_disk_size: '100',
 
@@ -96,8 +90,6 @@ module Cluster
         workers_instance_count: 2,
 
         engage_instance_type: 'c4.xlarge',
-
-        asset_server_instance_type: 'c4.xlarge',
 
         ganglia_instance_type: 't2.medium',
         ganglia_disk_size: '50',
@@ -121,8 +113,6 @@ module Cluster
 
         engage_instance_type: 'c4.8xlarge',
 
-        asset_server_instance_type: 'c4.8xlarge',
-
         ganglia_instance_type: 'c4.large',
         ganglia_disk_size: '100',
 
@@ -144,8 +134,6 @@ module Cluster
         workers_instance_count: 2,
 
         engage_instance_type: 't2.medium',
-
-        asset_server_instance_type: 't2.medium',
 
         ganglia_instance_type: 't2.medium',
         ganglia_disk_size: '10',
@@ -169,8 +157,6 @@ module Cluster
 
         engage_instance_type: 'c4.xlarge',
 
-        asset_server_instance_type: 'c4.xlarge',
-
         ganglia_instance_type: 't2.medium',
         ganglia_disk_size: '50',
 
@@ -192,8 +178,6 @@ module Cluster
         workers_instance_count: 2,
 
         engage_instance_type: 'c4.8xlarge',
-
-        asset_server_instance_type: 'c4.8xlarge',
 
         ganglia_instance_type: 'c4.large',
         ganglia_disk_size: '100',
@@ -220,8 +204,6 @@ module Cluster
 
         engage_instance_type: 't2.medium',
 
-        asset_server_instance_type: 't2.medium',
-
         ganglia_instance_type: 't2.medium',
         ganglia_disk_size: '10',
 
@@ -246,12 +228,19 @@ module Cluster
 
       all_attributes = attributes.merge(variant_attributes).
         merge(base_secrets_content: base_secrets).
-        merge(database_user_info)
+        merge(database_user_info).
+        merge(s3_distribution_bucket_name_from(attributes[:name]))
 
       erb.result(all_attributes)
     end
 
     private
+
+    def s3_distribution_bucket_name_from(name)
+      {
+        s3_distribution_bucket_name: %Q|#{Cluster::Base.calculate_name(name)}-distribution|
+      }
+    end
 
     def database_user_info
       password = ''
