@@ -78,7 +78,7 @@ namespace :cluster do
   end
 
   desc Cluster::RakeDocs.new('cluster:console').desc
-  task console: [:configtest, :config_sync_check] do
+  task console: [:configtest, :config_sync_check, :production_failsafe] do
     Cluster::Console.run
   end
 
