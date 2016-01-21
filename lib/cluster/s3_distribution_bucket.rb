@@ -2,10 +2,14 @@ module Cluster
   class S3DistributionBucket < Base
     def self.delete
       bucket_name = stack_custom_json[:s3_distribution_bucket_name]
-      delete_objects_from(bucket_name)
-      delete_versions_from(bucket_name)
-      delete_delete_markers_from(bucket_name)
-      delete_bucket(bucket_name)
+      begin
+        delete_objects_from(bucket_name)
+        delete_versions_from(bucket_name)
+        delete_delete_markers_from(bucket_name)
+        delete_bucket(bucket_name)
+      rescue Aws::S3::Errors::NoSuchBucket
+        puts "#{bucket_name} did not exist. Continuing. . ."
+      end
     end
 
     private

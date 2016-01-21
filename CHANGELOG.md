@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.0.5 - 1/21/2016
+
+* Don't error out when deleting non-existing buckets
+
 ## 1.0.4 - 1/21/2016
 
 * Remove the asset layer as it's replaced with the new s3 distribution.
