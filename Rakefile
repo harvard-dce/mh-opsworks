@@ -22,6 +22,8 @@ namespace :admin do
 
       Cluster::Instances.find_or_create
       Cluster::App.find_or_create
+      Cluster::S3DistributionBucket.find_or_create
+
       layers.each do |layer|
         puts %Q|Layer: "#{layer.name}" => #{layer.layer_id}|
         Cluster::Instances.find_in_layer(layer).each do |instance|

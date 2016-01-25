@@ -1,7 +1,24 @@
 module Cluster
   class S3DistributionBucket < Base
+    def self.find_or_create
+      S3Bucket.find_or_create(
+        name: distribution_bucket_name, permissions: 'public'
+      )
+      s3_client.put_bucket_cors(
+        bucket: distribution_bucket_name,
+        cors_configuration: {
+          cors_rules: [
+            allowed_headers: ['Authorization'],
+            allowed_methods: ['GET'],
+            allowed_origins: ['*'],
+            max_age_seconds: 3600
+          ]
+        }
+      )
+    end
+
     def self.delete
-      bucket_name = stack_custom_json[:s3_distribution_bucket_name]
+      bucket_name = distribution_bucket_name
       begin
         delete_objects_from(bucket_name)
         delete_versions_from(bucket_name)
@@ -50,6 +67,10 @@ module Cluster
       else
         { key: object.key }
       end
+    end
+
+    def self.distribution_bucket_name
+      stack_custom_json[:s3_distribution_bucket_name]
     end
   end
 end

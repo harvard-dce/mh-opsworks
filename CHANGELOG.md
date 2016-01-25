@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.0.6 - 1/28/2016
+
+* Auto-create the s3 distribution bucket with the correct CORS headers
+
 ## 1.0.5 - 1/21/2016
 
 * Don't error out when deleting non-existing buckets
