@@ -1,7 +1,10 @@
 module Cluster
   class S3DistributionBucket < Base
     def self.find_or_create
-      S3Bucket.find_or_create(name: distribution_bucket_name)
+      bucket = S3Bucket.find_existing(name: distribution_bucket_name)
+      return bucket if bucket
+
+      S3Bucket.create(name: distribution_bucket_name)
       s3_client.put_bucket_policy(
         bucket: distribution_bucket_name,
         policy: default_bucket_policy
