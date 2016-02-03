@@ -1,8 +1,10 @@
 module Cluster
   class S3DistributionBucket < Base
     def self.find_or_create
-      S3Bucket.find_or_create(
-        name: distribution_bucket_name, permissions: 'public'
+      S3Bucket.find_or_create(name: distribution_bucket_name)
+      s3_client.put_bucket_policy(
+        bucket: distribution_bucket_name,
+        policy: default_bucket_policy
       )
       s3_client.put_bucket_cors(
         bucket: distribution_bucket_name,
@@ -69,8 +71,21 @@ module Cluster
       end
     end
 
-    def self.distribution_bucket_name
-      stack_custom_json[:s3_distribution_bucket_name]
+    def self.default_bucket_policy
+     %Q|{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "1",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "*"
+      },
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::#{distribution_bucket_name}/*"
+    }
+  ]
+}|
     end
   end
 end

@@ -36,6 +36,10 @@ module Cluster
       def efs_filesystem_name
         %Q|#{vpc_name} efs filesystem|
       end
+
+      def distribution_bucket_name
+        stack_custom_json[:s3_distribution_bucket_name]
+      end
     end
 
     def self.included(base)
