@@ -2,6 +2,13 @@
 
 ## TO BE RELEASED
 
+## 1.6.1 - 6/08/2016
+
+* Allow `install_updates_on_boot` to be configured when a layer is created or
+  updated. As far as I can tell, this doesn't get retroactively applied to
+  instances in a layer that've already been created. This is a setting in each
+  layer's config.
+
 ## 1.6.0 - 5/31/2016
 
 * Increase the default root ebs volume size to 16G and allow for it to be
