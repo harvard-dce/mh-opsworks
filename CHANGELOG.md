@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 1.0.8 - 2/4/2016
+
+* Only set the bucket policy on the s3 distribution bucket on creation
+
+## 1.0.7 - 2/2/2016
+
+* Add a working bucket policy to the s3 distribution bucket
+
 ## 1.0.6 - 1/28/2016
 
 * Auto-create the s3 distribution bucket with the correct CORS headers
