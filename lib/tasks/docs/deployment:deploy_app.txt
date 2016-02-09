@@ -26,4 +26,4 @@ revision will still be running.
 
 SEE ALSO:
 
-cluster:new, matterhorn:restart
+cluster:new, matterhorn:restart, deployments:redeploy_app

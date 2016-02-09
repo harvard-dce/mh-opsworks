@@ -1,0 +1,8 @@
+Run unit tests while force deploying the most recent app revision
+
+Simlar to `deployment:redeploy_app`, except this also runs unit tests during
+the redeploy.
+
+SEE ALSO:
+
+deployment:deploy_app, deployment:redeploy_app

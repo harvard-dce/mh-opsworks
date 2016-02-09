@@ -17,6 +17,10 @@ module Cluster
       deploy_app(deploy_action: :force_deploy)
     end
 
+    def self.redeploy_app_with_unit_tests
+      deploy_app(deploy_action: :force_deploy, skip_java_unit_tests: false)
+    end
+
     def self.deploy_app(custom_json_overrides = {})
       stack = Cluster::Stack.with_existing_stack
       app = App.find_or_create

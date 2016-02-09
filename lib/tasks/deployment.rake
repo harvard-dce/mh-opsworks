@@ -9,6 +9,11 @@ namespace :deployment do
     Cluster::Deployment.redeploy_app
   end
 
+  desc Cluster::RakeDocs.new('deployment:redeploy_app_with_unit_tests').desc
+  task redeploy_app_with_unit_tests: ['cluster:configtest', 'cluster:config_sync_check', 'cluster:production_failsafe'] do
+    Cluster::Deployment.redeploy_app_with_unit_tests
+  end
+
   task rollback_app: ['cluster:configtest', 'cluster:config_sync_check'] do
     Cluster::Deployment.rollback_app
   end

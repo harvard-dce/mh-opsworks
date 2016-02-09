@@ -10,4 +10,4 @@ only be used in development or staging clusters.
 
 SEE ALSO:
 
-deployment:deploy_app
+deployment:deploy_app, deployment:redeploy_app_with_unit_tests
