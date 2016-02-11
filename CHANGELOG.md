@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 1.0.9 - 2/10/2016
+
+* Allow unit tests to be run via the `deployment:redeploy_app_with_unit_tests`
+  rake task.
+
 ## 1.0.8 - 2/4/2016
 
 * Only set the bucket policy on the s3 distribution bucket on creation
