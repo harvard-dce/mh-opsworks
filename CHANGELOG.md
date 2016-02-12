@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 1.0.10 - 2/16/2016
+
+* Mount nfs earlier in the init process to ensure we correctly add disk space
+  checks at the right time.
+
 ## 1.0.9 - 2/10/2016
 
 * Allow unit tests to be run via the `deployment:redeploy_app_with_unit_tests`
