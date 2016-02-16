@@ -11,6 +11,7 @@ module Cluster
 
         database_instance_type: 'db.t2.medium',
         database_disk_size: '20',
+        multi_az: false,
 
         admin_instance_type: 't2.medium',
 
@@ -36,6 +37,7 @@ module Cluster
 
         database_instance_type: 'db.t2.large',
         database_disk_size: '50',
+        multi_az: false,
 
         admin_instance_type: 'c4.xlarge',
 
@@ -61,6 +63,7 @@ module Cluster
 
         database_instance_type: 'db.m4.xlarge',
         database_disk_size: '250',
+        multi_az: true,
 
         admin_instance_type: 'c4.8xlarge',
 
@@ -83,6 +86,7 @@ module Cluster
 
         database_instance_type: 'db.t2.large',
         database_disk_size: '50',
+        multi_az: false,
 
         admin_instance_type: 'c4.xlarge',
 
@@ -105,6 +109,7 @@ module Cluster
 
         database_instance_type: 'db.m4.xlarge',
         database_disk_size: '250',
+        multi_az: true,
 
         admin_instance_type: 'c4.8xlarge',
 
@@ -127,6 +132,7 @@ module Cluster
 
         database_instance_type: 'db.t2.medium',
         database_disk_size: '20',
+        multi_az: false,
 
         admin_instance_type: 't2.medium',
 
@@ -149,6 +155,7 @@ module Cluster
 
         database_instance_type: 'db.t2.large',
         database_disk_size: '50',
+        multi_az: false,
 
         admin_instance_type: 'c4.xlarge',
 
@@ -171,6 +178,7 @@ module Cluster
 
         database_instance_type: 'db.m4.xlarge',
         database_disk_size: '250',
+        multi_az: true,
 
         admin_instance_type: 'c4.8xlarge',
 
@@ -196,6 +204,7 @@ module Cluster
 
         database_instance_type: 'db.t2.micro',
         database_disk_size: '20',
+        multi_az: false,
 
         admin_instance_type: 't2.medium',
 

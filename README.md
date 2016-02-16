@@ -674,6 +674,32 @@ creations use these custom AMIs. If you're deploying multiple clusters in a
 bunch of different regions you'll need to manually edit the AMI ID when
 switching regions.
 
+### RDS instance configuration
+
+You can override default RDS instance creation parameters by adding them to the
+`rds` stanza of your cluster configuration. The attributes you put in there are
+`merge`d into the defaults and passed to the ruby SDK
+[`Aws::RDS::Client#create_db_instance`
+method](https://docs.aws.amazon.com/sdkforruby/api/Aws/RDS/Client.html#create_db_instance-instance_method).
+
+So, by default we create a single-AZ RDS instance for all but "large" clusters.
+If you wanted to create a multi-az instance for a non-large cluster, you'd run
+`cluster:new`, update your cluster configuration to look something like:
+
+
+```
+{
+  "rds": {
+    "db_name": "matterhorn",
+    "_other stuff . . ": "other stuff",
+    "multi_az": true
+  }
+}
+```
+
+and then create your cluster.  This pattern is similar for other RDS-specific
+attributes.
+
 ### Potentially problematic aws resource limits
 
 The default aws resource limits are listed
