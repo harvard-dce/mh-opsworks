@@ -4,6 +4,8 @@
 
 * Mount nfs earlier in the init process to ensure we correctly add disk space
   checks at the right time.
+* Document multi-az RDS creation better. Create multi-az RDS by default for
+  large clusters.
 
 ## 1.0.9 - 2/10/2016
 
