@@ -1,6 +1,6 @@
 # Enabling DCE-specific authentication
 
-* Set up two route53 managed records under dcex.harvard.edu that point to:
+* Set up two route53 managed records under our *.harvard.edu domain that point to:
   * Your admin EIP and
   * Your engage server EIP.
 * Ask to have your engage server EIP whitelisted with the authentication server
