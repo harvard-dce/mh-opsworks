@@ -383,7 +383,10 @@
         "GroupDescription" : "Enable direct access to the matterhorn java daemon for matterhorn nodes",
         "VpcId" : { "Ref" : "VPC" },
         "SecurityGroupIngress" : [
-          { "IpProtocol" : "tcp", "FromPort" : "8080",  "ToPort" : "8080",  "CidrIp" : "0.0.0.0/0" }
+          { "IpProtocol" : "tcp", "FromPort" : "8080",  "ToPort" : "8080",  "CidrIp" : "0.0.0.0/0" },
+          { "IpProtocol" : "tcp", "FromPort" : "3128",  "ToPort" : "3128",  "CidrIp" : "10.0.0.0/8" },
+          { "IpProtocol" : "tcp", "FromPort" : "3128",  "ToPort" : "3128",  "CidrIp" : "172.16.0.0/12" },
+          { "IpProtocol" : "tcp", "FromPort" : "3128",  "ToPort" : "3128",  "CidrIp" : "192.168.0.0/16" }
         ],
         "SecurityGroupEgress" : [
           { "IpProtocol" : "tcp", "FromPort" : "8080",  "ToPort" : "8080",  "CidrIp" : "0.0.0.0/0" }

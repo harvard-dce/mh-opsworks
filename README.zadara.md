@@ -78,3 +78,53 @@ The VPC will probably not delete cleanly - you should:
 
 You might want to remove and/or reformat the volume you've exported to free up
 space.
+
+# Setting up s3 object storage backups
+
+Zadara's docs
+[here](https://support.zadarastorage.com/entries/69891364-Setup-Backup-To-S3-B2S3-Through-a-Proxy-In-Your-AWS-VPC).
+
+One thing not clear from the docs - every snapshot policy that you want to back
+up needs to go into its own bucket. This also means you will probably
+duplicate your entire volume into multiple buckets.
+
+If you want to object store more than one snapshot type, just create multiple
+buckets and add them to the list in the IAM user's inline policy (below).
+
+* Create or use a zadara-connected cluster.
+* Create or use an opsworks instance with a public IP as your zadara squid
+  proxy.
+* Add the `mh-opsworks-recipes::create-squid-proxy-for-storage-cluster` recipe
+  to the layer's `setup` lifecycle. Run it to create the squid3 proxy.
+* Create an s3 bucket to hold your snapshots. Default policies and access
+  controls should be fine.
+* Create an IAM user with access credentials and a inline policy that looks
+  like:
+
+        {
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Action": "s3:ListAllMyBuckets",
+                    "Resource": "arn:aws:s3:::*"
+                },
+                {
+                    "Effect": "Allow",
+                    "Action": "s3:*",
+                    "Resource": [
+                        "arn:aws:s3:::<your s3 snapshot bucket name>",
+                        "arn:aws:s3:::<your s3 snapshot bucket name>/*"
+                    ]
+                }
+            ]
+        }
+
+* Log in to your VPSA.
+* Add a "Connection" under "Remote Storage" -> "Remote Object Storage".  Set
+  the private IP of your squid proxy instance and port 3128 as your proxy,
+  while connecting it to the IAM credentials and bucket you've just created. The
+  connection will be tested when you add it.
+* Hit "create" under "Data Protection" -> "Backup to Object Storage". Glue your
+  volume, snapshot policy and remote connection together and save it.
+* You now have s3 backed snapshots.
+

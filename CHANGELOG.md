@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## TO BE RELEASED
+
+## 1.0.11 - 2/25/2016
+
+* Open the squid proxy port for rfc 1918 addresses. Document how to set up
+  zadara s3 object backups. This has essentially no effect for clusters that 
+  don't use zadara object backups (not enabled by default). See README.zadara.md
+  for more information.
+
 ## 1.0.10 - 2/16/2016
 
 * Mount nfs earlier in the init process to ensure we correctly add disk space
