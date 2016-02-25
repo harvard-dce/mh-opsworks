@@ -44,6 +44,7 @@ module Cluster
             {
               "Action" =>  [
                 "s3:*",
+                "sqs:*",
                 "cloudwatch:*",
                 "sns:CreateTopic",
                 "opsworks:DescribeInstances",

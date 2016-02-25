@@ -2,6 +2,9 @@
 
 ## TO BE RELEASED
 
+* Add SQS access to the instance profile policy document.
+* Document ELK component layer configuration and provided services.
+
 ## 1.2.0 - 3/23/2016
 
 * Allow for cluster state to be turned into a "seed file" and applied to
