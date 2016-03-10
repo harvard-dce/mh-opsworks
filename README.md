@@ -240,13 +240,49 @@ revision of the custom cookbook that you'd like to use.
       "custom_json": {},
       "custom_cookbooks_source": {
         "type": "git",
-        "url": "https://github.com/harvard-dce/mh-opsworks-berkshelf",
+        "url": "https://github.com/harvard-dce/mh-opsworks-recipes",
         "revision": "master"
       }
     }
   }
 }
 ```
+
+Rather than use a git repo (which is certainly simple), you can also package
+your recipes into a tarball hosted on s3 - [see the opsworks docs
+here](https://docs.aws.amazon.com/opsworks/latest/userguide/workingcookbook-installingcustom-repo.html).
+
+This allows you to decouple from github and
+[supermarket.chef.io](https://supermarket.chef.io), which could help your
+deployments be more robust because you're eliminating third party dependencies.
+
+If you're using the default
+[mh-opsworks-recipes](https://github.com/harvard-dce/mh-opsworks-recipes), the
+steps are:
+
+* Check out the mh-opsworks-recipes repo.
+* Check out the relevant tag, branch, or commit in the recipe repo.
+* Run `berks package mh-opsworks-recipes-[commit, tag, or branch].tar.gz`.
+* Upload this file to s3, making it public or ensuring your instances have
+  access to it otherwise.
+* Edit your cluster config to look like:
+
+
+```
+{
+  "stack": {
+    "chef": {
+      "custom_cookbooks_source": {
+        "type": "s3",
+        "url": "https://url-to-the-s3-bucket/mh-opsworks-recipes-[commit, tag, or branch].tar.gz",
+      }
+    }
+  }
+}
+```
+
+And then proceed normally - update your chef recipes, deploy, etc. The linked
+archive on s3 will be used for your custom recipes.
 
 ### Cluster switching
 
