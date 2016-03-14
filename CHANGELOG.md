@@ -2,6 +2,8 @@
 
 ## TO BE RELEASED
 
+* Very minor - don't write to `templates/minimal_cluster_config.json`.
+
 ## 1.0.11 - 2/25/2016
 
 * Open the squid proxy port for rfc 1918 addresses. Document how to set up

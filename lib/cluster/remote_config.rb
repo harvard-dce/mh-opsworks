@@ -129,6 +129,9 @@ module Cluster
     end
 
     def write_config_with(config_values)
+      # Don't write the config if we aren't in a real cluster
+      return if config.active_config == 'templates/minimal_cluster_config.json'
+
       json_output = JSON.pretty_generate(config_values)
 
       File.open(config.active_config, 'w', 0600) do |fh|
