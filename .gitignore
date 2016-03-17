@@ -5,3 +5,5 @@ tmp/
 *.bk
 .mhopsworks.rc
 coverage/
+.vagrant/
+log/

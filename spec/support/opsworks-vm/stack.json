@@ -1,0 +1,86 @@
+{
+  "opsworks": {
+    "layers": {
+      "local-support": {
+        "instances": {
+          "local-support1": {
+            "private_ip": "10.10.10.2",
+            "private_dns_name": "10.10.10.2"
+          }
+        }
+      },
+      "admin": {
+        "instances": {
+          "admin1": {
+            "private_ip": "10.10.10.10",
+            "private_dns_name": "10.10.10.10",
+            "public_dns_name": "10.10.10.10"
+          }
+        }
+      },
+      "engage": {
+        "instances": {
+          "engage1": {
+            "private_ip": "10.10.10.20",
+            "private_dns_name": "10.10.10.20",
+            "public_dns_name": "10.10.10.20"
+          }
+        }
+      },
+      "workers": {
+        "instances": {
+          "workers1": {
+            "private_ip": "10.10.10.30",
+            "private_dns_name": "10.10.10.30",
+            "public_dns_name": "10.10.10.30"
+          }
+        }
+      }
+    }
+  },
+  "deploy": {
+    "matterhorn": {
+      "application_type": "other",
+      "scm": {
+        "repository": "matterhorn-dce-fork/"
+      },
+      "database": {
+        "host": "10.10.10.2",
+        "database": "matterhorn",
+        "username": "root",
+        "password": "correcthorsebatterystaple"
+      }
+    }
+  },
+  "mysql": {
+    "server_root_password": "correcthorsebatterystaple",
+    "tunable": {"innodb_buffer_pool_size": "256M"}
+  },
+  "opsworks_custom_cookbooks": {
+    "enabled": true,
+    "scm": {
+      "repository": "mh-opsworks-recipes"
+    }
+  },
+  "cluster_env": "development",
+  "vagrant_environment": true,
+  "matterhorn_repo_root": "/opt/matterhorn",
+  "matterhorn_log_directory": "/opt/matterhorn/log",
+  "local_workspace_root": "/var/matterhorn-workspace",
+  "storage": {
+    "export_root": "/var/matterhorn",
+    "network": "10.10.10.0/24",
+    "layer_shortname": "local-support"
+  },
+  "capture_agent_query_url": "http://example.com",
+  "user_tracking_authhost": "example.com",
+  "shared_asset_bucket_name": "mh-opsworks-shared-assets",
+  "rest_auth": {
+    "user": "matterhorn_system_account",
+    "pass": "fakepass"
+  },
+  "admin_auth": {
+    "user": "admin",
+    "pass": "fakepass"
+  }
+}

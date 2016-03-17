@@ -1,0 +1,108 @@
+#!/bin/bash
+
+action="$1"
+
+base_box="harvard-dce/local-opsworks-ubuntu1404"
+if ! (vagrant box list | grep -q "$base_box"); then
+  vagrant box add "$base_box"
+  sleep 5
+fi
+
+
+usage() {
+  echo
+  echo "./bin/local_cluster <subcommand>"
+  echo
+  echo "  Run commands against the entire local opsworks cluster."
+  echo "  Valid subcommands:"
+  echo "    * up - bring up the cluster, including a deployment."
+  echo "    * halt - Shutdown all instances in the cluster nicely"
+  echo "    * destroy - Destroy all instances in the cluster"
+  echo "    * deploy - Deploy the latest changes in your local matterhorn repo and restart"
+  echo "    * suspend - Suspend all instances in the cluster to disk"
+  echo "    * resume - Resume all instances in the cluster"
+  echo
+  exit 1
+}
+
+wait_for_jobs_to_finish(){
+  for job in `jobs -p`; do
+    job_name="$(ps -p $job -o command=)"
+    echo "Waiting on \"$job_name\" to finish . . ."
+    wait $job
+  done
+}
+
+vagrant_full_provision(){
+  machine="$1"
+  echo "Provisioning $machine, including a deploy"
+  sleep 5
+  vagrant provision "$machine" >> log/"$machine".log &
+}
+
+vagrant_resume(){
+  machine="$1"
+  echo "Resuming $machine"
+  sleep 5
+  # This is slightly tortured because: https://github.com/mitchellh/vagrant/issues/6787
+  vagrant up --no-provision "$machine" >> log/"$machine".log &
+}
+
+vagrant_provision(){
+  machine="$1"
+  echo "Deploying to $machine"
+  sleep 5
+  vagrant provision "$machine" --provision-with deployment >> log/"$machine-deployment".log &
+}
+
+start_time=$(date +%s)
+
+case $action in
+  up*)
+    echo "Initializing boxes - hold tight!"
+    vagrant up --no-provision local-support admin engage workers >> log/box-init.log
+
+    echo "Provisioning"
+    vagrant_full_provision local-support
+    wait_for_jobs_to_finish
+
+    vagrant_full_provision admin
+    vagrant_full_provision engage
+    vagrant_full_provision workers
+    wait_for_jobs_to_finish
+    ;;
+  deploy*)
+    vagrant_provision admin
+    vagrant_provision engage
+    vagrant_provision workers
+    wait_for_jobs_to_finish
+    ;;
+  destroy*)
+    vagrant destroy -f
+    ;;
+  halt*)
+    vagrant halt
+    ;;
+  suspend*)
+    vagrant suspend
+    ;;
+  resume*)
+    vagrant_resume local-support
+    wait_for_jobs_to_finish
+
+    vagrant_resume admin
+    vagrant_resume engage
+    vagrant_resume workers
+    wait_for_jobs_to_finish
+    ;;
+  *)
+    usage
+    ;;
+esac
+
+end_time=$(date +%s)
+
+elapsed=$[$end_time - $start_time]
+echo
+echo "$action took $elapsed seconds"
+echo

@@ -1,0 +1,9 @@
+{
+  "opsworks": {
+    "instance": {
+      "hostname": "local-support1",
+      "private_dns_name": "10.10.10.2",
+      "public_dns_name": "10.10.10.2"
+    }
+  }
+}

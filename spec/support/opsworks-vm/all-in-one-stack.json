@@ -1,0 +1,55 @@
+{
+  "opsworks": {
+    "layers": {
+      "admin": {
+        "instances": {
+          "all-in-one1": {
+            "private_ip": "10.10.10.10",
+            "private_dns_name": "10.10.10.10",
+            "public_dns_name": "10.10.10.10"
+          }
+        }
+      }
+    }
+  },
+  "deploy": {
+    "matterhorn": {
+      "application_type": "other",
+      "scm": {
+        "repository": "matterhorn-dce-fork/"
+      },
+      "database": {
+        "host": "10.10.10.10",
+        "database": "matterhorn",
+        "username": "root",
+        "password": "correcthorsebatterystaple"
+      }
+    }
+  },
+  "mysql": {
+    "server_root_password": "correcthorsebatterystaple",
+    "tunable": {"innodb_buffer_pool_size": "256M"}
+  },
+  "opsworks_custom_cookbooks": {
+    "enabled": true,
+    "scm": {
+      "repository": "mh-opsworks-recipes"
+    }
+  },
+  "cluster_env": "development",
+  "vagrant_environment": true,
+  "matterhorn_repo_root": "/opt/matterhorn",
+  "matterhorn_log_directory": "/opt/matterhorn/log",
+  "local_workspace_root": "/var/matterhorn-workspace",
+  "capture_agent_query_url": "http://example.com",
+  "user_tracking_authhost": "example.com",
+  "shared_asset_bucket_name": "mh-opsworks-shared-assets",
+  "rest_auth": {
+    "user": "matterhorn_system_account",
+    "pass": "fakepass"
+  },
+  "admin_auth": {
+    "user": "admin",
+    "pass": "fakepass"
+  }
+}

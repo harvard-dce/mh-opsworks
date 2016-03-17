@@ -1,0 +1,26 @@
+{
+  "opsworks_custom_cookbooks": {
+    "recipes": [
+      "recipe[opsworks_initial_setup]",
+      "recipe[ssh_host_keys]",
+      "recipe[ssh_users]",
+      "recipe[mysql::client]",
+      "recipe[dependencies]",
+      "recipe[ebs]",
+      "recipe[opsworks_ganglia::client]",
+      "recipe[mysql::server]",
+      "recipe[deploy::mysql]",
+      "recipe[opsworks_ganglia::configure-client]",
+      "recipe[agent_version]",
+
+      "recipe[mh-opsworks-recipes::set-timezone]",
+      "recipe[mh-opsworks-recipes::fix-raid-mapping]",
+      "recipe[mh-opsworks-recipes::set-bash-as-default-shell]",
+      "recipe[mh-opsworks-recipes::install-utils]",
+      "recipe[mh-opsworks-recipes::create-matterhorn-user]",
+      "recipe[mh-opsworks-recipes::nfs-export]",
+      "recipe[mh-opsworks-recipes::clean-up-package-cache]",
+      "recipe[mh-opsworks-recipes::write-root-my-dot-cnf]"
+    ]
+  }
+}

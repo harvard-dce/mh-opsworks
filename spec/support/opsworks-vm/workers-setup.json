@@ -1,0 +1,28 @@
+{
+  "opsworks_custom_cookbooks": {
+    "recipes": [
+      "recipe[opsworks_initial_setup]",
+      "recipe[ssh_host_keys]",
+      "recipe[ssh_users]",
+      "recipe[mysql::client]",
+      "recipe[dependencies]",
+      "recipe[ebs]",
+      "recipe[opsworks_ganglia::client]",
+      "recipe[deploy::default]",
+      "recipe[opsworks_ganglia::configure-client]",
+      "recipe[agent_version]",
+
+      "recipe[mh-opsworks-recipes::set-timezone]",
+      "recipe[mh-opsworks-recipes::fix-raid-mapping]",
+      "recipe[mh-opsworks-recipes::set-bash-as-default-shell]",
+      "recipe[mh-opsworks-recipes::install-utils]",
+      "recipe[mh-opsworks-recipes::populate-maven-cache]",
+      "recipe[mh-opsworks-recipes::install-mh-base-packages]",
+      "recipe[mh-opsworks-recipes::create-matterhorn-user]",
+      "recipe[mh-opsworks-recipes::configure-nginx-proxy]",
+      "recipe[mh-opsworks-recipes::install-ffmpeg]",
+      "recipe[mh-opsworks-recipes::nfs-client]",
+      "recipe[mh-opsworks-recipes::clean-up-package-cache]"
+    ]
+  }
+}
