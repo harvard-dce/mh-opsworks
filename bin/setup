@@ -19,6 +19,21 @@ echo
 
 bundle install --binstubs
 
+# Set up python virtualenv for mh-ui-testing
+if ! command -v virtualenv > /dev/null; then
+  echo "Please install virtualenv using easy_install or pip."
+  echo "On OSX (system python):"
+  echo "  sudo easy_install virtualenv"
+  echo "With pip:"
+  echo "  sudo pip install virtualenv"
+  exit 1;
+fi
+
+echo
+
+virtualenv .venv
+.venv/bin/pip install -U -r requirements.txt
+
 if [ ! -f "./secrets.json" ]; then
   cp templates/secrets_example.json ./secrets.json
   chmod 600 ./secrets.json

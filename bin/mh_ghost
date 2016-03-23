@@ -1,0 +1,68 @@
+#!.venv/bin/python
+
+import os
+import sys
+import json
+from fabric.api import local, hide, prefix, settings, abort
+from fabric.colors import cyan
+
+
+def get_cluster_config():
+    with open('.mhopsworks.rc') as f:
+        rc = dict(x.strip().split('=') for x in f.readlines())
+    with open(rc['cluster']) as f:
+        config = json.load(f)
+    with open(rc['secrets']) as f:
+        config['secrets'] = json.load(f)
+    return config
+
+if __name__ == '__main__':
+
+    target_host = None
+    shell_vars = {}
+
+    if '--help' in sys.argv:
+        # remove any target node arg before pass through
+        if sys.argv[1].startswith('admin') or sys.argv[1].startswith('engage'):
+            sys.argv.pop(1)
+        cmd = ' '.join(sys.argv[1:])
+    else:
+        # first arg should be the target node to test against (admin1, engage1, etc)
+        node = sys.argv.pop(1)
+
+        cluster_config = get_cluster_config()
+        admin_auth = cluster_config['stack']['chef']['custom_json']['admin_auth']
+
+        with settings(hide('running', 'warnings'), warn_only=True):
+            target_host = local('./bin/rake stack:instances:public_dns hostname=%s' % node,
+                                capture=True)
+            if not target_host.succeeded:
+                abort("invalid node: " + target_host)
+            print cyan("using node " + node + ", hostname " + str(target_host))
+
+        # re-quote remaining args
+        test_args = [x.replace(' ', '\ ') for x in sys.argv[1:]]
+        test_args += [
+            '--var target_host=%s' % target_host,
+            '--var admin_user=%s' % admin_auth['user'],
+            '--var admin_pass=%s' % admin_auth['pass']
+        ]
+
+        cmd = ' '.join(test_args)
+
+        if '--key' not in cmd:
+            if 'ghostinspector_key' in cluster_config['secrets']:
+                gi_key = cluster_config['secrets']['ghostinspector_key']
+            elif 'GHOSTINSPECTOR_KEY' in os.environ:
+                gi_key = os.environ['GHOSTINSPECTOR_KEY']
+            else:
+                raise RuntimeError("ghostinspector api key must be provided or set "
+                                   "in secrets.json or ENV['GHOSTINSPECTOR_KEY']")
+            cmd += ' --key %s' % gi_key
+
+    with settings(
+            prefix('source .venv/bin/activate'),
+            hide('running'),
+            hide('warnings'),
+            warn_only=True):
+        local('mh --working-dir %s gi exec %s' % (os.getcwd(), cmd))
