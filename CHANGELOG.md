@@ -2,6 +2,12 @@
 
 ## TO BE RELEASED
 
+## 1.3.0 - 4/20/2016
+
+* Local opsworks cluster support. See `README.local-opsworks.md` for details.
+
+## 1.2.1 - 4/xx/2016
+
 * Add SQS access to the instance profile policy document.
 * Document ELK component layer configuration and provided services.
 
