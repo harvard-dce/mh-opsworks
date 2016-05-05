@@ -11,6 +11,11 @@ Vagrant.configure("2") do |config|
     vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
   end
 
+  # Ensure the repo is up-to-date on the first provisioning run
+  config.vm.provision :shell,
+    name: "update apt repo",
+    inline: "apt-get update"
+
   config.vm.provision :shell,
     name: "kill agent updater",
     run: 'always',

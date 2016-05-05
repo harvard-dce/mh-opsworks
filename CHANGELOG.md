@@ -2,6 +2,11 @@
 
 ## TO BE RELEASED
 
+## 1.3.1 - 5/5/2016
+
+* Fix a bug in the local opsworks support where the package repos weren't up to
+  date on instance boot before the first package install.
+
 ## 1.3.0 - 4/20/2016
 
 * Local opsworks cluster support. See `README.local-opsworks.md` for details.
