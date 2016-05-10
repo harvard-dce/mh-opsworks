@@ -1,13 +1,6 @@
 #!/bin/bash
 
-action="$1"
-
-base_box="harvard-dce/local-opsworks-ubuntu1404"
-if ! (vagrant box list | grep -q "$base_box"); then
-  vagrant box add "$base_box"
-  sleep 5
-fi
-
+source './bin/local_opsworks_common.sh'
 
 usage() {
   echo
@@ -55,7 +48,7 @@ vagrant_provision(){
   vagrant provision "$machine" --provision-with deployment >> log/"$machine-deployment".log &
 }
 
-start_time=$(date +%s)
+start_timing
 
 case $action in
   up*)
@@ -78,13 +71,13 @@ case $action in
     wait_for_jobs_to_finish
     ;;
   destroy*)
-    vagrant destroy -f
+    vagrant destroy -f local-support admin engage workers
     ;;
   halt*)
-    vagrant halt
+    vagrant halt local-support admin engage workers
     ;;
   suspend*)
-    vagrant suspend
+    vagrant suspend local-support admin engage workers
     ;;
   resume*)
     vagrant_resume local-support
@@ -100,9 +93,4 @@ case $action in
     ;;
 esac
 
-end_time=$(date +%s)
-
-elapsed=$[$end_time - $start_time]
-echo
-echo "$action took $elapsed seconds"
-echo
+display_elapsed_time

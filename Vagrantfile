@@ -29,27 +29,27 @@ Vagrant.configure("2") do |config|
   config.vm.synced_folder "../matterhorn-dce-fork", "/vagrant/matterhorn-dce-fork"
   config.vm.synced_folder "../mh-opsworks-recipes", "/vagrant/mh-opsworks-recipes"
 
-  # config.vm.define "all-in-one" do |layer|
-  #   layer.vm.hostname = "all-in-one1"
-  #
-  #   layer.vm.provider :virtualbox do |vb|
-  #     vb.memory = get_ram_slice_size * 10
-  #     vb.cpus = 4
-  #   end
-  #
-  #   layer.vm.provision :opsworks, type:"shell", args: [
-  #     'spec/support/opsworks-vm/all-in-one-stack.json',
-  #     'spec/support/opsworks-vm/all-in-one-shared.json',
-  #     'spec/support/opsworks-vm/all-in-one-setup.json'
-  #   ]
-  #   layer.vm.provision :deployment, type:"shell", run: 'always', args:[
-  #     'spec/support/opsworks-vm/all-in-one-stack.json',
-  #     'spec/support/opsworks-vm/all-in-one-shared.json',
-  #     'spec/support/opsworks-vm/all-in-one-deploy.json'
-  #   ]
-  #
-  #   layer.vm.network "private_network", ip: "10.10.10.10"
-  # end
+  config.vm.define "all-in-one" do |layer|
+    layer.vm.hostname = "all-in-one1"
+
+    layer.vm.provider :virtualbox do |vb|
+      vb.memory = get_ram_slice_size * 10
+      vb.cpus = 4
+    end
+
+    layer.vm.provision :opsworks, type:"shell", args: [
+      'spec/support/opsworks-vm/all-in-one-stack.json',
+      'spec/support/opsworks-vm/all-in-one-shared.json',
+      'spec/support/opsworks-vm/all-in-one-setup.json'
+    ]
+    layer.vm.provision :deployment, type:"shell", run: 'always', args:[
+      'spec/support/opsworks-vm/all-in-one-stack.json',
+      'spec/support/opsworks-vm/all-in-one-shared.json',
+      'spec/support/opsworks-vm/all-in-one-deploy.json'
+    ]
+
+    layer.vm.network "private_network", ip: "10.10.10.50"
+  end
 
   config.vm.define "local-support" do |layer|
     register_multi_hosts(layer)

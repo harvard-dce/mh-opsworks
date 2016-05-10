@@ -2,6 +2,11 @@
 
 ## TO BE RELEASED
 
+## 1.4.0 - 5/10/2016
+
+* improved tooling to spin up local vagrant-backed all-in-one nodes. See
+  `README.local-opsworks.md` for details.
+
 ## 1.3.1 - 5/5/2016
 
 * Fix a bug in the local opsworks support where the package repos weren't up to

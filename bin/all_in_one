@@ -1,0 +1,50 @@
+#!/bin/bash
+
+source './bin/local_opsworks_common.sh'
+
+usage() {
+  echo
+  echo "./bin/all_in_one <subcommand>"
+  echo
+  echo "  Run commands against the local all_in_one node."
+  echo "  Valid subcommands:"
+  echo "    * up - bring up the node, including a deployment."
+  echo "    * halt - Shutdown the node nicely"
+  echo "    * destroy - Destroy the node"
+  echo "    * deploy - Deploy the latest changes in your local matterhorn repo and restart"
+  echo "    * suspend - Suspend the node to disk"
+  echo "    * resume - Resume the node from a suspended state"
+  echo
+  exit 1
+}
+
+start_timing
+
+case $action in
+  up*)
+    echo "Initializing node - hold tight!"
+    vagrant up --no-provision all-in-one
+
+    vagrant provision all-in-one
+    ;;
+  deploy*)
+    vagrant provision all-in-one --provision-with deployment
+    ;;
+  destroy*)
+    vagrant destroy -f all-in-one
+    ;;
+  halt*)
+    vagrant halt all-in-one
+    ;;
+  suspend*)
+    vagrant suspend all-in-one
+    ;;
+  resume*)
+    vagrant up --no-provision all-in-one
+    ;;
+  *)
+    usage
+    ;;
+esac
+
+display_elapsed_time
