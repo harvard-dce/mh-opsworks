@@ -2,6 +2,9 @@
 
 ## TO BE RELEASED
 
+* Delete stack-level alarms when removing a cluster. Fix issue where alarms
+  were not being removed using the correct instance id.
+
 ## 1.4.0 - 5/10/2016
 
 * improved tooling to spin up local vagrant-backed all-in-one nodes. See
