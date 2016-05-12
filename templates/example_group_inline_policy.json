@@ -35,7 +35,10 @@
                 "rds:createDBSubnetGroup",
                 "rds:deleteDBSubnetGroup",
                 "rds:createDBInstance",
-                "rds:deleteDBInstance"
+                "rds:deleteDBInstance",
+                "rds:createEventSubscription",
+                "rds:modifyEventSubscription",
+                "rds:deleteEventSubscription"
             ],
             "Resource": [
                 "*"

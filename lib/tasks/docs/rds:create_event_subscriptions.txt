@@ -1,0 +1,12 @@
+Create and/or modify RDS event subscriptions
+
+Event subscriptions are used to notify when RDS clusters go into/out of
+certain states. When this happens, an alert is sent to the SNS topic the
+subscription is bound to. By default, we watch for RDS failure and failover
+events.
+
+New clusters automatically get these event subscriptions - use this to add
+event subscriptions to those clusters that don't have them bound to their RDS
+instances.
+
+SEE ALSO:

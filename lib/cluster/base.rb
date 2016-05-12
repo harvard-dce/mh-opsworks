@@ -21,6 +21,11 @@ module Cluster
       self.class.construct_instance(instance_id)
     end
 
+    def self.get_topic_arn
+      # create_topic is idempotent
+      sns_client.create_topic(name: topic_name).topic_arn
+    end
+
     def self.storage_config
       stack_custom_json.fetch(:storage, {})
     end

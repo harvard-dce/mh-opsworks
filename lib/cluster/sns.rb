@@ -70,10 +70,5 @@ module Cluster
         delete_subscriptions_for(topic_arn, result.next_token)
       end
     end
-
-    def self.get_topic_arn
-      # create_topic is idempotent
-      sns_client.create_topic(name: topic_name).topic_arn
-    end
   end
 end

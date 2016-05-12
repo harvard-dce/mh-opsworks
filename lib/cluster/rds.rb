@@ -12,9 +12,14 @@ module Cluster
 
     def self.find_or_create
       rds = find_existing
-      return construct_instance(rds) if rds
+      rds_instance = if rds
+                       construct_instance(rds)
+                     else
+                       create_rds
+                     end
+      create_event_subscriptions
 
-      create_rds
+      rds_instance
     end
 
     def self.delete
@@ -72,6 +77,10 @@ module Cluster
     end
 
     private
+
+    def self.create_event_subscriptions
+      EventSubscriptionCreator.create
+    end
 
     def self.find_db_subnet_group
       rds_client.describe_db_subnet_groups.inject([]){ |memo, page| memo + page.db_subnet_groups }.find do |db_subnet_group|
