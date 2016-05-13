@@ -13,6 +13,8 @@ describe Cluster::ConfigCreator do
     expect(output).to include(config_attributes[:app_git_revision])
     expect(output).to include(variant_attributes[:storage_instance_type])
     expect(output).to include(config_attributes[:default_users])
+    expect(output).to include(config_attributes[:primary_az])
+    expect(output).to include(config_attributes[:secondary_az])
   end
 
   it 'has multiple variants' do
@@ -61,6 +63,8 @@ describe Cluster::ConfigCreator do
     app_git_url = 'http://foobar'
     app_git_revision = 'unique_revision'
     default_users = 'afoasdf'
+    primary_az = 'us-east-1a'
+    secondary_az = 'us-east-1d'
 
     attributes = {
       name: name,
@@ -68,7 +72,9 @@ describe Cluster::ConfigCreator do
       app_git_url: app_git_url,
       variant: variant,
       app_git_revision: app_git_revision,
-      default_users: default_users
+      default_users: default_users,
+      primary_az: primary_az,
+      secondary_az: secondary_az
     }
   end
 end

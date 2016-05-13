@@ -12,6 +12,10 @@
   cluster, switch into it and run `./bin/rake rds:create_event_subscriptions`
 * Fix `stack:commands:update_packages`, which will correctly apply only bug-
   and security- fixes.
+* Implement "vpc:update" rake task to allow for vpc cloudformation
+  infrastructure to be applied when the template changes.  cloudformation will
+  incrementally apply changes to the template. This allows for new routes,
+  security groups and other attributes to changed easily and precisely.
 
 ## 1.4.0 - 5/10/2016
 

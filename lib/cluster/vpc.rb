@@ -24,67 +24,24 @@ module Cluster
       end
     end
 
+    def self.update
+      parameters = get_parameters
+      parameters.delete(:timeout_in_minutes)
+      stack = cloudformation_client.update_stack(parameters)
+      wait_until_stack_update_completed(stack.stack_id)
+      find_existing
+    end
+
     def self.find_or_create
       vpc = find_existing
-      if ! vpc
-        az_picker = Cluster::AZPicker.new
+      return vpc if vpc
 
-        if requested_vpc_has_conflicts_with_existing_one?
-          raise VpcConflictsWithAnother
-        end
-
-        parameters = [
-          {
-            parameter_key: 'CIDRBlock',
-            parameter_value: vpc_config[:cidr_block]
-          },
-          {
-            parameter_key: 'PublicCIDRBlock',
-            parameter_value: vpc_config[:public_cidr_block]
-          },
-          {
-            parameter_key: 'PrivateCIDRBlock',
-            parameter_value: vpc_config[:private_cidr_block]
-          },
-          {
-            parameter_key: 'DbCIDRBlock',
-            parameter_value: vpc_config[:db_cidr_block]
-          },
-          {
-            parameter_key: 'SNSTopicName',
-            parameter_value: topic_name
-          },
-          {
-            parameter_key: 'PrimaryAZ',
-            parameter_value: az_picker.primary_az
-          },
-          {
-            parameter_key: 'SecondaryAZ',
-            parameter_value: az_picker.secondary_az
-          }
-        ]
-
-        if supports_efs?
-          parameters << {
-            parameter_key: 'CreateEFS',
-            parameter_value: build_efs_resources?
-          }
-        end
-
-        stack = cloudformation_client.create_stack(
-          stack_name: vpc_name,
-          template_body: File.read(get_template_path),
-          parameters: parameters,
-          timeout_in_minutes: 15,
-          tags: [
-            {
-              key: 'opsworks:stack',
-              value: stack_config[:name]
-            }
-          ]
-        )
-        wait_until_stack_build_completed(stack.stack_id)
+      if requested_vpc_has_conflicts_with_existing_one?
+        raise VpcConflictsWithAnother
       end
+      stack = cloudformation_client.create_stack(get_parameters)
+
+      wait_until_stack_build_completed(stack.stack_id)
 
       find_existing
     end
@@ -97,6 +54,59 @@ module Cluster
     end
 
     private
+
+    def self.get_parameters
+      parameters = [
+        {
+          parameter_key: 'CIDRBlock',
+          parameter_value: vpc_config[:cidr_block]
+        },
+        {
+          parameter_key: 'PublicCIDRBlock',
+          parameter_value: vpc_config[:public_cidr_block]
+        },
+        {
+          parameter_key: 'PrivateCIDRBlock',
+          parameter_value: vpc_config[:private_cidr_block]
+        },
+        {
+          parameter_key: 'DbCIDRBlock',
+          parameter_value: vpc_config[:db_cidr_block]
+        },
+        {
+          parameter_key: 'SNSTopicName',
+          parameter_value: topic_name
+        },
+        {
+          parameter_key: 'PrimaryAZ',
+          parameter_value: vpc_config[:primary_az]
+        },
+        {
+          parameter_key: 'SecondaryAZ',
+          parameter_value: vpc_config[:secondary_az]
+        }
+      ]
+
+      if supports_efs?
+        parameters << {
+          parameter_key: 'CreateEFS',
+          parameter_value: build_efs_resources?
+        }
+      end
+
+      {
+        stack_name: vpc_name,
+        template_body: File.read(get_template_path),
+        parameters: parameters,
+        timeout_in_minutes: 15,
+        tags: [
+          {
+            key: 'opsworks:stack',
+            value: stack_config[:name]
+          }
+        ]
+      }
+    end
 
     def self.get_template_path
       if supports_efs?

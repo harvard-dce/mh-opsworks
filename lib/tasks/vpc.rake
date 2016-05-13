@@ -11,6 +11,11 @@ namespace :vpc do
     Cluster::VPC.find_or_create
   end
 
+  desc Cluster::RakeDocs.new('vpc:update').desc
+  task update: ['cluster:configtest', 'cluster:config_sync_check'] do
+    Cluster::VPC.update
+  end
+
   desc Cluster::RakeDocs.new('vpc:delete').desc
   task delete: ['cluster:configtest', 'cluster:config_sync_check', 'cluster:production_failsafe'] do
     Cluster::VPC.delete

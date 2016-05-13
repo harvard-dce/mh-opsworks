@@ -180,6 +180,7 @@ namespace :cluster do
     session.get_git_url
     session.get_git_revision
     session.compute_cidr_block_root
+    session.compute_azs
 
     if session.zadara_variant?
       session.get_export_root
@@ -194,6 +195,8 @@ namespace :cluster do
       app_git_revision: session.git_revision,
       export_root: session.export_root,
       nfs_server_host: session.nfs_server_host,
+      primary_az: session.primary_az,
+      secondary_az: session.secondary_az,
       default_users: JSON.pretty_generate(session.compute_default_users)
     )
     rc_file = Cluster::RcFileSwitcher.new(config_file: config_file)

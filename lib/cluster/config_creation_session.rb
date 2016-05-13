@@ -1,7 +1,7 @@
 module Cluster
   class ConfigCreationSession
     attr_accessor :variant, :name, :cidr_block_root, :git_url, :git_revision,
-      :export_root, :nfs_server_host
+      :export_root, :nfs_server_host, :primary_az, :secondary_az
 
     def choose_variant
       puts "Please choose the size of the cluster you'd like to deploy.\n\n"
@@ -66,6 +66,12 @@ module Cluster
 
     def compute_cidr_block_root
       @cidr_block_root = find_unused_cidr_block_root
+    end
+
+    def compute_azs
+      picker = Cluster::AZPicker.new
+      @primary_az = picker.primary_az
+      @secondary_az = picker.secondary_az
     end
 
     def compute_default_users

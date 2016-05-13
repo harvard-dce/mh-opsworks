@@ -92,6 +92,21 @@ describe Cluster::ConfigCreationSession do
     end
   end
 
+  context '#pick_az' do
+    it 'uses the AZ picker' do
+      az_picker = double('az picker')
+      allow(az_picker).to receive_messages([:primary_az, :secondary_az])
+      allow(Cluster::AZPicker).to receive(:new).and_return(az_picker)
+
+      session = described_class.new
+      session.compute_azs
+
+      expect(Cluster::AZPicker).to have_received(:new)
+      expect(az_picker).to have_received(:primary_az)
+      expect(az_picker).to have_received(:secondary_az)
+    end
+  end
+
   def stub_stacks_with_other_stack_name
     stack_result_double = double('stack result')
     allow(stack_result_double).to receive(:name).and_return('bleep')

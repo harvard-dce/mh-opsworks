@@ -32,6 +32,16 @@ module Cluster
         puts " done!"
       end
 
+      def wait_until_stack_update_completed(cfn_stack_id)
+        print "Waiting for vpc infrastructure to be updated for #{vpc_name}: "
+        cloudformation_client.wait_until(
+          :stack_update_complete, stack_name: cfn_stack_id
+        ) do |w|
+          ::Cluster::Instance.apply_wait_options(w)
+        end
+        puts " done!"
+      end
+
       def wait_until_stack_build_completed(cfn_stack_id)
         print "Waiting for vpc infrastructure to be built for #{vpc_name}: "
         cloudformation_client.wait_until(

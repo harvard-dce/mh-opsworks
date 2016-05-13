@@ -5,7 +5,9 @@ module ClusterCreationHelpers
       cidr_block_root: '',
       app_git_url: '',
       app_git_revision: '',
-      default_users: ''
+      default_users: '',
+      primary_az: 'us-east-1a',
+      secondary_az: 'us-east-1d'
     }
   end
 end
