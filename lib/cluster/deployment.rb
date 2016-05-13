@@ -63,7 +63,7 @@ module Cluster
     end
 
     def self.update_dependencies
-      run_command_on_layers(command: 'dependencies')
+      run_command_on_layers(command: 'update_dependencies')
     end
 
     def self.update_chef_recipes

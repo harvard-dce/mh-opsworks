@@ -10,6 +10,8 @@
   rights (it should match `templates/example_group_inline_policy.json`). New
   clusters will automatically get these subscriptions. To update an existing
   cluster, switch into it and run `./bin/rake rds:create_event_subscriptions`
+* Fix `stack:commands:update_packages`, which will correctly apply only bug-
+  and security- fixes.
 
 ## 1.4.0 - 5/10/2016
 

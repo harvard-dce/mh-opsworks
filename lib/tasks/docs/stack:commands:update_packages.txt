@@ -1,5 +1,10 @@
 Update operating system packages
 
-Installs regular operating system and package updates. It should not lead to
-downtime, but it probably makes sense to be careful and test updates in a
-development or staging cluster.
+Installs regular operating system and package upgrades, not including kernel
+updates. It runs "apt-get update" and "apt-get upgrade -y" under the covers,
+which will install security and bugfix updates to packages. This should be
+done during a deploy window just in case.
+
+Recall that an LTS distribution will never increment a major or minor version
+of a package unless you run "apt-get dist-upgrade", which will install new
+versions of packages.
