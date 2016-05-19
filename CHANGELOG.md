@@ -2,6 +2,8 @@
 
 ## TO BE RELEASED
 
+## 1.5.0 - 5/19/2016
+
 * Delete stack-level alarms when removing a cluster. Fix issue where alarms
   were not being removed using the correct instance id.
 * Add event subscriptions to RDS clusters to watch for failure and failover
