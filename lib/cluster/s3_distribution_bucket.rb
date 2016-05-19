@@ -1,16 +1,16 @@
 module Cluster
   class S3DistributionBucket < Base
-    def self.find_or_create
-      bucket = S3Bucket.find_existing(name: distribution_bucket_name)
+    def self.find_or_create(bucket_name)
+      bucket = S3Bucket.find_existing(name: bucket_name)
       return bucket if bucket
 
-      S3Bucket.create(name: distribution_bucket_name)
+      S3Bucket.create(name: bucket_name)
       s3_client.put_bucket_policy(
-        bucket: distribution_bucket_name,
-        policy: default_bucket_policy
+        bucket: bucket_name,
+        policy: default_bucket_policy_for(bucket_name)
       )
       s3_client.put_bucket_cors(
-        bucket: distribution_bucket_name,
+        bucket: bucket_name,
         cors_configuration: {
           cors_rules: [
             allowed_headers: ['Authorization'],
@@ -22,8 +22,7 @@ module Cluster
       )
     end
 
-    def self.delete
-      bucket_name = distribution_bucket_name
+    def self.delete(bucket_name)
       begin
         delete_objects_from(bucket_name)
         delete_versions_from(bucket_name)
@@ -74,7 +73,7 @@ module Cluster
       end
     end
 
-    def self.default_bucket_policy
+    def self.default_bucket_policy_for(bucket_name)
      %Q|{
   "Version": "2012-10-17",
   "Statement": [
@@ -85,7 +84,7 @@ module Cluster
         "AWS": "*"
       },
       "Action": "s3:GetObject",
-      "Resource": "arn:aws:s3:::#{distribution_bucket_name}/*"
+      "Resource": "arn:aws:s3:::#{bucket_name}/*"
     }
   ]
 }|

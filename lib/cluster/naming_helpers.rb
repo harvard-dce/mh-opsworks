@@ -40,6 +40,10 @@ module Cluster
       def distribution_bucket_name
         stack_custom_json[:s3_distribution_bucket_name]
       end
+
+      def s3_file_archive_bucket_name
+        stack_custom_json[:s3_file_archive_bucket_name]
+      end
     end
 
     def self.included(base)

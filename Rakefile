@@ -22,7 +22,8 @@ namespace :admin do
 
       Cluster::Instances.find_or_create
       Cluster::App.find_or_create
-      Cluster::S3DistributionBucket.find_or_create
+      Cluster::S3DistributionBucket.find_or_create(Cluster::Base.distribution_bucket_name)
+      Cluster::S3ArchiveBucket.find_or_create(Cluster::Base.s3_file_archive_bucket_name)
 
       layers.each do |layer|
         puts %Q|Layer: "#{layer.name}" => #{layer.layer_id}|
@@ -60,8 +61,9 @@ namespace :admin do
       puts 'deleting VPC'
       Cluster::VPC.delete
 
-      puts 'deleting S3 distribution bucket and assets'
-      Cluster::S3DistributionBucket.delete
+      puts 'deleting S3 distribution and file archive buckets and assets'
+      Cluster::S3DistributionBucket.delete(Cluster::Base.distribution_bucket_name)
+      Cluster::S3ArchiveBucket.delete(Cluster::Base.s3_file_archive_bucket_name)
 
       puts 'deleting configuration files'
       Cluster::RemoteConfig.new.delete

@@ -6,6 +6,16 @@
   customized in the cluster template. This only applies to new instances - you
   must delete and recreate an instance for it to get an increased root volume
   size with this change.
+* Create the `s3_file_archive_bucket_name` attribute during cluster creation.
+  Also create the bucket during `admin:cluster:init` and delete it during
+  `admin:cluster:delete`. This is necessary for the auto archiving features soon
+  to land in matterhorn-dce-fork.  To add the file archive bucket to an existing
+  cluster: 1) Edit the cluster config,  2) create a unique and appropriate
+  `s3_file_archive_bucket_name` right below the `s3_distribution_bucket_name`
+  (probably something like <cluster_name>-file-archive), 3) Run
+  `admin:cluster:init` to ensure the bucket is created, and then 4) deploy the
+  version of matterhorn that contains the archiving code. It is OK if you create
+  the bucket before the deploy, it'll just sit there waiting.
 
 ## 1.5.0 - 5/19/2016
 

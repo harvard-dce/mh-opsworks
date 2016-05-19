@@ -238,7 +238,8 @@ module Cluster
       all_attributes = attributes.merge(variant_attributes).
         merge(base_secrets_content: base_secrets).
         merge(database_user_info).
-        merge(s3_distribution_bucket_name_from(attributes[:name]))
+        merge(s3_distribution_bucket_name_from(attributes[:name])).
+        merge(s3_file_archive_bucket_name_from(attributes[:name]))
 
       erb.result(all_attributes)
     end
@@ -248,6 +249,12 @@ module Cluster
     def s3_distribution_bucket_name_from(name)
       {
         s3_distribution_bucket_name: %Q|#{Cluster::Base.calculate_name(name)}-distribution|
+      }
+    end
+
+    def s3_file_archive_bucket_name_from(name)
+      {
+        s3_file_archive_bucket_name: %Q|#{Cluster::Base.calculate_name(name)}-file-archive|
       }
     end
 
