@@ -28,14 +28,15 @@ module Cluster
     end
 
     def self.delete_stack_alarms
-      Cluster::Stack.with_existing_stack do |stack|
-        to_remove = []
-        stack_id = stack.stack_id
-        cloudwatch_client.describe_alarms.inject([]){ |memo, page| memo + page.metric_alarms }.each do |alarm|
-          alarm.dimensions.each do |dimension|
-            if dimension.name == 'StackId' && stack_id == dimension.value
-              to_remove << alarm
-            end
+      stack = Cluster::Stack.find_existing
+      return unless stack
+
+      to_remove = []
+      stack_id = stack.stack_id
+      cloudwatch_client.describe_alarms.inject([]){ |memo, page| memo + page.metric_alarms }.each do |alarm|
+        alarm.dimensions.each do |dimension|
+          if dimension.name == 'StackId' && stack_id == dimension.value
+            to_remove << alarm
           end
         end
 
