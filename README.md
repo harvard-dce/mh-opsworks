@@ -612,8 +612,7 @@ we're building ffmpeg.
 ### Horizontal worker scaling
 
 Automated horizontal worker scaling is run via a cron job on the ganglia
-monitoring node (monitoring-master1). This uses [our
-ec2-management](https://github.com/harvard-dce/ec2-management) python script.
+monitoring node (monitoring-master1). This uses [our mo-scaler](https://github.com/harvard-dce/mo-scaler) python script.
 
 The chef recipe `mh-opsworks-recipes::install-ec2-scaling-manager` installs the
 necessary python requirements, the git repository and configures a `.env` file
@@ -622,6 +621,31 @@ authentication password, you should re-rerun this recipe.
 
 If you want to use a different release tag, update `ec2_management_release` in
 your stack's `custom_json` and re-run the recipe above.
+
+The number of worker instances available at any given time is controlled by
+three values that can be modified in your `custom_json` (see example below).
+After updating you will need to re-run the above recipe.
+
+```
+{
+  "stack": {
+    "chef": {
+      "custom_json": {
+        "moscaler": {
+          "offpeak_instances": 2,
+          "peak_instances": 10,
+          "weekend_instances": 1
+        },
+        ...
+      }
+    }
+  }
+}
+```
+
+then:
+
+`./bin/rake stack:commands:execute_recipes_on_layers layers="Ganglia" recipes="mh-opsworks-recipes::install-ec2-scaling-manager"`
 
 ### Custom engage and admin node hostnames
 
