@@ -69,7 +69,8 @@
         "instances": {
           "number_of_instances": "1",
           "instance_type": "c4.xlarge",
-          "root_device_type": "ebs"
+          "root_device_type": "ebs",
+          "root_device_size": 16
         }
       },
       {
@@ -99,7 +100,8 @@
         "instances": {
           "number_of_instances": "1",
           "instance_type": "c4.xlarge",
-          "root_device_type": "ebs"
+          "root_device_type": "ebs",
+          "root_device_size": 16
         }
       },
       {
@@ -124,7 +126,8 @@
         "instances": {
           "number_of_instances": 0,
           "instance_type": "<%= storage_instance_type %>",
-          "root_device_type": "ebs"
+          "root_device_type": "ebs",
+          "root_device_size": 16
         }
       },
       {
@@ -152,7 +155,8 @@
         "instances": {
           "number_of_instances": 0,
           "instance_type": "<%= admin_instance_type %>",
-          "root_device_type": "ebs"
+          "root_device_type": "ebs",
+          "root_device_size": 16
         }
       },
       {
@@ -179,7 +183,8 @@
           "_fake_number_of_instances": "<%= workers_instance_count %>",
           "number_of_instances": 0,
           "instance_type": "<%= workers_instance_type %>",
-          "root_device_type": "ebs"
+          "root_device_type": "ebs",
+          "root_device_size": 16
         }
       },
       {
@@ -207,7 +212,8 @@
         "instances": {
           "number_of_instances": 0,
           "instance_type": "<%= engage_instance_type %>",
-          "root_device_type": "ebs"
+          "root_device_type": "ebs",
+          "root_device_size": 16
         }
       },
       {
@@ -233,7 +239,8 @@
         "instances": {
           "number_of_instances": 0,
           "instance_type": "<%= ganglia_instance_type %>",
-          "root_device_type": "ebs"
+          "root_device_type": "ebs",
+          "root_device_size": 16
         }
       }
     ],

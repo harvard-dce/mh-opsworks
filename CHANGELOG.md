@@ -2,6 +2,11 @@
 
 ## TO BE RELEASED
 
+* Increase the default root ebs volume size to 16G and allow for it to be
+  customized in the cluster template. This only applies to new instances - you
+  must delete and recreate an instance for it to get an increased root volume
+  size with this change.
+
 ## 1.5.0 - 5/19/2016
 
 * Delete stack-level alarms when removing a cluster. Fix issue where alarms
