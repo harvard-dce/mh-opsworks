@@ -2,6 +2,8 @@
 
 ## TO BE RELEASED
 
+## 1.6.0 - 5/31/2016
+
 * Increase the default root ebs volume size to 16G and allow for it to be
   customized in the cluster template. This only applies to new instances - you
   must delete and recreate an instance for it to get an increased root volume
