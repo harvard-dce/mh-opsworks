@@ -22,6 +22,7 @@ module Cluster
         stack_id: stack.stack_id,
         type: params.fetch(:type, 'custom'),
         enable_auto_healing: params.fetch(:enable_auto_healing, false),
+        install_updates_on_boot: params.fetch(:install_updates_on_boot, false),
         name: params[:name],
         attributes: layer_attributes,
         shortname: params[:shortname],
