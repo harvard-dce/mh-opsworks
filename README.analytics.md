@@ -41,17 +41,18 @@ for processing and indexing MH analytics data, particularly usertracking events.
         "volume_configurations": [{
             "mount_point": "/vol/elasticsearch_data",
             "number_of_disks": 1,
-            "size": "300",
+            "size": "500",
             "volume_type": "gp2"
         }],
         "instances": {
             "number_of_instances": 1,
-            "instance_type": "m4.large",
+            "instance_type": "m4.xlarge",
             "root_device_type": "ebs"
         }
       }
 ```
 
+* re: *instance_type*, `m4.large` is probably sufficient for development. For prod, or If you're doing any intensive bulk operations, `m4.xlarge` should be preferred.
 * update your "custom_json" block to provide a user/pass combo for http auth:
 
 ```
