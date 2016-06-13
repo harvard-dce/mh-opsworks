@@ -1,5 +1,7 @@
 module Cluster
   class ConfigCreator
+    DEFAULT_VARIANT = :medium
+
     VARIANTS = {
       small: {
         template: './templates/cluster_config_default.json.erb',

@@ -2,6 +2,8 @@
 
 ## TO BE RELEASED
 
+* Provide convenience defaults when executing `cluster:new`.
+
 ## 1.6.1 - 6/08/2016
 
 * Allow `install_updates_on_boot` to be configured when a layer is created or

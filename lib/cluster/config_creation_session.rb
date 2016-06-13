@@ -5,13 +5,17 @@ module Cluster
 
     def choose_variant
       puts "Please choose the size of the cluster you'd like to deploy.\n\n"
+      default = Cluster::ConfigCreator::DEFAULT_VARIANT
       keys = []
       Cluster::ConfigCreator::VARIANTS.each do |key, variant|
         keys << key
         puts %Q|- #{key}: #{variant[:description]}|
       end
-      print %Q|\nOne of #{keys.join(', ')}: |
+      print %Q|\nOne of #{keys.join(', ')} [#{default}]: |
       variant_choice = STDIN.gets.strip.chomp.to_sym
+      if variant_choice.match(/^\s?$/)
+        variant_choice = default
+      end
       return choose_variant unless keys.include?(variant_choice)
 
       @variant = variant_choice
@@ -103,8 +107,13 @@ module Cluster
     end
 
     def get_git_url
-      print "\nThe git URL to the matterhorn repo, e.g. git@bitbucket.org. . .: "
+      default = ENV.fetch('MATTERHORN_GIT_URL', '')
+      print "\nThe git URL to the matterhorn repo, e.g. git@bitbucket.org [#{default}]: "
       git_url = STDIN.gets.strip.chomp
+
+      if git_url.match(/^\s?$/)
+        git_url = default
+      end
 
       unless git_url.match(/^git@|https:\/\//i)
         return get_git_url
@@ -114,7 +123,7 @@ module Cluster
     end
 
     def get_git_revision
-      print "\nThe branch, tag, or revision to deploy (hit enter to default to master): "
+      print "\nThe branch, tag, or revision to deploy [master]: "
       git_revision = STDIN.gets.strip.chomp
 
       if git_revision.match(/^\s?$/)

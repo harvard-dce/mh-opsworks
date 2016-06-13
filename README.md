@@ -88,6 +88,8 @@ and public key.  Following the example set in Step 1, it'd be "janesmith".
 It's easiest if your SSH user matches your default local unix username as
 the `stack:instances:ssh_to` rake task will work out of the box.
 
+A default git url can be provided by setting `MATTERHORN_GIT_URL` in your shell.
+
 ### Step 4 - Sanity check your cluster configuration
 
 We've implemented a set of sanity checks to ensure your cluster configuration
