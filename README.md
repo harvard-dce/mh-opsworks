@@ -6,6 +6,7 @@ matterhorn cluster.
 ## Requirements
 
 * Ruby 2
+* Python 2.7+, including virtualenv 
 * Appropriately configured aws rights linked to an access key
 * A POSIX operating system
 

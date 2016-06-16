@@ -120,6 +120,21 @@ namespace :stack do
     task start: ['cluster:configtest', 'cluster:config_sync_check'] do
       Cluster::Stack.start_all
     end
+    
+    desc Cluster::RakeDocs.new('stack:instances:public_dns').desc
+    task public_dns: ['cluster:configtest'] do
+      hostname = ENV['hostname'].to_s.strip
+      if hostname == ''
+        puts "Missing hostname arg"
+        exit 1
+      end
+      instance = Cluster::Instances.find_by_hostname(hostname)
+      if instance == nil
+        puts "#{hostname} does not exist"
+        exit 1
+      end
+      puts instance.public_dns
+    end
   end
 
   namespace :layers do

@@ -3,6 +3,7 @@
 ## TO BE RELEASED
 
 * Provide convenience defaults when executing `cluster:new`.
+* Execution of ghost inspector tests via `./bin/mh_ghost` script.
 
 ## 1.6.1 - 6/08/2016
 

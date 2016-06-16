@@ -1,0 +1,2 @@
+# for optional ghost inspector test execution; see README.ui-testing.md                                                                                                
+mh-ui-testing==1.0.0   

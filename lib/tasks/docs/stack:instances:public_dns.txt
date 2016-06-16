@@ -1,0 +1,5 @@
+Output the public dns hostname for an instance
+
+Example:
+
+    ./bin/rake stack:instances:public_dns hostname=admin1
