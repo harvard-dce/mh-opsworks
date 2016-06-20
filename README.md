@@ -286,6 +286,9 @@ steps are:
 And then proceed normally - update your chef recipes, deploy, etc. The linked
 archive on s3 will be used for your custom recipes.
 
+To enable additional debug-level log output from chef, change the `chef_log_level` setting
+in your stack's custom json to "debug".
+
 ### Cluster switching
 
 The rake task `cluster:switch` looks for all configuration files stored in the

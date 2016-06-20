@@ -2,6 +2,8 @@
 
 ## TO BE RELEASED
 
+* Add `custom_json` item for controlling chef log level.
+
 ## 1.6.2 - 6/24/2016
 
 * Provide convenience defaults when executing `cluster:new`.
