@@ -2,7 +2,10 @@
 
 ## TO BE RELEASED
 
+## 1.6.2 - 6/24/2016
+
 * Provide convenience defaults when executing `cluster:new`.
+* bump analytics node instance type and ebs size
 
 ## 1.6.1 - 6/08/2016
 
