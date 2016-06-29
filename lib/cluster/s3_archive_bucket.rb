@@ -27,6 +27,35 @@ module Cluster
           ]
         }
       })
+
+      # Do not allow deletions in production
+      if !dev_or_testing_cluster?
+        policy = {
+            "Version" => "2008-10-17",
+            "Id" => "ProtectionAgainstDeleteInProd",
+            "Statement" => [
+              {
+                "Sid" => "1",
+                "Effect" => "Deny",
+                "Principal" => {"AWS" => "*"},
+                "Action" => "s3:DeleteBucket",
+                "Resource" => "arn:aws:s3:::#{bucket_name}"
+              },
+              {
+                "Sid" => "2",
+                "Effect" => "Deny",
+                "Principal" => {"AWS" => "*"},
+                "Action" => "s3:DeleteObject",
+                "Resource" => "arn:aws:s3:::#{bucket_name}/*"
+              }
+            ]
+        }
+        require 'json'
+        s3_client.put_bucket_policy({
+          bucket: bucket_name,
+          policy: policy.to_json 
+        })
+      end
     end
   end
 end

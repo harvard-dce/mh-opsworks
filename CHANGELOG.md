@@ -3,6 +3,7 @@
 ## TO BE RELEASED
 
 * Add `custom_json` item for controlling chef log level.
+* Added policy to S3 file archive bucket (2-week project) so that nothing can be deleted in production.
 
 ## 1.6.2 - 6/24/2016
 
