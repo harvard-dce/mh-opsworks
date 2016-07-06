@@ -452,16 +452,17 @@ cluster's `custom_json`.
   "stack": {
     "chef": {
       "custom_json": {
-        "newrelic": {
-          "key": "your new relic API key"
-          }
+        "admin": { "newrelic": { "key": "your new relic API key for admin layer" }},
+        "engage": { "newrelic": { "key": "your new relic API key for engage layer" }},
+        "workers": { "newrelic": { "key": "your new relic API key for workers layer" }}
       },
     }
   }
 }
 ```
 
-If you don't include the "newrelic" key, it isn't enabled.
+If you omit the layer name or the "newrelic" key for a layer, newrelic isn't enabled for that layer.
+All nodes in the layer will use the same key.
 
 Chef enables newrelic app monitoring on the admin, worker and engage nodes.
 Each node is monitored separately and under an aggregate app named after your
