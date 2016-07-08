@@ -6,6 +6,8 @@
   to become available/deleted.
 * increase `retry_limit` on AWS client objects to alleviate failures due to 
   API throttling errors
+* Rename of moscaler install recipe in cluster config templates &
+  updates to horizontal scaling docs
 
 ## 1.7.0 - 7/15/2016
 

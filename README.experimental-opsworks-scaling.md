@@ -1,4 +1,9 @@
-### Horizontal worker scaling
+**NOTE**: This is an alternate implementation of scaling unrelated to what's
+described in [README.horizontal-scaling.md](README.horizontal-scaling.md). It uses cloudwatch metrics
+only and does not account for things like workers being idle, their 
+billed uptime, etc. It should be considered deprecated.
+
+### Experimental Horizontal worker scaling
 
 EXPERIMENTAL: Basic automatic horizontal worker scaling can be accomplished
 through a combination of opsworks built-ins and custom metrics and alarms.
