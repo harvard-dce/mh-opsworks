@@ -140,9 +140,10 @@ module Cluster
 
       def apply_wait_options(w)
         w.tap do |w|
-          w.max_attempts = 600
-          w.delay = 5
-          w.before_wait do |attempts, response|
+          w.max_attempts = 60
+          w.delay = 0
+          w.before_wait do |attempts, response|0
+            sleep((attempts + 2) ** 2)
             print '.'
           end
         end

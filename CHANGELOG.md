@@ -2,6 +2,9 @@
 
 ## TO BE RELEASED
 
+* Configure waiters to do "exponential backoff" when waiting for resources
+  to become available/deleted.
+
 ## 1.7.0 - 7/15/2016
 
 * Add `custom_json` item for controlling chef log level.
