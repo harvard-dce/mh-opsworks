@@ -4,6 +4,8 @@
 
 * Configure waiters to do "exponential backoff" when waiting for resources
   to become available/deleted.
+* increase `retry_limit` on AWS client objects to alleviate failures due to 
+  API throttling errors
 
 ## 1.7.0 - 7/15/2016
 
