@@ -2,6 +2,8 @@
 
 ## TO BE RELEASED
 
+## 1.7.1 - 7/20/2016
+
 * Configure waiters to do "exponential backoff" when waiting for resources
   to become available/deleted.
 * increase `retry_limit` on AWS client objects to alleviate failures due to 
