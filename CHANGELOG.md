@@ -2,6 +2,8 @@
 
 ## TO BE RELEASED
 
+* tag provisioned s3 buckets with the opsworks stack name
+
 ## 1.7.1 - 7/20/2016
 
 * Configure waiters to do "exponential backoff" when waiting for resources

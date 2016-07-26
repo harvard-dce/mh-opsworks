@@ -1,5 +1,8 @@
 module Cluster
   class S3Bucket < Base
+
+    include ConfigurationHelpers
+
     def self.find_existing(name: '')
       asset_bucket = s3_client.list_buckets.inject([]){ |memo, page| memo + page.buckets }.find do |bucket|
         bucket.name == name
@@ -21,6 +24,19 @@ module Cluster
           status: 'Enabled'
         }
       )
+
+      s3_client.put_bucket_tagging(
+        bucket: name,
+        tagging: {
+          tag_set: [
+            {
+              key: 'opsworks:stack',
+              value: stack_config[:name]
+            }
+          ]
+        }
+      )
+
       construct_bucket(name)
     end
 
