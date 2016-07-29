@@ -172,14 +172,7 @@
           "deploy": [ ],
           "shutdown": [ ]
         },
-        "volume_configurations": [
-          {
-            "mount_point": "/var/matterhorn-workspace",
-            "number_of_disks": 1,
-            "size": "<%= matterhorn_workspace_size %>",
-            "volume_type": "gp2"
-          }
-        ],
+        "volume_configurations": [ ],
         "instances": {
           "_fake_number_of_instances": "<%= workers_instance_count %>",
           "number_of_instances": 0,
