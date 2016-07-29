@@ -4,7 +4,7 @@ module Cluster
       :export_root, :nfs_server_host, :primary_az, :secondary_az
 
     def choose_variant
-      puts "Please choose the size of the cluster you'd like to deploy.\n\n"
+      puts "\nPlease choose the size of the cluster you'd like to deploy.\n\n"
       default = Cluster::ConfigCreator::DEFAULT_VARIANT
       keys = []
       Cluster::ConfigCreator::VARIANTS.each do |key, variant|
@@ -133,6 +133,16 @@ module Cluster
       end
     end
 
+    def local_vs_opsworks
+      print "\nCould the purpose of this cluster be accomplished using a local vagrant instance? [y/N]: "
+      local_vs_opsworks = STDIN.gets.strip.chomp
+
+      if local_vs_opsworks.downcase == 'y'
+        print "Great! You just saved some money!\n"
+        exit 0
+      end
+    end
+
     private
 
     def find_optimal_keyfile
@@ -153,5 +163,6 @@ module Cluster
     def cluster_name_ok?(name)
       name.match(/^[a-zA-Z\d]+[a-zA-Z\d -]+$/)
     end
+
   end
 end

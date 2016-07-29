@@ -175,6 +175,7 @@ namespace :cluster do
   desc Cluster::RakeDocs.new('cluster:new').desc
   task :new do
     session = Cluster::ConfigCreationSession.new
+    session.local_vs_opsworks
     session.choose_variant
     session.get_cluster_name
     session.get_git_url
