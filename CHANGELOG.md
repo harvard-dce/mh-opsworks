@@ -8,6 +8,7 @@
 * prompt user to consider using a local vagrant cluster
 * removed unnecessary `/var/matterhorn-workspace` volume definition from
   workers layer config in all cluster config templates.
+* add opsworks:DescribeLayers action to instance profile policy
 
 ## 1.7.1 - 7/20/2016
 

@@ -53,6 +53,7 @@ module Cluster
                 "cloudwatch:*",
                 "sns:CreateTopic",
                 "opsworks:DescribeInstances",
+                "opsworks:DescribeLayers",
                 "opsworks:DescribeStacks",
                 "opsworks:StartInstance",
                 "opsworks:StopInstance",
