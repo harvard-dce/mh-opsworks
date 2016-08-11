@@ -2,6 +2,8 @@
 
 ## TO BE RELEASED
 
+## 1.8.0 - 8/11/2016
+
 * tag provisioned s3 buckets with the opsworks stack name
 * Fix a couple of issues that resulted in modifications to files as a
   side-effect of running `bin/setup`.
