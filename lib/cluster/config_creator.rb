@@ -9,7 +9,7 @@ module Cluster
         description: 'Only appropriate to smoke-test deployment and process very small videos. Uses a storage layer to export a filesystem.',
 
         storage_instance_type: 't2.medium',
-        storage_disk_size: '200',
+        storage_disk_size: '100',
 
         database_instance_type: 'db.t2.medium',
         database_disk_size: '20',
@@ -26,6 +26,7 @@ module Cluster
         ganglia_disk_size: '10',
 
         matterhorn_root_size: '20',
+        root_device_size: '8',
         matterhorn_workspace_size: '50'
       },
 
@@ -35,10 +36,10 @@ module Cluster
         description: 'Appropriate for processing small workloads and testing capture agent integration. Uses a storage layer to export a filesystem.',
 
         storage_instance_type: 'c4.xlarge',
-        storage_disk_size: '500',
+        storage_disk_size: '250',
 
-        database_instance_type: 'db.t2.large',
-        database_disk_size: '50',
+        database_instance_type: 'db.t2.medium',
+        database_disk_size: '20',
         multi_az: false,
 
         admin_instance_type: 'c4.xlarge',
@@ -49,9 +50,10 @@ module Cluster
         engage_instance_type: 'c4.xlarge',
 
         ganglia_instance_type: 't2.medium',
-        ganglia_disk_size: '50',
+        ganglia_disk_size: '20',
 
-        matterhorn_root_size: '50',
+        matterhorn_root_size: '20',
+        root_device_size: '8',
         matterhorn_workspace_size: '50'
       },
 
@@ -63,7 +65,7 @@ module Cluster
         storage_instance_type: 'c4.8xlarge',
         storage_disk_size: '2000',
 
-        database_instance_type: 'db.m4.xlarge',
+        database_instance_type: 'db.m4.2xlarge',
         database_disk_size: '250',
         multi_az: true,
 
@@ -78,6 +80,7 @@ module Cluster
         ganglia_disk_size: '100',
 
         matterhorn_root_size: '50',
+        root_device_size: '16',
         matterhorn_workspace_size: '250'
       },
 
@@ -86,8 +89,8 @@ module Cluster
 
         description: 'Appropriate for processing small workloads and testing capture agent integration. Uses zadara storage - see README.zadara.md for instructions. ',
 
-        database_instance_type: 'db.t2.large',
-        database_disk_size: '50',
+        database_instance_type: 'db.t2.medium',
+        database_disk_size: '20',
         multi_az: false,
 
         admin_instance_type: 'c4.xlarge',
@@ -98,9 +101,10 @@ module Cluster
         engage_instance_type: 'c4.xlarge',
 
         ganglia_instance_type: 't2.medium',
-        ganglia_disk_size: '50',
+        ganglia_disk_size: '20',
 
-        matterhorn_root_size: '50',
+        matterhorn_root_size: '20',
+        root_device_size: '8',
         matterhorn_workspace_size: '50'
       },
 
@@ -109,7 +113,7 @@ module Cluster
 
         description: 'Appropriate for large workloads. Uses zadara storage - see README.zadara.md for instructions. ',
 
-        database_instance_type: 'db.m4.xlarge',
+        database_instance_type: 'db.m4.2xlarge',
         database_disk_size: '250',
         multi_az: true,
 
@@ -124,6 +128,7 @@ module Cluster
         ganglia_disk_size: '100',
 
         matterhorn_root_size: '50',
+        root_device_size: '16',
         matterhorn_workspace_size: '250'
       },
 
@@ -147,6 +152,7 @@ module Cluster
         ganglia_disk_size: '10',
 
         matterhorn_root_size: '20',
+        root_device_size: '8',
         matterhorn_workspace_size: '50'
       },
 
@@ -170,6 +176,7 @@ module Cluster
         ganglia_disk_size: '50',
 
         matterhorn_root_size: '50',
+        root_device_size: '8',
         matterhorn_workspace_size: '50'
       },
 
@@ -193,6 +200,7 @@ module Cluster
         ganglia_disk_size: '100',
 
         matterhorn_root_size: '50',
+        root_device_size: '16',
         matterhorn_workspace_size: '50'
       },
 
@@ -219,6 +227,7 @@ module Cluster
         ganglia_disk_size: '10',
 
         matterhorn_root_size: '20',
+        root_device_size: '8',
         matterhorn_workspace_size: '50'
       }
     }

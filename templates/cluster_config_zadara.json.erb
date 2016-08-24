@@ -104,7 +104,7 @@
           "number_of_instances": 1,
           "instance_type": "<%= admin_instance_type %>",
           "root_device_type": "ebs",
-          "root_device_size": 16
+          "root_device_size": "<%= root_device_size %>"
         }
       },
       {
@@ -158,7 +158,7 @@
           "number_of_instances": "<%= workers_instance_count %>",
           "instance_type": "<%= workers_instance_type %>",
           "root_device_type": "ebs",
-          "root_device_size": 16
+          "root_device_size": "<%= root_device_size %>"
         }
       },
       {
@@ -220,7 +220,7 @@
           "number_of_instances": 1,
           "instance_type": "<%= engage_instance_type %>",
           "root_device_type": "ebs",
-          "root_device_size": 16
+          "root_device_size": "<%= root_device_size %>"
         }
       },
       {
@@ -261,7 +261,7 @@
           "number_of_instances": 1,
           "instance_type": "<%= ganglia_instance_type %>",
           "root_device_type": "ebs",
-          "root_device_size": 16
+          "root_device_size": "<%= root_device_size %>"
         }
       }
     ],
