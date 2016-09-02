@@ -2,6 +2,8 @@
 
 ## TO BE RELEASED
 
+* add the `install-job-queued-metric` recipe to the Ganglia layer's setup list
+
 ## 1.8.0 - 8/11/2016
 
 * tag provisioned s3 buckets with the opsworks stack name
