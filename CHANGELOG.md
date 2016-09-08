@@ -2,7 +2,10 @@
 
 ## TO BE RELEASED
 
+## 1.8.1 - 9/08/2016
+
 * add the `install-job-queued-metric` recipe to the Ganglia layer's setup list
+* downward adjustments to default instance types and volume sizes
 
 ## 1.8.0 - 8/11/2016
 
