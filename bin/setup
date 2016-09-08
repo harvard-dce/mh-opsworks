@@ -17,7 +17,7 @@ fi
 
 echo
 
-bundle install --binstubs
+bundle install
 
 if [ ! -f "./secrets.json" ]; then
   cp templates/secrets_example.json ./secrets.json

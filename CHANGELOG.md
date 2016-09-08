@@ -2,6 +2,8 @@
 
 ## TO BE RELEASED
 
+* don't use the `--binstubs` flag in `bin/setup`
+
 ## 1.8.1 - 9/08/2016
 
 * add the `install-job-queued-metric` recipe to the Ganglia layer's setup list
