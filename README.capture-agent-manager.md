@@ -181,7 +181,7 @@ difference as a cloudwatch metric.
 
 To do this add the recipe in the setup phase of the utility node:
 ```
-    mh-opsworks-recipes::install-capture-agent-timedrift-metric
+    mh-opsworks-recipes::install-ca-timedrift-metric
 ```
 
 And add the capture agent private ssh key to the custom json var
