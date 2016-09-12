@@ -1,7 +1,7 @@
 module Cluster
   class ConfigCreationSession
     attr_accessor :variant, :name, :cidr_block_root, :git_url, :git_revision,
-      :export_root, :nfs_server_host, :primary_az, :secondary_az
+      :export_root, :nfs_server_host, :primary_az, :secondary_az, :project_tag
 
     def choose_variant
       puts "\nPlease choose the size of the cluster you'd like to deploy.\n\n"
@@ -19,6 +19,15 @@ module Cluster
       return choose_variant unless keys.include?(variant_choice)
 
       @variant = variant_choice
+    end
+
+    def get_project_tag
+      print "\nWhat value for Project Tag? [MH]: "
+      project_tag = STDIN.gets.strip.chomp
+
+      # the default is set in the template mainly because, in tests, this isn't
+      # run and project_tag doesnt' get a default value
+      @project_tag = project_tag
     end
 
     def zadara_variant?

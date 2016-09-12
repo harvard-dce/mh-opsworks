@@ -207,5 +207,16 @@ module Cluster
     def self.construct_instance(stack_id)
       Aws::OpsWorks::Stack.new(stack_id, client: opsworks_client)
     end
+
+    def self.find_volume_ids
+      volume_ids = []
+      stack = find_existing
+      resp = opsworks_client.describe_volumes({stack_id: stack.stack_id})
+      resp.volumes.each do |volume|
+        volume_ids.push(volume.ec2_volume_id)
+      end
+
+      volume_ids
+    end
   end
 end

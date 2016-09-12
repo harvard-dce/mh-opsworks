@@ -89,5 +89,22 @@ module Cluster
         end
       end
     end
+
+    def self.create_custom_tags
+      if stack_custom_tags.empty?
+        return
+      end
+
+      resource_ids = Stack.find_volume_ids
+      find_existing.each do |instance|
+        resource_ids.push(instance.ec2_instance_id)
+      end
+
+      ec2_client.create_tags({
+          dry_run: false,
+          resources: resource_ids,
+          tags: stack_custom_tags
+      })
+    end
   end
 end

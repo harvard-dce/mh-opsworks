@@ -176,6 +176,7 @@ namespace :cluster do
   task :new do
     session = Cluster::ConfigCreationSession.new
     session.local_vs_opsworks
+    session.get_project_tag
     session.choose_variant
     session.get_cluster_name
     session.get_git_url
@@ -191,6 +192,7 @@ namespace :cluster do
     config_file = Cluster::RemoteConfig.create(
       name: session.name,
       variant: session.variant,
+      project_tag: session.project_tag,
       cidr_block_root: session.cidr_block_root,
       app_git_url: session.git_url,
       app_git_revision: session.git_revision,

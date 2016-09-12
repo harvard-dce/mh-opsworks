@@ -27,6 +27,10 @@
         "opsworks": {
           "chef_log_level": "info"
         },
+        "aws_custom_tags": [
+            {"key": "OU", "value": "DE"},
+            {"key": "Project", "value": "<%= project_tag %>"}
+        ],
         "matterhorn_repo_root": "/opt/matterhorn",
         "matterhorn_log_directory": "/opt/matterhorn/log",
         "local_workspace_root": "/var/matterhorn-workspace",
