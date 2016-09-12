@@ -119,6 +119,7 @@ namespace :stack do
     desc Cluster::RakeDocs.new('stack:instances:start').desc
     task start: ['cluster:configtest', 'cluster:config_sync_check'] do
       Cluster::Stack.start_all
+      Cluster::Instances.create_custom_tags
     end
   end
 

@@ -33,7 +33,7 @@ module Cluster
               key: 'opsworks:stack',
               value: stack_config[:name]
             }
-          ]
+          ].concat(stack_custom_json[:aws_custom_tags] || [])
         }
       )
 
@@ -49,6 +49,20 @@ module Cluster
 
     def self.construct_bucket(name)
       Aws::S3::Bucket.new(name, client: s3_client)
+    end
+
+    def self.create_custom_tags(name)
+      custom_tags = stack_custom_json[:aws_custom_tags] || []
+      if custom_tags.empty?
+        return
+      end
+
+      s3_client.put_bucket_tagging({
+        bucket: "#{name}",
+        tagging: {tag_set: custom_tags},
+        use_accelerate_endpoint: false
+      })
+
     end
   end
 end

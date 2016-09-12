@@ -89,5 +89,27 @@ module Cluster
         end
       end
     end
+
+    def self.create_custom_tags
+      custom_tags = stack_custom_json[:aws_custom_tags] || []
+      if custom_tags.empty?
+        return
+      end
+
+      stack = Stack.find_existing
+      resource_ids = []
+      resp = opsworks_client.describe_volumes({stack_id: stack.stack_id})
+      resp.volumes.each do |volume|
+        resource_ids.push(volume.ec2_volume_id)
+      end
+      find_existing.each do |instance|
+        resource_ids.push(instance.ec2_instance_id)
+      end
+      ec2_client.create_tags({
+          dry_run: false,
+          resources: resource_ids,
+          tags: custom_tags
+      })
+    end
   end
 end

@@ -10,6 +10,8 @@ EBS volumes is relatively expensive.
 
 Subsequent starts go much faster, maybe 10 to 15 minutes.
 
+Custom tags are created or updated when starting instances via this command.
+
 SEE ALSO:
 
 admin:cluster:init, stack:instances:stop

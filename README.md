@@ -760,6 +760,45 @@ Fortunately error messages are fairly clear when a resource limit is hit,
 either in the shell output of mh-opsworks or in the aws web cloudformation (or
 other) UIs.
 
+### Custom Tags
+
+When you create a new cluster you are prompted to input a value for the
+`Project` tag, the default value is `MH`. You can also do `rake cluster:edit`
+to add or change tags in the custom json section.
+
+```
+{
+  "stack": {
+    "chef": {
+      "custom_json": {
+        ...
+        "aws_custom_tags": [
+            {"key": "OU", "value": "DE"},
+            {"key": "Project", "value": "MH"}
+        ],
+      },
+
+      ...
+
+      }
+    }
+  }
+}
+
+```
+
+Tags are applied to VPCs, RDS instance, and S3 buckets, when you do `rake
+admin:cluster:init` (when these resources are created). EC2 instances and EBS
+volumes have tags applied every time you do `rake stack:instances:start`. Note
+that if you start the instance for the first time from the AWS Opsworks
+console, the instance will not be tagged.
+
+Tags can also be applied to the cluster via command `rake admin:cluster:tag`.
+This will tag VPCs, RDS instance, S3 buckets, EC2 instances, and EBS volumes.
+Note that applying tags will update or create new tags, but will not remove existing
+tags.
+
+
 ## TODO
 
 * Automate cloudfront distribution creation
