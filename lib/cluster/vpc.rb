@@ -104,7 +104,7 @@ module Cluster
             key: 'opsworks:stack',
             value: stack_config[:name]
           }
-        ].concat(stack_custom_json[:aws_custom_tags])
+        ].concat(stack_custom_tags)
       }
     end
 
@@ -153,15 +153,14 @@ module Cluster
     end
 
     def self.create_custom_tags
-      custom_tags = stack_custom_json[:aws_custom_tags] || []
-      if custom_tags.empty?
+      if stack_custom_tags.empty?
         return
       end
 
       vpc = find_existing
       vpc.create_tags({
           dry_run: false,
-          tags: custom_tags
+          tags: stack_custom_tags
       })
     end
   end

@@ -56,7 +56,7 @@ module Cluster
         tags: [ {
           key: "opsworks:stack",
           value: stack_config[:name],
-        } ].concat(stack_custom_json[:aws_custom_tags]),
+        } ].concat(stack_custom_tags),
         vpc_security_group_ids: [ sg_group_id ],
 
         auto_minor_version_upgrade: false,
@@ -93,14 +93,13 @@ module Cluster
     end
 
     def self.create_custom_tags
-      custom_tags = stack_custom_json[:aws_custom_tags] || []
-      if custom_tags.empty?
+      if stack_custom_tags.empty?
         return
       end
 
       rds_client.add_tags_to_resource({
         resource_name: rds_db_instance_arn,
-        tags: custom_tags
+        tags: stack_custom_tags
       })
     end
   end

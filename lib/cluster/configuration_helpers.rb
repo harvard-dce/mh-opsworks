@@ -84,6 +84,10 @@ module Cluster
           layer[:shortname] == layer_shortname
         end.fetch(:instances, {})
       end
+
+      def stack_custom_tags
+        stack_custom_json[:aws_custom_tags] || []
+      end
     end
 
     def self.included(base)

@@ -25,11 +25,8 @@ module Cluster
       print "\nWhat value for Project Tag? [MH]: "
       project_tag = STDIN.gets.strip.chomp
 
-      #if project_tag.match(/^\s?/)
-      #  @project_tag = "MH"
-      #else
-      #  @project_tag = project_tag
-      #end
+      # the default is set in the template mainly because, in tests, this isn't
+      # run and project_tag doesnt' get a default value
       @project_tag = project_tag
     end
 
