@@ -96,8 +96,12 @@ module Cluster
       end
 
       vpc = VPC.find_existing
-      resource_ids = []
+
+      # ec2_client doesn't bring detached volumes, have to use opsworks_client
+      resource_ids = [].concat(Stack.find_volume_ids)
+
       # opsworks_client doesn't bring the NAT instance, have to use ec2_client
+      # note that there will be duplicated volumes in the array
       resp = ec2_client.describe_instances({
         dry_run: false,
         filters: [
