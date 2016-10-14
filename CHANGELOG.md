@@ -3,6 +3,13 @@
 ## TO BE RELEASED
 
 * don't use the `--binstubs` flag in `bin/setup`
+* Include new `install-cwlogs` recipe in cluster config templates. 
+  Add IAM policy permissions for managing cloudwatch log groups. 
+  On rollout the "mh-opsworks-cluster-managers" IAM group will need to be manually updated to 
+  include the new "logs:*" and "sqs:*" permissions. Existing clusters will need to run 
+  `./bin/rake stack:users:init` to sync their respective cluster manager user.
+  Add deletion of additional cluster artifacts, including cloudwatch log groups
+  and sqs queues & buckets related to the analytics node.
 
 ## 1.8.1 - 9/08/2016
 

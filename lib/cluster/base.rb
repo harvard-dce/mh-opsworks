@@ -51,6 +51,7 @@ module Cluster
                 "s3:*",
                 "sqs:*",
                 "cloudwatch:*",
+                "logs:*",
                 "sns:CreateTopic",
                 "opsworks:DescribeInstances",
                 "opsworks:DescribeLayers",

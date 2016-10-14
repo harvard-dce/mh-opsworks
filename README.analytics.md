@@ -26,6 +26,7 @@ for processing and indexing MH analytics data, particularly usertracking events.
                 "mh-opsworks-recipes::install-custom-metrics",
                 "mh-opsworks-recipes::create-alerts-from-opsworks-metrics",
                 "mh-opsworks-recipes::enable-enhanced-networking",
+                "mh-opsworks-recipes::install-cwlogs",
                 "mh-opsworks-recipes::install-elasticsearch",
                 "mh-opsworks-recipes::install-logstash-kibana",
                 "mh-opsworks-recipes::clean-up-package-cache"

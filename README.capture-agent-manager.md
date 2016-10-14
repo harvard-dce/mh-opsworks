@@ -29,6 +29,7 @@ switching from primary to secondary live stream..
             "mh-opsworks-recipes::install-custom-metrics",
             "mh-opsworks-recipes::create-alerts-from-opsworks-metrics",
             "mh-opsworks-recipes::enable-enhanced-networking",
+            "mh-opsworks-recipes::install-cwlogs",
             "mh-opsworks-recipes::clean-up-package-cache",
             "mh-opsworks-recipes::create-capture-agent-manager-user",
             "mh-opsworks-recipes::create-capture-agent-manager-directories",
