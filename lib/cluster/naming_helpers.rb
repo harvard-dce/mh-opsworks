@@ -44,6 +44,18 @@ module Cluster
       def s3_file_archive_bucket_name
         stack_custom_json[:s3_file_archive_bucket_name]
       end
+
+      def analytics_es_snapshots_bucket_name
+        %Q|#{stack_shortname}-snapshots|
+      end
+
+      def analytics_ua_harvester_bucket_name
+        %Q|#{stack_shortname}-ua-harvester|
+      end
+
+      def useractions_queue_name
+        %Q|#{stack_shortname}-user-actions|
+      end
     end
 
     def self.included(base)

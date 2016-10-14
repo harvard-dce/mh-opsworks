@@ -29,6 +29,7 @@
                 "iam:*User*",
                 "sns:*",
                 "cloudwatch:*",
+                "logs:*",
                 "s3:*",
                 "elasticfilesystem:*",
                 "rds:describe*",

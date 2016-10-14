@@ -58,15 +58,24 @@ namespace :admin do
       puts 'deleting service role'
       Cluster::ServiceRole.delete
 
-      puts 'deleting VPC'
-      Cluster::VPC.delete
-
       puts 'deleting S3 distribution and file archive buckets and assets'
       Cluster::S3DistributionBucket.delete(Cluster::Base.distribution_bucket_name)
       Cluster::S3ArchiveBucket.delete(Cluster::Base.s3_file_archive_bucket_name)
 
+      puts 'deleting analytics buckets'
+      Cluster::S3AnalyticsBuckets.delete
+
+      puts 'deleting cloudwatch log groups'
+      Cluster::CWLogs.delete
+
+      puts 'deleting SQS queues'
+      Cluster::SQS.delete_queue(Cluster::Base.useractions_queue_name)
+
       puts 'deleting configuration files'
       Cluster::RemoteConfig.new.delete
+
+      puts 'deleting VPC'
+      Cluster::VPC.delete
     end
 
     desc Cluster::RakeDocs.new('admin:cluster:tag').desc

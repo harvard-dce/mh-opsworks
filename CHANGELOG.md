@@ -3,6 +3,8 @@
 ## TO BE RELEASED
 
 * don't use the `--binstubs` flag in `bin/setup`
+* deletion of additional cluster artifacts, including cloudwatch log groups
+  and sqs queues & buckets related to the analytics node.
 
 ## 1.8.1 - 9/08/2016
 
