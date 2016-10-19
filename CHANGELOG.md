@@ -2,6 +2,8 @@
 
 ## TO BE RELEASED
 
+## 1.10.0 - 10/19/2016
+
 * don't use the `--binstubs` flag in `bin/setup`
 * Include new `install-cwlogs` recipe in cluster config templates. 
   Add IAM policy permissions for managing cloudwatch log groups. 
@@ -10,6 +12,10 @@
   `./bin/rake stack:users:init` to sync their respective cluster manager user.
   Add deletion of additional cluster artifacts, including cloudwatch log groups
   and sqs queues & buckets related to the analytics node.
+
+## 1.9.0 - 9/16/2016
+
+* custom tagging as rake task
 
 ## 1.8.1 - 9/08/2016
 
