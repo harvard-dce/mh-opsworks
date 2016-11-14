@@ -315,6 +315,9 @@
           "root_device_size": "<%= root_device_size %>"
         }
       }
+      <% if include_analytics %>
+        ,<%= ERB.new(analytics_layer_template).result(binding) %>
+      <% end %>
     ],
     "app": {
       "shortname": "matterhorn",

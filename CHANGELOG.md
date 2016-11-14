@@ -2,6 +2,8 @@
 
 ## TO BE RELEASED
 
+* Make it easier to add an analytics node via `cluster:new`
+
 ## 1.10.0 - 10/19/2016
 
 * don't use the `--binstubs` flag in `bin/setup`

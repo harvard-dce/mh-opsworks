@@ -25,6 +25,9 @@ module Cluster
         ganglia_instance_type: 't2.medium',
         ganglia_disk_size: '10',
 
+        analytics_instance_type: 't2.large',
+        analytics_disk_size: '20',
+
         matterhorn_root_size: '20',
         root_device_size: '8',
         matterhorn_workspace_size: '50'
@@ -51,6 +54,9 @@ module Cluster
 
         ganglia_instance_type: 't2.medium',
         ganglia_disk_size: '20',
+
+        analytics_instance_type: 'm4.large',
+        analytics_disk_size: '50',
 
         matterhorn_root_size: '20',
         root_device_size: '8',
@@ -79,6 +85,9 @@ module Cluster
         ganglia_instance_type: 'c4.large',
         ganglia_disk_size: '100',
 
+        analytics_instance_type: 'm4.xlarge',
+        analytics_disk_size: '500',
+
         matterhorn_root_size: '50',
         root_device_size: '16',
         matterhorn_workspace_size: '250'
@@ -103,6 +112,9 @@ module Cluster
         ganglia_instance_type: 't2.medium',
         ganglia_disk_size: '20',
 
+        analytics_instance_type: 'm4.large',
+        analytics_disk_size: '50',
+
         matterhorn_root_size: '20',
         root_device_size: '8',
         matterhorn_workspace_size: '50'
@@ -126,6 +138,9 @@ module Cluster
 
         ganglia_instance_type: 'c4.large',
         ganglia_disk_size: '100',
+
+        analytics_instance_type: 'm4.xlarge',
+        analytics_disk_size: '500',
 
         matterhorn_root_size: '50',
         root_device_size: '16',
@@ -251,12 +266,19 @@ module Cluster
         merge(base_secrets_content: base_secrets).
         merge(database_user_info).
         merge(s3_distribution_bucket_name_from(attributes[:name])).
-        merge(s3_file_archive_bucket_name_from(attributes[:name]))
+        merge(s3_file_archive_bucket_name_from(attributes[:name])).
+        merge(analytics_layer_content)
 
       erb.result(all_attributes)
     end
 
     private
+
+    def analytics_layer_content
+      {
+        analytics_layer_template: File.read('templates/analytics_layer.json.erb')
+      }
+    end
 
     def project_tag
       if attributes[:project_tag].nil? || attributes[:project_tag].empty?
