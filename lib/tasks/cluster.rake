@@ -178,6 +178,7 @@ namespace :cluster do
     session.local_vs_opsworks
     session.get_project_tag
     session.choose_variant
+    session.analytics_node
     session.get_cluster_name
     session.get_git_url
     session.get_git_revision
@@ -200,7 +201,8 @@ namespace :cluster do
       nfs_server_host: session.nfs_server_host,
       primary_az: session.primary_az,
       secondary_az: session.secondary_az,
-      default_users: JSON.pretty_generate(session.compute_default_users)
+      default_users: JSON.pretty_generate(session.compute_default_users),
+      include_analytics: session.include_analytics
     )
     rc_file = Cluster::RcFileSwitcher.new(config_file: config_file)
     rc_file.write

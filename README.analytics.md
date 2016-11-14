@@ -4,57 +4,63 @@ The opsworks "Analytics" layer provides a full [ELK](https://www.elastic.co/prod
 stack in a single instance. ELK = Elasticsearch + Logstash + Kibana. This is the stack of components used
 for processing and indexing MH analytics data, particularly usertracking events.
 
-* Modify your cluster config to include the following layer config:
+To include an analytics node in your cluster simply say "Y" when prompted during the `cluster:new` process.
+
+For an existing cluster, modify your cluster config to include the following layer config, then run `stack:instances:init`
+to get the new node (which you can then start via the AWS console):
 
 ```
-      {
-        "name": "Analytics",
-        "shortname": "analytics",
-        "enable_auto_healing": true,
-        "install_updates_on_boot": true,
-        "type": "custom",
-        "auto_assign_elastic_ips": true,
-        "auto_assign_public_ips": true,
-        "use_ebs_optimized_instances": true,
-        "custom_recipes": {
-            "setup": [
-                "mh-opsworks-recipes::set-timezone",
-                "mh-opsworks-recipes::fix-raid-mapping",
-                "mh-opsworks-recipes::set-bash-as-default-shell",
-                "mh-opsworks-recipes::install-utils",
-                "mh-opsworks-recipes::enable-postfix-smarthost",
-                "mh-opsworks-recipes::install-custom-metrics",
-                "mh-opsworks-recipes::create-alerts-from-opsworks-metrics",
-                "mh-opsworks-recipes::enable-enhanced-networking",
-                "mh-opsworks-recipes::install-cwlogs",
-                "mh-opsworks-recipes::install-elasticsearch",
-                "mh-opsworks-recipes::install-logstash-kibana",
-                "mh-opsworks-recipes::clean-up-package-cache"
-            ],
-            "configure": [
-                "mh-opsworks-recipes::install-ua-harvester",
-                "mh-opsworks-recipes::configure-logstash-kibana"
-            ],
-            "shutdown": [
-                "mh-opsworks-recipes::remove-alarms"
-            ]
-        },
-        "volume_configurations": [{
-            "mount_point": "/vol/elasticsearch_data",
-            "number_of_disks": 1,
-            "size": "500",
-            "volume_type": "gp2"
-        }],
-        "instances": {
-            "number_of_instances": 1,
-            "instance_type": "m4.xlarge",
-            "root_device_type": "ebs"
-        }
-      }
+ {
+   "name": "Analytics",
+   "shortname": "analytics",
+   "enable_auto_healing": true,
+   "install_updates_on_boot": true,
+   "type": "custom",
+   "auto_assign_elastic_ips": true,
+   "auto_assign_public_ips": true,
+   "use_ebs_optimized_instances": true,
+   "custom_recipes": {
+     "setup": [
+       "mh-opsworks-recipes::set-timezone",
+       "mh-opsworks-recipes::fix-raid-mapping",
+       "mh-opsworks-recipes::set-bash-as-default-shell",
+       "mh-opsworks-recipes::install-utils",
+       "mh-opsworks-recipes::install-mh-base-packages",
+       "mh-opsworks-recipes::enable-postfix-smarthost",
+       "mh-opsworks-recipes::install-custom-metrics",
+       "mh-opsworks-recipes::create-alerts-from-opsworks-metrics",
+       "mh-opsworks-recipes::enable-enhanced-networking",
+       "mh-opsworks-recipes::install-cwlogs",
+       "mh-opsworks-recipes::install-elasticsearch",
+       "mh-opsworks-recipes::install-ua-harvester",
+       "mh-opsworks-recipes::install-logstash-kibana",
+       "mh-opsworks-recipes::clean-up-package-cache"
+     ],
+     "configure": [
+       "mh-opsworks-recipes::configure-ua-harvester"
+     ],
+     "shutdown": [
+       "mh-opsworks-recipes::remove-alarms"
+     ]
+   },
+   "volume_configurations": [
+     {
+       "mount_point": "/vol/elasticsearch_data",
+       "number_of_disks": 1,
+       "size": "20",
+       "volume_type": "gp2"
+     }
+   ],
+   "instances": {
+     "number_of_instances": 1,
+     "instance_type": "t2.medium",
+     "root_device_type": "ebs",
+     "root_device_size": "8"
+   }
+ }
 ```
 
-* re: *instance_type*, `m4.large` is probably sufficient for development. For prod, or If you're doing any intensive bulk operations, `m4.xlarge` should be preferred.
-* update your "custom_json" block to provide a user/pass combo for http auth:
+* also for existing clusters, update your "custom_json" block to provide a user/pass combo for http auth:
 
 ```
     {
@@ -66,10 +72,12 @@ for processing and indexing MH analytics data, particularly usertracking events.
         }
     }
 ```
+* re: *instance_type*, anything from `t2.medium` to `m4.large` is sufficient for development. If you're planning
+to generate and query a large volume of user data during development, `m4.large` is recommended. 
+For prod, or If you're doing any intensive bulk operations, `m4.xlarge` should be preferred.
 * For a list of settings and defaults for the `"elk"` custom config, see the
   `get_elk_info` [recipe helper](https://github.com/harvard-dce/mh-opsworks-recipes/blob/master/libraries/default.rb) method.
-  merged to show all the possible elk settings.
-* for existing clusters you may need to manually update your cluster's instance
+* for older existing clusters you may need to manually update your cluster's instance
   profile to add SQS access. You can find it by viewing any of your stack's
   instances in the ec2 console, then find the "IAM Role" in the instance
   description, click that, then "Edit Policy" and add `"sqs:*"` to the allowed
@@ -122,16 +130,4 @@ to `false` in your cluster config's `"elk"` stanza.
 Manual create/restore of snapshots can be done via the Kopf interface. Click the
 "more" tab and choose "snapshot".
 
-## Cluster delete clean-up
-
-There are a few AWS artifacts that are created by the analytics layer recipes that are
-not automatically cleaned up after an `admin:cluster:delete`. You will need to
-remove these up manually for the time being.
-
-* SQS queue: *\<stack-name\>-user-actions*
-* S3 stuff:
-  * *mh-user-action-harvester/\<stack-name\>-last-action-ts*
-  * *elasticsearch-snapshots/\<stack-name\>*
-
-**Note, for s3 stuff**: Don't delete the top-level bucket! Just the stack-specific object(s).
 

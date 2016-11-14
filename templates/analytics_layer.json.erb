@@ -1,0 +1,48 @@
+{
+  "name": "Analytics",
+  "shortname": "analytics",
+  "enable_auto_healing": true,
+  "install_updates_on_boot": true,
+  "type": "custom",
+  "auto_assign_elastic_ips": true,
+  "auto_assign_public_ips": true,
+  "use_ebs_optimized_instances": true,
+  "custom_recipes": {
+    "setup": [
+      "mh-opsworks-recipes::set-timezone",
+      "mh-opsworks-recipes::fix-raid-mapping",
+      "mh-opsworks-recipes::set-bash-as-default-shell",
+      "mh-opsworks-recipes::install-utils",
+      "mh-opsworks-recipes::install-mh-base-packages",
+      "mh-opsworks-recipes::enable-postfix-smarthost",
+      "mh-opsworks-recipes::install-custom-metrics",
+      "mh-opsworks-recipes::create-alerts-from-opsworks-metrics",
+      "mh-opsworks-recipes::enable-enhanced-networking",
+      "mh-opsworks-recipes::install-cwlogs",
+      "mh-opsworks-recipes::install-elasticsearch",
+      "mh-opsworks-recipes::install-ua-harvester",
+      "mh-opsworks-recipes::install-logstash-kibana",
+      "mh-opsworks-recipes::clean-up-package-cache"
+    ],
+    "configure": [
+      "mh-opsworks-recipes::configure-ua-harvester"
+    ],
+    "shutdown": [
+      "mh-opsworks-recipes::remove-alarms"
+    ]
+  },
+  "volume_configurations": [
+    {
+      "mount_point": "/vol/elasticsearch_data",
+      "number_of_disks": 1,
+      "size": "<%= analytics_disk_size %>",
+      "volume_type": "gp2"
+    }
+  ],
+  "instances": {
+    "number_of_instances": 1,
+    "instance_type": "<%= analytics_instance_type %>",
+    "root_device_type": "ebs",
+    "root_device_size": "<%= root_device_size %>"
+  }
+}

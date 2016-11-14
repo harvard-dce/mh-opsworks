@@ -74,7 +74,8 @@ describe Cluster::ConfigCreator do
       app_git_revision: app_git_revision,
       default_users: default_users,
       primary_az: primary_az,
-      secondary_az: secondary_az
+      secondary_az: secondary_az,
+      include_analytics: true
     }
   end
 end

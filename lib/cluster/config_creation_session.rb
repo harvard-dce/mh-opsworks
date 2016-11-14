@@ -1,7 +1,8 @@
 module Cluster
   class ConfigCreationSession
     attr_accessor :variant, :name, :cidr_block_root, :git_url, :git_revision,
-      :export_root, :nfs_server_host, :primary_az, :secondary_az, :project_tag
+      :export_root, :nfs_server_host, :primary_az, :secondary_az, :project_tag,
+      :include_analytics
 
     def choose_variant
       puts "\nPlease choose the size of the cluster you'd like to deploy.\n\n"
@@ -149,6 +150,15 @@ module Cluster
       if local_vs_opsworks.downcase == 'y'
         print "Great! You just saved some money!\n"
         exit 0
+      end
+    end
+
+    def analytics_node
+      print "\nWould you like an analytics node? [y/N]: "
+      include_analytics = STDIN.gets.strip.chomp
+
+      if include_analytics.downcase == 'y'
+        @include_analytics = true
       end
     end
 

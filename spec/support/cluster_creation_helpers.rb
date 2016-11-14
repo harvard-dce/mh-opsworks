@@ -7,7 +7,8 @@ module ClusterCreationHelpers
       app_git_revision: '',
       default_users: '',
       primary_az: 'us-east-1a',
-      secondary_az: 'us-east-1d'
+      secondary_az: 'us-east-1d',
+      include_analytics: true
     }
   end
 end
