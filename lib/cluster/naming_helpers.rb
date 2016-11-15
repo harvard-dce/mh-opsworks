@@ -21,6 +21,10 @@ module Cluster
         %Q|#{stack_shortname}-database|
       end
 
+      def db_hibernate_snapshot_id
+        %Q|#{rds_name}-hibernated|
+      end
+
       def vpc_name
         %Q|#{stack_shortname}-vpc|
       end

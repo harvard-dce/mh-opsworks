@@ -22,14 +22,15 @@ module Cluster
       rds_instance
     end
 
-    def self.delete
+    def self.delete(final_snapshot=nil)
       if find_existing
-        rds_client.delete_db_instance(
-          db_instance_identifier: rds_name,
-          # This is because we're doing backups out-of-band and
-          # they live in the shared NFS
-          skip_final_snapshot: true
-        )
+        parameters = { db_instance_identifier: rds_name }
+        if final_snapshot.nil?
+          parameters[:skip_final_snapshot] = true
+        else
+          parameters[:final_db_snapshot_identifier] = final_snapshot
+        end
+        rds_client.delete_db_instance(parameters)
         wait_until_rds_instance_deleted(rds_name)
       end
     end
@@ -40,39 +41,84 @@ module Cluster
       end
     end
 
-    def self.create_rds
-      # Create optional read replicas
-      # Create backup policies
-      # Set AZ to be the primary?
-      vpc = VPC.find_existing
-      sg_finder = SecurityGroupFinder.new(vpc)
-      sg_group_id = sg_finder.security_group_id_for('AWS-OpsWorks-Custom-Server')
-      db_subnet_group_name = find_db_subnet_group.db_subnet_group_name
-      base_parameters = rds_config
+    def self.hibernate
+      if stack_shortname.match(/prod|prd/i)
+        puts "Refusing to hibernate prod db"
+        return
+      end
 
-      parameters = {
+      if find_existing
+        puts "Hibernating RDS instance via snapshot + delete"
+        # turn off auto backups. without this the restore wastes time doing an immediate backup.
+        # we'll turn it back on at the end of the restore operation
+        rds_client.modify_db_instance({
+          backup_retention_period: 0,
+          apply_immediately: true,
+          db_instance_identifier: rds_name
+        })
+        # wait until our modification is complete and the instance is available again
+        wait_for_rds_instance_modification(rds_name)
+
+        delete(final_snapshot=db_hibernate_snapshot_id)
+      else
+        puts "No RDS instance to hibernate"
+      end
+    end
+
+    def self.restore
+      if find_existing
+        puts "RDS instance already online"
+        return
+      end
+
+      unless hibernate_snapshot_exists
+        puts "Unable to find hibernate snapshot: #{ db_hibernate_snapshot_id }... creating a fresh instance"
+        return create_rds
+      end
+
+      puts "Restoring RDS instance"
+
+      parameters = get_create_params
+      parameters[:db_snapshot_identifier] = db_hibernate_snapshot_id
+
+      # restore doesn't take these params
+      [ :db_name, :preferred_backup_window, :preferred_maintenance_window, :backup_retention_period,
+        :vpc_security_group_ids, :engine_version, :allocated_storage, :master_username, :master_user_password
+      ].each do |s|
+        parameters.delete(s)
+      end
+
+      response = rds_client.restore_db_instance_from_db_snapshot(parameters)
+      wait_until_rds_instance_available(rds_name)
+
+      # restore also doesn't let you set security groups on initial creation, so we have to do that in a follow-up call
+      # also, we can now re-enable the backup setting
+      rds_client.modify_db_instance({
         db_instance_identifier: rds_name,
-        db_subnet_group_name: db_subnet_group_name,
-        tags: [ {
-          key: "opsworks:stack",
-          value: stack_config[:name],
-        } ].concat(stack_custom_tags),
-        vpc_security_group_ids: [ sg_group_id ],
+        backup_retention_period: rds_config[:backup_retention_period],
+        apply_immediately: true,
+        vpc_security_group_ids: [ sg_group_id ]
+      })
 
-        auto_minor_version_upgrade: false,
-        copy_tags_to_snapshot: true,
-        engine: 'MySQL',
-        engine_version: '5.6.23',
-        multi_az: false,
-        preferred_backup_window: "05:02-05:32",
-        preferred_maintenance_window: "thu:09:31-thu:10:01",
-        publicly_accessible: false,
-        storage_type: 'gp2',
-      }.merge(base_parameters)
+      rds_client.delete_db_snapshot({ db_snapshot_identifier: db_hibernate_snapshot_id })
+      construct_instance(response.db_instance)
+    end
+
+    def self.create_rds
+      parameters = get_create_params
+
+      # don't set this on initial create as it causes rds to do an immediate backup (which slows us down)
+      backup_retention_period = parameters.delete(:backup_retention_period)
 
       response = rds_client.create_db_instance(parameters)
       wait_until_rds_instance_available(rds_name)
 
+      # set the backup retention period now as now that the instance exists the immediate backup
+      # can happen concurrent with other, subsequent cluster init stuff
+      rds_client.modify_db_instance({
+          db_instance_identifier: rds_name,
+          backup_retention_period: backup_retention_period
+      })
       construct_instance(response.db_instance)
     end
 
@@ -88,6 +134,12 @@ module Cluster
       end
     end
 
+    def self.sg_group_id
+      vpc = VPC.find_existing
+      sg_finder = SecurityGroupFinder.new(vpc)
+      sg_finder.security_group_id_for('AWS-OpsWorks-Custom-Server')
+    end
+
     def self.construct_instance(rds)
       Aws::RDS::DBInstance.new(rds.db_instance_identifier, client: rds_client)
     end
@@ -101,6 +153,35 @@ module Cluster
         resource_name: rds_db_instance_arn,
         tags: stack_custom_tags
       })
+    end
+
+    def self.get_create_params
+      db_subnet_group_name = find_db_subnet_group.db_subnet_group_name
+      base_parameters = rds_config
+
+      {
+          db_instance_identifier: rds_name,
+          db_subnet_group_name: db_subnet_group_name,
+          vpc_security_group_ids: [ sg_group_id ],
+          tags: [{
+            key: "opsworks:stack",
+            value: stack_config[:name],
+          }].concat(stack_custom_tags),
+          auto_minor_version_upgrade: false,
+          copy_tags_to_snapshot: true,
+          engine: 'MySQL',
+          multi_az: false,
+          engine_version: '5.6.23',
+          preferred_backup_window: "05:02-05:32",
+          preferred_maintenance_window: "thu:09:31-thu:10:01",
+      }.merge(base_parameters)
+    end
+
+    def self.hibernate_snapshot_exists
+      rds_client.describe_db_snapshots({
+          db_instance_identifier: rds_name,
+          db_snapshot_identifier: db_hibernate_snapshot_id
+      }).db_snapshots.any?
     end
   end
 end

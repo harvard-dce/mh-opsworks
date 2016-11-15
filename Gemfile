@@ -12,3 +12,5 @@ gem 'pry'
 gem 'erubis', '~> 2.7.0'
 gem 'diffy', '~> 3.0.7'
 gem 'simplecov', require: false
+gem 'celluloid'
+gem 'colorize'

@@ -1,7 +1,6 @@
 Stops all instances in the current cluster
 
-This shuts down matterhorn and then stops all instances in the cluster - it's
-useful to idle a cluster when you're not using it.
+This shuts down matterhorn and, stops all instances in the cluster, and hibernates the RDS instance.
 
 SEE ALSO:
 
