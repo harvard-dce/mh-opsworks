@@ -32,24 +32,28 @@ module Cluster
       end
     end
 
-    def self.stop_all
+    def self.stop_all(hibernate_rds=true)
       with_existing_stack do |stack|
         puts 'turning on maintenance mode, stopping matterhorn on engage and workers. . . '
         Cluster::Deployment.execute_chef_recipes_on_layers(
           recipes: ['mh-opsworks-recipes::maintenance-mode-on', 'mh-opsworks-recipes::stop-matterhorn'],
           layers: ['Engage', 'Workers']
         )
+        rds_hibernate = Celluloid::Future.new { hibernate_rds and Cluster::RDS.hibernate }
         stop_all_in_layers(
           ['workers', 'admin', 'engage', 'monitoring-master']
         )
         stop_all_in_layers(['storage'])
         stop_all_other_instances
+        join = rds_hibernate.value
       end
     end
 
     def self.start_all
       with_existing_stack do |stack|
+        rds_restore = Celluloid::Future.new { Cluster::RDS.restore }
         start_all_in_layers(['storage'])
+        join = rds_restore.value
         start_all_in_layers(['admin'])
         start_all_in_layers(['workers', 'engage','monitoring-master'])
         start_all_other_instances

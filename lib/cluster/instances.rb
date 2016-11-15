@@ -26,7 +26,7 @@ module Cluster
       instances = []
       stack = Cluster::Stack.find_existing
       if stack
-        Cluster::Stack.stop_all
+        Cluster::Stack.stop_all(hibernate_rds=false)
         opsworks_client.describe_instances(stack_id: stack.stack_id).inject([]){ |memo, page| memo + page.instances }.each do |instance|
           opsworks_instance = Cluster::Instance.new(instance.instance_id)
           opsworks_instance.delete

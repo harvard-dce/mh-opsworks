@@ -1,4 +1,5 @@
 require './lib/cluster'
+require 'colorize'
 Dir['./lib/tasks/*.rake'].each { |file| load file }
 
 namespace :admin do
@@ -31,8 +32,11 @@ namespace :admin do
           puts %Q|	Instance: #{instance.hostname} => status: #{instance.status}, ec2_instance_id: #{instance.ec2_instance_id}|
         end
       end
+
       puts
       puts %Q|Initializing the cluster does not start instances. To start them, use "./bin/rake stack:instances:start"|
+      puts
+      puts %Q|Initializing the cluster starts your RDS instance! Please run 'rds:hibernate' if you're not starting the cluster right away!|.yellow
     end
 
     desc Cluster::RakeDocs.new('admin:cluster:delete').desc

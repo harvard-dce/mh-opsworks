@@ -12,6 +12,8 @@ Subsequent starts go much faster, maybe 10 to 15 minutes.
 
 Custom tags are created or updated when starting instances via this command.
 
+The cluster's RDS instance is restored from it's "-hibernated" snapshot.
+
 SEE ALSO:
 
 admin:cluster:init, stack:instances:stop
