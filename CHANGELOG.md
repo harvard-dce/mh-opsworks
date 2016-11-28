@@ -3,6 +3,7 @@
 ## TO BE RELEASED
 
 * Make it easier to add an analytics node via `cluster:new`
+* Allow configtest override for advanced, edge case clusters via `skip_configtest`.
 
 ## 1.10.0 - 10/19/2016
 

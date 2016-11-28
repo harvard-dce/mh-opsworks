@@ -798,6 +798,17 @@ This will tag VPCs, RDS instance, S3 buckets, EC2 instances, and EBS volumes.
 Note that applying tags will update or create new tags, but will not remove existing
 tags.
 
+### Configtest Override
+
+For advanced edge-case use, i.e., *if you really know what you're doing*, you can override
+the automatic cluter config sanity checking by adding the following to your custom
+json block:
+
+    "skip_configtest": true
+    
+This would be useful in a situation where, for example, you wanted to create a stack
+that contained only an **Analytics** node. Without this setting the rake task will fail,
+complaining about a missing Admin layer.
 
 ## TODO
 
