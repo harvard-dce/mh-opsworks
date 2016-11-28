@@ -2,6 +2,8 @@
 
 ## TO BE RELEASED
 
+## 1.11.0 - 11/28/2016
+
 * Make it easier to add an analytics node via `cluster:new`
 * Allow configtest override for advanced, edge case clusters via `skip_configtest`.
 * RDS hibernation via snapshot + delete & re-creation
