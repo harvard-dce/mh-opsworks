@@ -58,6 +58,10 @@ module Cluster
         ['development', 'test'].include?(stack_custom_json[:cluster_env])
       end
 
+      def skip_configtest?
+        stack_custom_json[:skip_configtest]
+      end
+
       def cluster_seed_bucket_name
         stack_custom_json[:cluster_seed_bucket_name]
       end

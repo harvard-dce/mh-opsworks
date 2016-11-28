@@ -40,7 +40,12 @@ namespace :cluster do
 "
       exit 1
     end
-    config.sane?
+    unless Cluster::Base.skip_configtest?
+      config.sane?
+    else
+      puts "Skipping cluster config sanity check!"
+      true
+    end
   end
 
   desc Cluster::RakeDocs.new('cluster:active').desc
