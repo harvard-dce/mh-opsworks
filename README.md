@@ -753,7 +753,7 @@ Unlike the opsworks ec2 instances, RDS instances cannot be simply turned off/on.
 They either exist and are running, or are deleted. `mh-opsworks` allows for a form
 of RDS "hibernation" that involves taking a final snapshot followed by a deletion
 of the instance. "Restoring" involves recreating the instance from it's final
-snapshot. The naming format of the hibernation snapshot is `[db name]__hibernated__`.
+snapshot. The naming format of the hibernation snapshot is `[db name]-hibernated`.
 
 Hibernation of the RDS instance happens automatically during a `stack:instances:stop` 
 operation. Restoration of the RDS instance happens during `stack:instances:start`, with
