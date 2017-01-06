@@ -25,6 +25,7 @@ to get the new node (which you can then start via the AWS console):
        "mh-opsworks-recipes::fix-raid-mapping",
        "mh-opsworks-recipes::set-bash-as-default-shell",
        "mh-opsworks-recipes::install-utils",
+       "mh-opsworks-recipes::install-crowdstrike",
        "mh-opsworks-recipes::install-mh-base-packages",
        "mh-opsworks-recipes::enable-postfix-smarthost",
        "mh-opsworks-recipes::install-custom-metrics",

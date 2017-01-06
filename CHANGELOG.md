@@ -2,6 +2,8 @@
 
 ## TO BE RELEASED
 
+* Crowdstrike install recipe added to cluster config templates
+
 ## 1.11.0 - 11/28/2016
 
 * Make it easier to add an analytics node via `cluster:new`

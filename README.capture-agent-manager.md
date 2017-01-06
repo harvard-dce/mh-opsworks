@@ -25,6 +25,7 @@ switching from primary to secondary live stream..
             "mh-opsworks-recipes::fix-raid-mapping",
             "mh-opsworks-recipes::set-bash-as-default-shell",
             "mh-opsworks-recipes::install-utils",
+            "mh-opsworks-recipes::install-crowdstrike",
             "mh-opsworks-recipes::enable-postfix-smarthost",
             "mh-opsworks-recipes::install-custom-metrics",
             "mh-opsworks-recipes::create-alerts-from-opsworks-metrics",
