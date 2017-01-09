@@ -22,14 +22,27 @@ module Cluster
       rds_instance
     end
 
-    def self.delete(final_snapshot=nil)
+    def self.delete
       if find_existing
-        parameters = { db_instance_identifier: rds_name }
-        if final_snapshot.nil?
-          parameters[:skip_final_snapshot] = true
-        else
-          parameters[:final_db_snapshot_identifier] = final_snapshot
-        end
+        parameters = {
+          db_instance_identifier: rds_name,
+          skip_final_snapshot: true
+        }
+        rds_client.delete_db_instance(parameters)
+        wait_until_rds_instance_deleted(rds_name)
+      end
+      if hibernate_snapshot_exists
+        puts "Deleting RDS hibernate snapshot"
+        rds_client.delete_db_snapshot({ db_snapshot_identifier: db_hibernate_snapshot_id })
+      end
+    end
+
+    def self.delete_with_snapshot(final_snapshot)
+      if find_existing
+        parameters = {
+          db_instance_identifier: rds_name,
+          final_db_snapshot_identifier: final_snapshot
+        }
         rds_client.delete_db_instance(parameters)
         wait_until_rds_instance_deleted(rds_name)
       end
@@ -59,7 +72,7 @@ module Cluster
         # wait until our modification is complete and the instance is available again
         wait_for_rds_instance_modification(rds_name)
 
-        delete(final_snapshot=db_hibernate_snapshot_id)
+        delete_with_snapshot(db_hibernate_snapshot_id)
       else
         puts "No RDS instance to hibernate"
       end
