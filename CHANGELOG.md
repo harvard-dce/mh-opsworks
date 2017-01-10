@@ -2,6 +2,8 @@
 
 ## TO BE RELEASED
 
+## 1.12.0 - 01/10/2017
+
 * Crowdstrike install recipe added to cluster config templates
 * Delete any RDS hibernation snapshots on cluster delete
 
