@@ -6,6 +6,7 @@
 * Ask to have your engage server EIP whitelisted with the authentication server
   by submitting a service desk ticket. You will need ensure this whitelisting
   happens before auth will work correctly.
+* obtain the `auth_key` value. Ask someone how to get this if you don't know.
 * Modify your cluster config to include the following:
 
         "chef": {
@@ -15,6 +16,7 @@
             "auth_activated": "true",
             "auth_host": "the hostname of the auth server",
             "auth_redirect_location": "https://login-page-on-auth_host-above",
+            "auth_key": "the-auth-encryption-key"
             ... everything else...
           }
         }
