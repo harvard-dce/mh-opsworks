@@ -117,8 +117,8 @@ module Cluster
     end
 
     def get_git_url
-      default = ENV.fetch('MATTERHORN_GIT_URL', '')
-      print "\nThe git URL to the matterhorn repo, e.g. git@bitbucket.org [#{default}]: "
+      default = ENV.fetch('OPENCAST_GIT_URL', '')
+      print "\nThe git URL to the opencast repo, e.g. git@github.com:harvard-dce/dce-opencast.git [#{default}]: "
       git_url = STDIN.gets.strip.chomp
 
       if git_url.match(/^\s?$/)

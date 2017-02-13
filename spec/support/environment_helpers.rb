@@ -15,8 +15,8 @@ module EnvironmentHelpers
     ClimateControl.modify(options, &block)
   end
 
-  def with_no_mhopsworks_rc
-    rc_file = '.mhopsworks.rc'
+  def with_no_ocopsworks_rc
+    rc_file = '.ocopsworks.rc'
     if File.exists?(rc_file)
       original_content = File.read(rc_file)
       File.unlink(rc_file)

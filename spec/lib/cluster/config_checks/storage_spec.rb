@@ -12,7 +12,7 @@ describe Cluster::ConfigChecks::Storage do
               chef: { custom_json: {
                 storage: {
                   type: 'external',
-                  export_root: '/var/matterhorn',
+                  export_root: '/var/opencast',
                   nfs_server_host: '10.0.0.1'
                 }
               }},
@@ -29,7 +29,7 @@ describe Cluster::ConfigChecks::Storage do
               chef: { custom_json: {
                 storage: {
                   type: 'external',
-                  export_root: '/var/matterhorn',
+                  export_root: '/var/opencast',
                 }
               }},
               layers: [] }
@@ -59,7 +59,7 @@ describe Cluster::ConfigChecks::Storage do
                   shortname: 'storage',
                   instances: { number_of_instances: 1 },
                   volume_configurations: [
-                    { mount_point: '/var/matterhorn', number_of_disks: 1, size: '10' }
+                    { mount_point: '/var/opencast', number_of_disks: 1, size: '10' }
                   ]
               }
               ]

@@ -72,7 +72,7 @@ shared_examples_for 'a singleton layer for' do |shortname|
       },
       volume_configurations: [
         {
-          mount_point: "/var/matterhorn",
+          mount_point: "/var/opencast",
           raid_level: 0,
           number_of_disks: 2,
           size: "20",

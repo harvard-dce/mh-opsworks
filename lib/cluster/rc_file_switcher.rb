@@ -1,6 +1,6 @@
 module Cluster
   class RcFileSwitcher
-    RC_FILE = '.mhopsworks.rc'
+    RC_FILE = '.ocopsworks.rc'
 
     def initialize(config_file: 'minimal_cluster_config.json', secrets_file: 'secrets.json')
       @config_file = config_file

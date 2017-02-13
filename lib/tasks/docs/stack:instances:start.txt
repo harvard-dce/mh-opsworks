@@ -1,7 +1,7 @@
 Start all instances in the current cluster
 
 Start instances in the proper order so that you end up with a correctly
-running matterhorn application. This is what you should use to start a
+running opencast application. This is what you should use to start a
 cluster.
 
 It takes 45 minutes to an hour to start a cluster the first time. This is

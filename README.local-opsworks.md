@@ -10,7 +10,7 @@ We do not currently support all-in-one nodes, but that should be coming soon.
 * virtualbox 5.0.x
 * vagrant 1.8.x
 * [vagrant-hosts plugin](https://github.com/oscar-stack/vagrant-hosts)
-* mh-opsworks-recipes and matterhorn-dce-fork must be checked out as sibling
+* oc-opsworks-recipes and dce-opencast must be checked out as sibling
   directories of this repository.
 
 ## Getting started
@@ -23,11 +23,11 @@ We do not currently support all-in-one nodes, but that should be coming soon.
 * Ensure your repository directory structure looks like this:
 
         [parent dir]
-          - mh-opsworks
-          - mh-opsworks-recipes
-          - matterhorn-dce-fork
+          - oc-opsworks
+          - oc-opsworks-recipes
+          - dce-opencast
 
-* Ensure matterhorn-dce-fork and mh-opsworks-recipes are in the state you want
+* Ensure dce-opencast and oc-opsworks-recipes are in the state you want
   to test.
 * Start your environment! This takes about 20 to 25 minutes on my beefy machine
   with SSD.
@@ -97,11 +97,11 @@ For an all-in-one cluster, we set up a single node:
         ./bin/local_cluster suspend
         ./bin/local_cluster resume
 
-* Your local matterhorn-dce-fork and chef recipe repos are available in the
+* Your local dce-opencast and chef recipe repos are available in the
   vagrant machines at:
 
-        /vagrant/matterhorn-dce-fork
-        /vagrant/mh-opsworks-recipes
+        /vagrant/dce-opencast
+        /vagrant/oc-opsworks-recipes
 
 * Do work locally. After you've done stuff, redeploy your changes. This takes
   around 5 minutes (for now). See 'More on deploys' below for info on how to do
@@ -138,13 +138,13 @@ you're testing changes to only a few jars.  The workflow to do more targetted
 (and faster) maven builds might look like:
 
 * Edit your code in eclipse or your editor of choice. It is automatically
-  synced to `/vagrant/matterhorn-dce-fork`.
+  synced to `/vagrant/dce-opencast`.
 * Connect to the vagrant machine that activates the jar you're modifying via
   `vagrant ssh [node name]`.
-* `cd` into `/vagrant/matterhorn-dce-fork` and build the jar using your normal
+* `cd` into `/vagrant/dce-opencast` and build the jar using your normal
   maven build process. Copy or build it into the correct directory under
-  `/opt/matterhorn/current/`
-* Restart matterhorn via a normal ol' `sudo service matterhorn restart`.
+  `/opt/opencast/current/`
+* Restart opencast via a normal ol' `sudo service opencast restart`.
 
 ## Building a new base image via packer
 

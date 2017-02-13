@@ -1,6 +1,6 @@
 Create a cluster seed file
 
-THIS IS WILL STOP A RUNNING MATTERHORN. BE SURE TO USE THIS ONLY ON
+THIS IS WILL STOP A RUNNING OPENCAST. BE SURE TO USE THIS ONLY ON
 NON-PRODUCTION CLUSTERS.
 
 This creates a cluster seed file, which is a tarball that lets you

@@ -13,14 +13,14 @@
     }
   },
   "deploy": {
-    "matterhorn": {
+    "opencast": {
       "application_type": "other",
       "scm": {
         "repository": "matterhorn-dce-fork/"
       },
       "database": {
         "host": "10.10.10.50",
-        "database": "matterhorn",
+        "database": "opencast",
         "username": "root",
         "password": "correcthorsebatterystaple"
       }
@@ -33,19 +33,22 @@
   "opsworks_custom_cookbooks": {
     "enabled": true,
     "scm": {
-      "repository": "mh-opsworks-recipes"
+      "repository": "oc-opsworks-recipes"
     }
   },
   "cluster_env": "development",
   "vagrant_environment": true,
-  "matterhorn_repo_root": "/opt/matterhorn",
-  "matterhorn_log_directory": "/opt/matterhorn/log",
-  "local_workspace_root": "/var/matterhorn-workspace",
+  "opencast_repo_root": "/opt/opencast",
+  "opencast_log_directory": "/opt/opencast/log",
+  "local_workspace_root": "/var/opencast-workspace",
   "capture_agent_query_url": "http://example.com",
   "user_tracking_authhost": "example.com",
   "shared_asset_bucket_name": "mh-opsworks-shared-assets",
+  "activemq_bind_host": "0.0.0.0",
+  "deploy_action": "force_deploy",
+  "db_seed_file": "dce-config/docs/scripts/ddl/mysql5.sql",
   "rest_auth": {
-    "user": "matterhorn_system_account",
+    "user": "opencast_system_account",
     "pass": "fakepass"
   },
   "admin_auth": {

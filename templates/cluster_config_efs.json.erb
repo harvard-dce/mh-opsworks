@@ -11,7 +11,7 @@
     "_cidr_block_comment": "10.1.1.0/24 gives you 254 ips"
   },
   "rds": {
-    "db_name": "matterhorn",
+    "db_name": "opencast",
     "db_instance_class": "<%= database_instance_type %>",
     "allocated_storage": "<%= database_disk_size %>",
     "master_username": "root",
@@ -28,14 +28,14 @@
             { "key": "OU", "value": "DE" },
             { "key": "Project", "value": "<%= project_tag %>" }
         ],
-        "matterhorn_repo_root": "/opt/matterhorn",
-        "matterhorn_log_directory": "/opt/matterhorn/log",
-        "local_workspace_root": "/var/matterhorn-workspace",
+        "opencast_repo_root": "/opt/opencast",
+        "opencast_log_directory": "/opt/opencast/log",
+        "local_workspace_root": "/var/opencast-workspace",
         "s3_distribution_bucket_name": "<%= s3_distribution_bucket_name %>",
         "s3_file_archive_bucket_name": "<%= s3_file_archive_bucket_name %>",
         "storage": {
           "nfs_server_export_root": "/",
-          "export_root": "/var/matterhorn",
+          "export_root": "/var/opencast",
           "type": "external",
           "subtype": "efs",
           "nfs_server_host": ""
@@ -58,53 +58,53 @@
         "auto_assign_public_ips": true,
         "custom_recipes": {
           "setup": [
-            "mh-opsworks-recipes::set-timezone",
-            "mh-opsworks-recipes::fix-raid-mapping",
-            "mh-opsworks-recipes::set-bash-as-default-shell",
-            "mh-opsworks-recipes::install-utils",
-            "mh-opsworks-recipes::install-crowdstrike",
-            "mh-opsworks-recipes::populate-maven-cache",
-            "mh-opsworks-recipes::install-mh-base-packages",
-            "mh-opsworks-recipes::create-matterhorn-user",
-            "mh-opsworks-recipes::install-deploy-key",
-            "mh-opsworks-recipes::enable-postfix-smarthost",
-            "mh-opsworks-recipes::configure-nginx-proxy",
-            "mh-opsworks-recipes::install-cwlogs",
-            "mh-opsworks-recipes::install-ffmpeg",
-            "mh-opsworks-recipes::nfs-client",
-            "mh-opsworks-recipes::install-custom-metrics",
-            "mh-opsworks-recipes::create-alerts-from-opsworks-metrics",
-            "mh-opsworks-recipes::enable-enhanced-networking",
-            "mh-opsworks-recipes::rsyslog-to-loggly",
-            "mh-opsworks-recipes::write-root-my-dot-cnf",
-            "mh-opsworks-recipes::install-mysql-backups",
-            "mh-opsworks-recipes::clean-up-package-cache"
+            "oc-opsworks-recipes::set-timezone",
+            "oc-opsworks-recipes::fix-raid-mapping",
+            "oc-opsworks-recipes::set-bash-as-default-shell",
+            "oc-opsworks-recipes::install-utils",
+            "oc-opsworks-recipes::install-crowdstrike",
+            "oc-opsworks-recipes::populate-maven-cache",
+            "oc-opsworks-recipes::install-oc-base-packages",
+            "oc-opsworks-recipes::create-opencast-user",
+            "oc-opsworks-recipes::install-deploy-key",
+            "oc-opsworks-recipes::enable-postfix-smarthost",
+            "oc-opsworks-recipes::configure-nginx-proxy",
+            "oc-opsworks-recipes::install-cwlogs",
+            "oc-opsworks-recipes::install-ffmpeg",
+            "oc-opsworks-recipes::nfs-client",
+            "oc-opsworks-recipes::install-custom-metrics",
+            "oc-opsworks-recipes::create-alerts-from-opsworks-metrics",
+            "oc-opsworks-recipes::enable-enhanced-networking",
+            "oc-opsworks-recipes::rsyslog-to-loggly",
+            "oc-opsworks-recipes::write-root-my-dot-cnf",
+            "oc-opsworks-recipes::install-mysql-backups",
+            "oc-opsworks-recipes::clean-up-package-cache"
           ],
           "configure": [
-            "mh-opsworks-recipes::update-host-based-configurations",
-            "mh-opsworks-recipes::update-nginx-config-for-ganglia"
+            "oc-opsworks-recipes::update-host-based-configurations",
+            "oc-opsworks-recipes::update-nginx-config-for-ganglia"
           ],
           "deploy": [
-            "mh-opsworks-recipes::deploy-admin",
-            "mh-opsworks-recipes::maintenance-mode-off"
+            "oc-opsworks-recipes::deploy-admin",
+            "oc-opsworks-recipes::maintenance-mode-off"
           ],
           "shutdown": [
-            "mh-opsworks-recipes::maintenance-mode-on",
-            "mh-opsworks-recipes::remove-alarms",
-            "mh-opsworks-recipes::stop-matterhorn"
+            "oc-opsworks-recipes::maintenance-mode-on",
+            "oc-opsworks-recipes::remove-alarms",
+            "oc-opsworks-recipes::stop-opencast"
           ]
         },
         "volume_configurations": [
           {
-            "mount_point": "/var/matterhorn-workspace",
+            "mount_point": "/var/opencast-workspace",
             "number_of_disks": 1,
-            "size": "<%= matterhorn_workspace_size %>",
+            "size": "<%= opencast_workspace_size %>",
             "volume_type": "gp2"
           },
           {
-            "mount_point": "/opt/matterhorn",
+            "mount_point": "/opt/opencast",
             "number_of_disks": 1,
-            "size": "<%= matterhorn_root_size %>",
+            "size": "<%= opencast_root_size %>",
             "volume_type": "gp2"
           }
         ],
@@ -123,43 +123,43 @@
         "install_updates_on_boot": true,
         "custom_recipes": {
           "setup": [
-            "mh-opsworks-recipes::set-timezone",
-            "mh-opsworks-recipes::fix-raid-mapping",
-            "mh-opsworks-recipes::set-bash-as-default-shell",
-            "mh-opsworks-recipes::install-utils",
-            "mh-opsworks-recipes::populate-maven-cache",
-            "mh-opsworks-recipes::install-mh-base-packages",
-            "mh-opsworks-recipes::create-matterhorn-user",
-            "mh-opsworks-recipes::install-deploy-key",
-            "mh-opsworks-recipes::enable-postfix-smarthost",
-            "mh-opsworks-recipes::configure-nginx-proxy",
-            "mh-opsworks-recipes::install-cwlogs",
-            "mh-opsworks-recipes::install-ffmpeg",
-            "mh-opsworks-recipes::nfs-client",
-            "mh-opsworks-recipes::install-custom-metrics",
-            "mh-opsworks-recipes::create-alerts-from-opsworks-metrics",
-            "mh-opsworks-recipes::enable-enhanced-networking",
-            "mh-opsworks-recipes::rsyslog-to-loggly",
-            "mh-opsworks-recipes::clean-up-package-cache"
+            "oc-opsworks-recipes::set-timezone",
+            "oc-opsworks-recipes::fix-raid-mapping",
+            "oc-opsworks-recipes::set-bash-as-default-shell",
+            "oc-opsworks-recipes::install-utils",
+            "oc-opsworks-recipes::populate-maven-cache",
+            "oc-opsworks-recipes::install-oc-base-packages",
+            "oc-opsworks-recipes::create-opencast-user",
+            "oc-opsworks-recipes::install-deploy-key",
+            "oc-opsworks-recipes::enable-postfix-smarthost",
+            "oc-opsworks-recipes::configure-nginx-proxy",
+            "oc-opsworks-recipes::install-cwlogs",
+            "oc-opsworks-recipes::install-ffmpeg",
+            "oc-opsworks-recipes::nfs-client",
+            "oc-opsworks-recipes::install-custom-metrics",
+            "oc-opsworks-recipes::create-alerts-from-opsworks-metrics",
+            "oc-opsworks-recipes::enable-enhanced-networking",
+            "oc-opsworks-recipes::rsyslog-to-loggly",
+            "oc-opsworks-recipes::clean-up-package-cache"
           ],
           "configure": [
-            "mh-opsworks-recipes::update-host-based-configurations"
+            "oc-opsworks-recipes::update-host-based-configurations"
           ],
           "deploy": [
-            "mh-opsworks-recipes::deploy-worker",
-            "mh-opsworks-recipes::maintenance-mode-off"
+            "oc-opsworks-recipes::deploy-worker",
+            "oc-opsworks-recipes::maintenance-mode-off"
           ],
           "shutdown": [
-            "mh-opsworks-recipes::maintenance-mode-on",
-            "mh-opsworks-recipes::remove-alarms",
-            "mh-opsworks-recipes::stop-matterhorn"
+            "oc-opsworks-recipes::maintenance-mode-on",
+            "oc-opsworks-recipes::remove-alarms",
+            "oc-opsworks-recipes::stop-opencast"
           ]
         },
         "volume_configurations": [
           {
-            "mount_point": "/opt/matterhorn",
+            "mount_point": "/opt/opencast",
             "number_of_disks": 1,
-            "size": "<%= matterhorn_root_size %>",
+            "size": "<%= opencast_root_size %>",
             "volume_type": "gp2"
           }
         ],
@@ -180,50 +180,50 @@
         "auto_assign_public_ips": true,
         "custom_recipes": {
           "setup": [
-            "mh-opsworks-recipes::set-timezone",
-            "mh-opsworks-recipes::fix-raid-mapping",
-            "mh-opsworks-recipes::set-bash-as-default-shell",
-            "mh-opsworks-recipes::install-utils",
-            "mh-opsworks-recipes::install-crowdstrike",
-            "mh-opsworks-recipes::populate-maven-cache",
-            "mh-opsworks-recipes::install-mh-base-packages",
-            "mh-opsworks-recipes::create-matterhorn-user",
-            "mh-opsworks-recipes::install-deploy-key",
-            "mh-opsworks-recipes::enable-postfix-smarthost",
-            "mh-opsworks-recipes::install-cwlogs",
-            "mh-opsworks-recipes::install-ffmpeg",
-            "mh-opsworks-recipes::nfs-client",
-            "mh-opsworks-recipes::configure-engage-nginx-proxy",
-            "mh-opsworks-recipes::install-custom-metrics",
-            "mh-opsworks-recipes::create-alerts-from-opsworks-metrics",
-            "mh-opsworks-recipes::enable-enhanced-networking",
-            "mh-opsworks-recipes::rsyslog-to-loggly",
-            "mh-opsworks-recipes::clean-up-package-cache"
+            "oc-opsworks-recipes::set-timezone",
+            "oc-opsworks-recipes::fix-raid-mapping",
+            "oc-opsworks-recipes::set-bash-as-default-shell",
+            "oc-opsworks-recipes::install-utils",
+            "oc-opsworks-recipes::install-crowdstrike",
+            "oc-opsworks-recipes::populate-maven-cache",
+            "oc-opsworks-recipes::install-oc-base-packages",
+            "oc-opsworks-recipes::create-opencast-user",
+            "oc-opsworks-recipes::install-deploy-key",
+            "oc-opsworks-recipes::enable-postfix-smarthost",
+            "oc-opsworks-recipes::install-cwlogs",
+            "oc-opsworks-recipes::install-ffmpeg",
+            "oc-opsworks-recipes::nfs-client",
+            "oc-opsworks-recipes::configure-engage-nginx-proxy",
+            "oc-opsworks-recipes::install-custom-metrics",
+            "oc-opsworks-recipes::create-alerts-from-opsworks-metrics",
+            "oc-opsworks-recipes::enable-enhanced-networking",
+            "oc-opsworks-recipes::rsyslog-to-loggly",
+            "oc-opsworks-recipes::clean-up-package-cache"
           ],
           "configure": [
-            "mh-opsworks-recipes::update-host-based-configurations"
+            "oc-opsworks-recipes::update-host-based-configurations"
           ],
           "deploy": [
-            "mh-opsworks-recipes::deploy-engage",
-            "mh-opsworks-recipes::maintenance-mode-off"
+            "oc-opsworks-recipes::deploy-engage",
+            "oc-opsworks-recipes::maintenance-mode-off"
           ],
           "shutdown": [
-            "mh-opsworks-recipes::maintenance-mode-on",
-            "mh-opsworks-recipes::remove-alarms",
-            "mh-opsworks-recipes::stop-matterhorn"
+            "oc-opsworks-recipes::maintenance-mode-on",
+            "oc-opsworks-recipes::remove-alarms",
+            "oc-opsworks-recipes::stop-opencast"
           ]
         },
         "volume_configurations": [
           {
-            "mount_point": "/var/matterhorn-workspace",
+            "mount_point": "/var/opencast-workspace",
             "number_of_disks": 1,
-            "size": "<%= matterhorn_workspace_size %>",
+            "size": "<%= opencast_workspace_size %>",
             "volume_type": "gp2"
           },
           {
-            "mount_point": "/opt/matterhorn",
+            "mount_point": "/opt/opencast",
             "number_of_disks": 1,
-            "size": "<%= matterhorn_root_size %>",
+            "size": "<%= opencast_root_size %>",
             "volume_type": "gp2"
           }
         ],
@@ -244,22 +244,22 @@
         "use_ebs_optimized_instances": true,
         "custom_recipes": {
           "setup": [
-            "mh-opsworks-recipes::set-timezone",
-            "mh-opsworks-recipes::fix-raid-mapping",
-            "mh-opsworks-recipes::set-bash-as-default-shell",
-            "mh-opsworks-recipes::install-utils",
-            "mh-opsworks-recipes::install-crowdstrike",
-            "mh-opsworks-recipes::enable-postfix-smarthost",
-            "mh-opsworks-recipes::install-custom-metrics",
-            "mh-opsworks-recipes::install-job-queued-metrics",
-            "mh-opsworks-recipes::create-alerts-from-opsworks-metrics",
-            "mh-opsworks-recipes::enable-enhanced-networking",
-            "mh-opsworks-recipes::install-moscaler",
-            "mh-opsworks-recipes::create-mysql-alarms",
-            "mh-opsworks-recipes::clean-up-package-cache"
+            "oc-opsworks-recipes::set-timezone",
+            "oc-opsworks-recipes::fix-raid-mapping",
+            "oc-opsworks-recipes::set-bash-as-default-shell",
+            "oc-opsworks-recipes::install-utils",
+            "oc-opsworks-recipes::install-crowdstrike",
+            "oc-opsworks-recipes::enable-postfix-smarthost",
+            "oc-opsworks-recipes::install-custom-metrics",
+            "oc-opsworks-recipes::install-job-queued-metrics",
+            "oc-opsworks-recipes::create-alerts-from-opsworks-metrics",
+            "oc-opsworks-recipes::enable-enhanced-networking",
+            "oc-opsworks-recipes::install-moscaler",
+            "oc-opsworks-recipes::create-mysql-alarms",
+            "oc-opsworks-recipes::clean-up-package-cache"
           ],
           "shutdown": [
-            "mh-opsworks-recipes::remove-alarms"
+            "oc-opsworks-recipes::remove-alarms"
           ]
         },
         "volume_configurations": [
@@ -279,8 +279,8 @@
       }
     ],
     "app": {
-      "shortname": "matterhorn",
-      "name": "Matterhorn",
+      "shortname": "opencast",
+      "name": "Opencast",
       "type": "other",
       "deployment": {
         "to_layers": ["Admin", "Engage", "Workers"],

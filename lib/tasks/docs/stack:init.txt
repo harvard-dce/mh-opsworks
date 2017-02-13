@@ -4,7 +4,7 @@ You probably want `admin:cluster:init`.
 
 Create a stack within the associated VPC. It does not create the
 layers, instances, app, or other associated resources. It is most useful for
-mh-opsworks developers to create a stack when the supporting infrastructure is
+oc-opsworks developers to create a stack when the supporting infrastructure is
 already there.
 
 SEE ALSO:

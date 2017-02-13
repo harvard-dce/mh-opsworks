@@ -37,7 +37,7 @@ build_ami() {
   echo "Instance prepared. Creating the AMI!"
   echo "It will take a while to build the AMIs. Check in the ec2 console for progress info."
   echo
-  aws ec2 create-image --instance-id=$instance_id --name "${prefix}mhopsworks_base_$date_string" --description "${prefix} AMI for mh-opsworks that contains most base packages" --reboot --profile $profile
+  aws ec2 create-image --instance-id=$instance_id --name "${prefix}ocopsworks_base_$date_string" --description "${prefix} AMI for oc-opsworks that contains most base packages" --reboot --profile $profile
   echo
 }
 

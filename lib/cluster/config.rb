@@ -66,7 +66,7 @@ module Cluster
     private
 
     def from_rc_file
-      rc_file_name = '.mhopsworks.rc'
+      rc_file_name = '.ocopsworks.rc'
       return {} unless File.exists?(rc_file_name)
 
       parse_rc_file(rc_file_name)

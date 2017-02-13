@@ -28,9 +28,9 @@ module Cluster
         analytics_instance_type: 't2.large',
         analytics_disk_size: '20',
 
-        matterhorn_root_size: '20',
+        opencast_root_size: '20',
         root_device_size: '8',
-        matterhorn_workspace_size: '50'
+        opencast_workspace_size: '50'
       },
 
       medium: {
@@ -58,9 +58,9 @@ module Cluster
         analytics_instance_type: 'm4.large',
         analytics_disk_size: '50',
 
-        matterhorn_root_size: '20',
+        opencast_root_size: '20',
         root_device_size: '8',
-        matterhorn_workspace_size: '50'
+        opencast_workspace_size: '50'
       },
 
       large: {
@@ -88,9 +88,9 @@ module Cluster
         analytics_instance_type: 'm4.xlarge',
         analytics_disk_size: '500',
 
-        matterhorn_root_size: '50',
+        opencast_root_size: '50',
         root_device_size: '16',
-        matterhorn_workspace_size: '250'
+        opencast_workspace_size: '250'
       },
 
       zadara_medium: {
@@ -115,9 +115,9 @@ module Cluster
         analytics_instance_type: 'm4.large',
         analytics_disk_size: '50',
 
-        matterhorn_root_size: '20',
+        opencast_root_size: '20',
         root_device_size: '8',
-        matterhorn_workspace_size: '50'
+        opencast_workspace_size: '50'
       },
 
       zadara_large: {
@@ -142,9 +142,9 @@ module Cluster
         analytics_instance_type: 'm4.xlarge',
         analytics_disk_size: '500',
 
-        matterhorn_root_size: '50',
+        opencast_root_size: '50',
         root_device_size: '16',
-        matterhorn_workspace_size: '250'
+        opencast_workspace_size: '250'
       },
 
       efs_small: {
@@ -166,9 +166,9 @@ module Cluster
         ganglia_instance_type: 't2.medium',
         ganglia_disk_size: '10',
 
-        matterhorn_root_size: '20',
+        opencast_root_size: '20',
         root_device_size: '8',
-        matterhorn_workspace_size: '50'
+        opencast_workspace_size: '50'
       },
 
       efs_medium: {
@@ -190,9 +190,9 @@ module Cluster
         ganglia_instance_type: 't2.medium',
         ganglia_disk_size: '50',
 
-        matterhorn_root_size: '50',
+        opencast_root_size: '50',
         root_device_size: '8',
-        matterhorn_workspace_size: '50'
+        opencast_workspace_size: '50'
       },
 
       efs_large: {
@@ -214,9 +214,9 @@ module Cluster
         ganglia_instance_type: 'c4.large',
         ganglia_disk_size: '100',
 
-        matterhorn_root_size: '50',
+        opencast_root_size: '50',
         root_device_size: '16',
-        matterhorn_workspace_size: '50'
+        opencast_workspace_size: '50'
       },
 
       ami_builder: {
@@ -241,9 +241,9 @@ module Cluster
         ganglia_instance_type: 't2.medium',
         ganglia_disk_size: '10',
 
-        matterhorn_root_size: '20',
+        opencast_root_size: '20',
         root_device_size: '8',
-        matterhorn_workspace_size: '50'
+        opencast_workspace_size: '50'
       }
     }
 

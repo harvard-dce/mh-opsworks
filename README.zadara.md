@@ -1,6 +1,6 @@
 # Configuring a cluster to connect to zadara storage
 
-## mh-opsworks and cluster configuration changes
+## oc-opsworks and cluster configuration changes
 
 The list below represents the cluster configuration level changes necessary to
 connect a cluster to zadara (or perhaps other) external storage.
@@ -91,7 +91,7 @@ buckets and add them to the list in the IAM user's inline policy (below).
 * Create or use a zadara-connected cluster.
 * Create or use an opsworks instance with a public IP as your zadara squid
   proxy.
-* Add the `mh-opsworks-recipes::create-squid-proxy-for-storage-cluster` recipe
+* Add the `oc-opsworks-recipes::create-squid-proxy-for-storage-cluster` recipe
   to the layer's `setup` lifecycle. Run it to create the squid3 proxy.
 * Add a rule to the layer's security group (e.g. Utility) that opens port 3128
   to the IP of your VPSA

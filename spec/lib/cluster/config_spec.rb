@@ -13,7 +13,7 @@ describe Cluster::Config do
 
 
   it 'uses templates/minimal_cluster_config.json as the config by default' do
-    with_no_mhopsworks_rc do
+    with_no_ocopsworks_rc do
       with_modified_env(CLUSTER_CONFIG_FILE: nil) do
         allow(File).to receive(:read)
 
@@ -26,7 +26,7 @@ describe Cluster::Config do
 
   it 'uses ENV["CLUSTER_CONFIG_FILE"] if defined' do
     config_file = 'spec/support/files/minimal_config.json'
-    with_no_mhopsworks_rc do
+    with_no_ocopsworks_rc do
       with_modified_env(CLUSTER_CONFIG_FILE: config_file) do
         allow(File).to receive(:read)
 
@@ -60,12 +60,12 @@ describe Cluster::Config do
   end
 end
 
-describe 'with .mhopsworks.rc' do
+describe 'with .ocopsworks.rc' do
   include EnvironmentHelpers
 
-  it 'reads from .mhopsworks.rc to determine the active cluster' do
+  it 'reads from .ocopsworks.rc to determine the active cluster' do
     with_modified_env(CLUSTER_CONFIG_FILE: nil) do
-      with_overwritten_mhopsworks_rc do
+      with_overwritten_ocopsworks_rc do
         config = Cluster::Config.new
 
         expect(config.parsed).to eq({ key: 'test-cluster.json'})
@@ -73,9 +73,9 @@ describe 'with .mhopsworks.rc' do
     end
   end
 
-  it 'reads from .mhopsworks.rc to determine the active secrets.json' do
+  it 'reads from .ocopsworks.rc to determine the active secrets.json' do
     with_modified_env(SECRETS_FILE: nil) do
-      with_overwritten_mhopsworks_rc do
+      with_overwritten_ocopsworks_rc do
         config = Cluster::Config.new
 
         expect(config.parsed_secrets).to eq({key: 'test-secrets.json'})
@@ -83,9 +83,9 @@ describe 'with .mhopsworks.rc' do
     end
   end
 
-  def with_overwritten_mhopsworks_rc
+  def with_overwritten_ocopsworks_rc
     original_content = nil
-    rc_file = '.mhopsworks.rc'
+    rc_file = '.ocopsworks.rc'
     if File.exists?(rc_file)
       original_content = File.read(rc_file)
     end
@@ -96,7 +96,7 @@ describe 'with .mhopsworks.rc' do
       end
     end
 
-    File.open('.mhopsworks.rc', 'w') do |f|
+    File.open('.ocopsworks.rc', 'w') do |f|
       f.write "cluster=test-cluster.json\n"
       f.write "secrets=test-secrets.json\n"
     end

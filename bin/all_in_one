@@ -11,7 +11,7 @@ usage() {
   echo "    * up - bring up the node, including a deployment."
   echo "    * halt - Shutdown the node nicely"
   echo "    * destroy - Destroy the node"
-  echo "    * deploy - Deploy the latest changes in your local matterhorn repo and restart"
+  echo "    * deploy - Deploy the latest changes in your local opencast repo and restart"
   echo "    * suspend - Suspend the node to disk"
   echo "    * resume - Resume the node from a suspended state"
   echo

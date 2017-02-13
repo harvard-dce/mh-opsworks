@@ -1,0 +1,8 @@
+Start opencast daemon on all appropriate layers
+
+This recipe runs `service opencast start` on Admin, Workers, and Engage
+layers in no particular order.
+
+SEE ALSO:
+
+opencast:stop, stack:instances:start, opencast:restart

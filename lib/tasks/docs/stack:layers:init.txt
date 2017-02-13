@@ -1,4 +1,4 @@
 Initialize layers in the current cluster
 
-This is probably only useful to mh-opsworks developers. It allows you to
+This is probably only useful to oc-opsworks developers. It allows you to
 create and re-create layers in a stack.

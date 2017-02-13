@@ -1,7 +1,7 @@
 An interactive ruby REPL
 
-This allows you to interact with the mh-opsworks API in a REPL. This is useful
-for ruby developers that understand the mh-opsworks API or those that want to
+This allows you to interact with the oc-opsworks API in a REPL. This is useful
+for ruby developers that understand the oc-opsworks API or those that want to
 work with the aws ruby-sdk interface directly.
 
 SEE ALSO:

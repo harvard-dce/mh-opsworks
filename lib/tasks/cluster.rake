@@ -107,12 +107,12 @@ namespace :cluster do
 
   desc Cluster::RakeDocs.new('cluster:reset').desc
   task reset: [:configtest, :config_sync_check, :production_failsafe, :reset_or_seed_check] do
-    recipes = %W|mh-opsworks-recipes::stop-matterhorn
-    mh-opsworks-recipes::reset-database
-    mh-opsworks-recipes::remove-all-matterhorn-files
-    mh-opsworks-recipes::create-matterhorn-directories
-    mh-opsworks-recipes::remove-admin-indexes
-    mh-opsworks-recipes::remove-engage-indexes|
+    recipes = %W|oc-opsworks-recipes::stop-opencast
+    oc-opsworks-recipes::reset-database
+    oc-opsworks-recipes::remove-all-opencast-files
+    oc-opsworks-recipes::create-opencast-directories
+    oc-opsworks-recipes::remove-admin-indexes
+    oc-opsworks-recipes::remove-engage-indexes|
     layers = ['Admin','Engage','Workers']
     custom_json='{"do_it":true}'
 
@@ -122,12 +122,12 @@ namespace :cluster do
       custom_json: custom_json
     )
 
-    Rake::Task['matterhorn:start'].execute
+    Rake::Task['opencast:start'].execute
   end
 
   desc Cluster::RakeDocs.new('cluster:create_seed_file').desc
   task create_seed_file: [:configtest, :config_sync_check, :production_failsafe, :reset_or_seed_check] do
-    recipes = ['mh-opsworks-recipes::stop-matterhorn', 'mh-opsworks-recipes::create-cluster-seed-file']
+    recipes = ['oc-opsworks-recipes::stop-opencast', 'oc-opsworks-recipes::create-cluster-seed-file']
     layers = ['Admin','Engage','Workers']
     custom_json ='{"do_it":true}'
 
@@ -137,7 +137,7 @@ namespace :cluster do
       custom_json: custom_json
     )
 
-    Rake::Task['matterhorn:start'].execute
+    Rake::Task['opencast:start'].execute
   end
 
   desc Cluster::RakeDocs.new('cluster:apply_seed_file').desc
@@ -163,13 +163,13 @@ namespace :cluster do
       exit 1
     end
 
-    recipes = %W|mh-opsworks-recipes::stop-matterhorn
-    mh-opsworks-recipes::reset-database
-    mh-opsworks-recipes::remove-all-matterhorn-files
-    mh-opsworks-recipes::load-seed-data
-    mh-opsworks-recipes::create-matterhorn-directories
-    mh-opsworks-recipes::remove-admin-indexes
-    mh-opsworks-recipes::remove-engage-indexes|
+    recipes = %W|oc-opsworks-recipes::stop-opencast
+    oc-opsworks-recipes::reset-database
+    oc-opsworks-recipes::remove-all-opencast-files
+    oc-opsworks-recipes::load-seed-data
+    oc-opsworks-recipes::create-opencast-directories
+    oc-opsworks-recipes::remove-admin-indexes
+    oc-opsworks-recipes::remove-engage-indexes|
     layers = ['Admin','Engage','Workers']
     custom_json=%Q|{"do_it":true, "cluster_seed_file":"#{seed_file}"}|
 
@@ -179,7 +179,7 @@ namespace :cluster do
       custom_json: custom_json
     )
 
-    Rake::Task['matterhorn:start'].execute
+    Rake::Task['opencast:start'].execute
   end
 
   desc Cluster::RakeDocs.new('cluster:new').desc

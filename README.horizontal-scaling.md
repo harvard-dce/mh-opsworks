@@ -5,7 +5,7 @@ monitoring node (monitoring-master1). It uses [the mo-scaler](https://github.com
 python software to increase and decrease the number of worker nodes for a cluster
 based on one of two strategies.
 
-The chef recipe [`mh-opsworks-recipes::install-moscaler`](https://github.com/harvard-dce/mh-opsworks-recipes/blob/master/recipes/install-moscaler.rb) installs the
+The chef recipe [`oc-opsworks-recipes::install-moscaler`](https://github.com/harvard-dce/mh-opsworks-recipes/blob/master/recipes/install-moscaler.rb) installs the
 necessary python requirements, the git repository and generates both a `.env` file
 and an `autoscale.json` config file with the necessary credentials and other variables from 
 your cluster config settings. If you change any of the scaling
@@ -17,7 +17,7 @@ There are two high-level types of scaling under which **moscaler** can be run: `
 The time-based scaling ensures that a fixed number of workers are online based on
 the time of day and the day of the week. The `auto` scaling type tries to turn on/off 
 worker nodes based on the current state of the cluster, e.g., a server load metric or
-job count values reported by Matterhorn.
+job count values reported by Opencast.
 
 The type to be used is determined by the `moscaler_type` value in the `moscaler`
 block of your cluster config. 
@@ -83,7 +83,7 @@ This is an example block that would be inserted into the stack's custom json.
               "method": "cloudwatch",
               "name": "mh queued jobs",
               "settings": {
-                "metric": "MatterhornJobsQueued",
+                "metric": "OpencastJobsQueued",
                 "instance_name": "monitoring-master1",
                 "namespace": "AWS/OpsworksCustom",
                 "up_threshold": 1,
@@ -105,7 +105,7 @@ This is an example block that would be inserted into the stack's custom json.
           ]
         },
 
-With this configuration mo-scaler would sequentially consult first the `MatterhornJobsQueued` metric 
+With this configuration mo-scaler would sequentially consult first the `OpencastJobsQueued` metric 
 published by the `monitoring-master1` instance, and then the `load_1` metric for the entire workers
 layer. The "mh queued jobs" strategy is going to recommend scaling up 2 workers if its metric is 
 equal to or above the threshold of 1, or down 1 worker if there are zero queued jobs. The "workers layer load"
@@ -133,7 +133,7 @@ kind of configuration scenario should be thoroughly tested.
 
 ### Cluster config settings
 
-The defaults for all moscaler settings are defined in a `mh-opsworks-recipes` helper function:
+The defaults for all moscaler settings are defined in a `oc-opsworks-recipes` helper function:
 
     def get_moscaler_info
       {
@@ -200,7 +200,7 @@ For the `.env` and `autoscale.json` settings, see the README at http://github.co
 for more info.
 
 After updating any of these settings you will need to rerun the recipe, either via the AWS console
-or `mh-opsworks`:
+or `oc-opsworks`:
 
 `./bin/rake stack:commands:execute_recipes_on_layers layers="Ganglia" recipes="mh-opsworks-recipes::install-moscaler"`
 
