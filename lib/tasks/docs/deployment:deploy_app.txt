@@ -1,7 +1,7 @@
 Deploy the main application
 
 This will deploy the main application as configured in the cluster config to
-all matterhorn layers - currently Admin, Engage, and Workers.
+all opencast layers - currently Admin, Engage, and Workers.
 
 If the SHA resolved from the branch, tag, or revision has already been deployed
 this does nothing and exits cleanly.
@@ -15,15 +15,15 @@ and change the revision in the `app` section.
       "revision": "<your branch, tag or sha here>"
     }
 
-This does not restart matterhorn after a deploy to allow you to spot check
+This does not restart opencast after a deploy to allow you to spot check
 and coordinate restarts more easily.  If the deploy fails on any node, rake
 will exit. That means it's safe to to something like:
 
-    ./bin/rake deployments:deploy_app matterhorn:restart
+    ./bin/rake deployments:deploy_app opencast:restart
 
-and if the deployment fails matterhorn will not be restarted and the previous
+and if the deployment fails opencast will not be restarted and the previous
 revision will still be running.
 
 SEE ALSO:
 
-cluster:new, matterhorn:restart, deployments:redeploy_app
+cluster:new, opencast:restart, deployments:redeploy_app

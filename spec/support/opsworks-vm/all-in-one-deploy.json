@@ -1,8 +1,8 @@
 {
   "opsworks_custom_cookbooks": {
     "recipes": [
-      "recipe[mh-opsworks-recipes::deploy-all-in-one]",
-      "recipe[mh-opsworks-recipes::restart-matterhorn]"
+      "recipe[oc-opsworks-recipes::deploy-all-in-one]",
+      "recipe[oc-opsworks-recipes::restart-opencast]"
     ]
   }
 }

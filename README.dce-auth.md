@@ -21,6 +21,6 @@
           }
         }
 
-* Redeploy your cluster and restart matterhorn. Videos uploaded previously may
+* Redeploy your cluster and restart opencast. Videos uploaded previously may
   not work correctly because the full URLs are rendered into the database and
   media packages.

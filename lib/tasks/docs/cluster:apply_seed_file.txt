@@ -7,14 +7,14 @@ THIS IS DESTRUCTIVE. USE ONLY WHEN CERTAIN.
 If you don't pass in a seed_file, you'll get a basic chooser that lets you
 choose them by number.
 
-This is most useful to allow you to restore a matterhorn cluster to a
+This is most useful to allow you to restore a opencast cluster to a
 consistent state based on the seed file you're applying.
 
 It:
 
 * Zeros out the files, database tables, and solr indexes on a cluster,
 * Loads seed data from the cluster seed, and
-* Ensures matterhorn is running.
+* Ensures opencast is running.
 
 The seed files live in the "shared_asset_bucket_name" configured in your
 cluster config and are created by `cluster:create_seed_file`.

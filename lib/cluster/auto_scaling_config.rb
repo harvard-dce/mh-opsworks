@@ -7,7 +7,7 @@ module Cluster
         up_scaling = scaling_params.fetch(:up, {})
         down_scaling = scaling_params.fetch(:down, {})
         # This alarm name is tightly coupled to the topic_name
-        # and the mh-opsworks-recipes::install-job-queued-metrics recipe
+        # and the oc-opsworks-recipes::install-job-queued-metrics recipe
         alarm_suffix = up_scaling.delete(:alarm_suffix)
         up_scaling[:alarms] = [ %Q|#{topic_name}#{alarm_suffix}| ]
 

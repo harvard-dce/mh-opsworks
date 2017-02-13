@@ -1,6 +1,6 @@
 # Configuring a cluster to connect to zadara storage
 
-## mh-opsworks and cluster configuration changes
+## oc-opsworks and cluster configuration changes
 
 The list below represents the cluster configuration level changes necessary to
 connect a cluster to zadara (or perhaps other) external storage.
@@ -51,9 +51,9 @@ Zadara VPSA creation is discussed in more detail
    successfully connected your cluster, you can remove the layer and the
    throwaway instance.
 1. Create a RAID group from your drives that'll be used to populate a pool.
-1. Create NAS users with username/UID mappings, for matterhorn, uid 2122 and
+1. Create NAS users with username/UID mappings, for opencast, uid 2122 and
    `custom_metrics` uid 997
-1. Create NAS groups with group name / GID mappings, for matterhorn, gid 2122
+1. Create NAS groups with group name / GID mappings, for opencast, gid 2122
    and `custom_metrics` uid 997
 1. Carve a NAS volume from the pool you previously created. The export name is
    set by the volume, as an NFS server can have multiple exports. Use a name
@@ -94,7 +94,7 @@ buckets and add them to the list in the IAM user's inline policy (below).
 * Create or use a zadara-connected cluster.
 * Create or use an opsworks instance with a public IP as your zadara squid
   proxy.
-* Add the `mh-opsworks-recipes::create-squid-proxy-for-storage-cluster` recipe
+* Add the `oc-opsworks-recipes::create-squid-proxy-for-storage-cluster` recipe
   to the layer's `setup` lifecycle. Run it to create the squid3 proxy.
 * Create an s3 bucket to hold your snapshots. Default policies and access
   controls should be fine.

@@ -1,7 +1,7 @@
 {
   "opsworks_custom_cookbooks": {
     "recipes": [
-      "recipe[mh-opsworks-recipes::deploy-database]"
+      "recipe[oc-opsworks-recipes::deploy-database]"
     ]
   }
 }

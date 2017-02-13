@@ -2,7 +2,7 @@ describe Cluster::ConfigChecks::JsonFormat do
   include EnvironmentHelpers
 
   it 'raises Cluster::JSONFormatError on invalid JSON' do
-    with_no_mhopsworks_rc do
+    with_no_ocopsworks_rc do
       with_modified_env(
         CLUSTER_CONFIG_FILE: 'spec/support/files/invalid_json.json'
       ) do
@@ -13,7 +13,7 @@ describe Cluster::ConfigChecks::JsonFormat do
   end
 
   it 'is true for valid JSON' do
-    with_no_mhopsworks_rc do
+    with_no_ocopsworks_rc do
       with_modified_env(
         CLUSTER_CONFIG_FILE: 'spec/support/files/valid_json.json'
       ) do

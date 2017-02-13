@@ -2,7 +2,7 @@
 
 The opsworks "Analytics" layer provides a full [ELK](https://www.elastic.co/products)
 stack in a single instance. ELK = Elasticsearch + Logstash + Kibana. This is the stack of components used
-for processing and indexing MH analytics data, particularly usertracking events.
+for processing and indexing Opencast analytics data, particularly usertracking events.
 
 To include an analytics node in your cluster simply say "Y" when prompted during the `cluster:new` process.
 
@@ -21,27 +21,27 @@ to get the new node (which you can then start via the AWS console):
    "use_ebs_optimized_instances": true,
    "custom_recipes": {
      "setup": [
-       "mh-opsworks-recipes::set-timezone",
-       "mh-opsworks-recipes::fix-raid-mapping",
-       "mh-opsworks-recipes::set-bash-as-default-shell",
-       "mh-opsworks-recipes::install-utils",
-       "mh-opsworks-recipes::install-crowdstrike",
-       "mh-opsworks-recipes::install-mh-base-packages",
-       "mh-opsworks-recipes::enable-postfix-smarthost",
-       "mh-opsworks-recipes::install-custom-metrics",
-       "mh-opsworks-recipes::create-alerts-from-opsworks-metrics",
-       "mh-opsworks-recipes::enable-enhanced-networking",
-       "mh-opsworks-recipes::install-cwlogs",
-       "mh-opsworks-recipes::install-elasticsearch",
-       "mh-opsworks-recipes::install-ua-harvester",
-       "mh-opsworks-recipes::install-logstash-kibana",
-       "mh-opsworks-recipes::clean-up-package-cache"
+       "oc-opsworks-recipes::set-timezone",
+       "oc-opsworks-recipes::fix-raid-mapping",
+       "oc-opsworks-recipes::set-bash-as-default-shell",
+       "oc-opsworks-recipes::install-utils",
+       "oc-opsworks-recipes::install-crowdstrike",
+       "oc-opsworks-recipes::install-oc-base-packages",
+       "oc-opsworks-recipes::enable-postfix-smarthost",
+       "oc-opsworks-recipes::install-custom-metrics",
+       "oc-opsworks-recipes::create-alerts-from-opsworks-metrics",
+       "oc-opsworks-recipes::enable-enhanced-networking",
+       "oc-opsworks-recipes::install-cwlogs",
+       "oc-opsworks-recipes::install-elasticsearch",
+       "oc-opsworks-recipes::install-ua-harvester",
+       "oc-opsworks-recipes::install-logstash-kibana",
+       "oc-opsworks-recipes::clean-up-package-cache"
      ],
      "configure": [
-       "mh-opsworks-recipes::configure-ua-harvester"
+       "oc-opsworks-recipes::configure-ua-harvester"
      ],
      "shutdown": [
-       "mh-opsworks-recipes::remove-alarms"
+       "oc-opsworks-recipes::remove-alarms"
      ]
    },
    "volume_configurations": [
@@ -77,7 +77,7 @@ to get the new node (which you can then start via the AWS console):
 to generate and query a large volume of user data during development, `m4.large` is recommended. 
 For prod, or If you're doing any intensive bulk operations, `m4.xlarge` should be preferred.
 * For a list of settings and defaults for the `"elk"` custom config, see the
-  `get_elk_info` [recipe helper](https://github.com/harvard-dce/mh-opsworks-recipes/blob/master/libraries/default.rb) method.
+  `get_elk_info` [recipe helper](https://github.com/harvard-dce/oc-opsworks-recipes/blob/master/libraries/default.rb) method.
 * for older existing clusters you may need to manually update your cluster's instance
   profile to add SQS access. You can find it by viewing any of your stack's
   instances in the ec2 console, then find the "IAM Role" in the instance
@@ -96,7 +96,7 @@ For prod, or If you're doing any intensive bulk operations, `m4.xlarge` should b
   * nginx acting as a reverse proxy to both Kibana and Elasticsearch. The proxy
     listens on both 80 & 443, but all traffic is forced to https and HTTP Basic
     auth is required.
-  * a MH user action harvester script that fetches events from the engage node
+  * a useraction harvester script that fetches events from the engage node
     every 2 minutes.
 * There will also be a "stack-name-user-actions" SQS queue created.
   The harvester script uses this queue to feed events to logstash.

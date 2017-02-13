@@ -3,7 +3,7 @@ Delete a stack with no dependencies
 You probably want `admin:cluster:delete`.
 
 You must delete all dependent resources - layers, instances, apps, etc. before
-you can delete a stack with this task. This is only useful to mh-opsworks
+you can delete a stack with this task. This is only useful to oc-opsworks
 developers to help iterate on stack creation without spinning up all the
 infrastructure under it.
 

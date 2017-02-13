@@ -1,4 +1,4 @@
-Initialize a matterhorn cluster using the current cluster config
+Initialize a opencast cluster using the current cluster config
 
 This:
 

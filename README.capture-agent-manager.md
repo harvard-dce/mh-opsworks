@@ -21,27 +21,27 @@ switching from primary to secondary live stream..
         "auto_assign_public_ips": true,
         "custom_recipes": {
           "setup": [
-            "mh-opsworks-recipes::set-timezone",
-            "mh-opsworks-recipes::fix-raid-mapping",
-            "mh-opsworks-recipes::set-bash-as-default-shell",
-            "mh-opsworks-recipes::install-utils",
-            "mh-opsworks-recipes::install-crowdstrike",
-            "mh-opsworks-recipes::enable-postfix-smarthost",
-            "mh-opsworks-recipes::install-custom-metrics",
-            "mh-opsworks-recipes::create-alerts-from-opsworks-metrics",
-            "mh-opsworks-recipes::enable-enhanced-networking",
-            "mh-opsworks-recipes::install-cwlogs",
-            "mh-opsworks-recipes::clean-up-package-cache",
-            "mh-opsworks-recipes::create-capture-agent-manager-user",
-            "mh-opsworks-recipes::create-capture-agent-manager-directories",
-            "mh-opsworks-recipes::install-capture-agent-manager-packages",
-            "mh-opsworks-recipes::install-capture-agent-manager",
-            "mh-opsworks-recipes::configure-capture-agent-manager-gunicorn",
-            "mh-opsworks-recipes::configure-capture-agent-manager-nginx-proxy",
-            "mh-opsworks-recipes::configure-capture-agent-manager-supervisor"
+            "oc-opsworks-recipes::set-timezone",
+            "oc-opsworks-recipes::fix-raid-mapping",
+            "oc-opsworks-recipes::set-bash-as-default-shell",
+            "oc-opsworks-recipes::install-utils",
+            "oc-opsworks-recipes::install-crowdstrike",
+            "oc-opsworks-recipes::enable-postfix-smarthost",
+            "oc-opsworks-recipes::install-custom-metrics",
+            "oc-opsworks-recipes::create-alerts-from-opsworks-metrics",
+            "oc-opsworks-recipes::enable-enhanced-networking",
+            "oc-opsworks-recipes::install-cwlogs",
+            "oc-opsworks-recipes::clean-up-package-cache",
+            "oc-opsworks-recipes::create-capture-agent-manager-user",
+            "oc-opsworks-recipes::create-capture-agent-manager-directories",
+            "oc-opsworks-recipes::install-capture-agent-manager-packages",
+            "oc-opsworks-recipes::install-capture-agent-manager",
+            "oc-opsworks-recipes::configure-capture-agent-manager-gunicorn",
+            "oc-opsworks-recipes::configure-capture-agent-manager-nginx-proxy",
+            "oc-opsworks-recipes::configure-capture-agent-manager-supervisor"
           ],
           "shutdown": [
-            "mh-opsworks-recipes::remove-alarms"
+            "oc-opsworks-recipes::remove-alarms"
           ]
         },
         "volume_configurations": [
@@ -183,7 +183,7 @@ difference as a cloudwatch metric.
 
 To do this add the recipe in the setup phase of the utility node:
 ```
-    mh-opsworks-recipes::install-ca-timedrift-metric
+    oc-opsworks-recipes::install-ca-timedrift-metric
 ```
 
 And add the capture agent private ssh key to the custom json var

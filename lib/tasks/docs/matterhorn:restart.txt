@@ -1,8 +1,0 @@
-Restart matterhorn daemon on all appropriate layers
-
-This recipe runs `service matterhorn restart` on Admin, Workers, and Engage
-layers in no particular order.
-
-SEE ALSO:
-
-matterhorn:stop, stack:instances:start, matterhorn:start

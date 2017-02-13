@@ -3,7 +3,7 @@
 /*secrets*.json
 tmp/
 *.bk
-.mhopsworks.rc
+.ocopsworks.rc
 coverage/
 .vagrant/
 log/

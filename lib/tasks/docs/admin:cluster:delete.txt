@@ -1,4 +1,4 @@
-Delete the current matterhorn cluster
+Delete the current opencast cluster
 
 This undoes what `admin:cluster:init` does. It deletes:
 

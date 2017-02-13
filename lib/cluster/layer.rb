@@ -55,7 +55,7 @@ module Cluster
     end
 
     def get_security_group_for_public_layer
-      security_group_id_for("#{vpc_name}-DirectAccessToMatterhornDaemon")
+      security_group_id_for("#{vpc_name}-DirectAccessToOpencastDaemon")
     end
 
     def get_security_group_for_private_layer

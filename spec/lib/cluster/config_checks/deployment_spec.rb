@@ -24,8 +24,8 @@ describe Cluster::ConfigChecks::Deployment do
   def deployment_to_layers(layers = ["Admin", "Engage", "Workers"])
     {
       app: {
-        shortname: "matterhorn",
-        name: "Matterhorn",
+        shortname: "opencast",
+        name: "Opencast",
         type: "other",
         deployment: {
           to_layers: layers,
@@ -33,7 +33,7 @@ describe Cluster::ConfigChecks::Deployment do
         },
         app_source: {
           type: "git",
-          url: "git@bitbucket.org:hudcede/matterhorn-dce-fork.git",
+          url: "git@github.com:harvard-dce/dce-opencast.git",
           revision: "master"
         }
       }

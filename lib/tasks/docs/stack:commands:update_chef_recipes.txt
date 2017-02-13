@@ -6,7 +6,7 @@ configuration:
 
       "custom_cookbooks_source": {
         "type": "git",
-        "url": "https://github.com/harvard-dce/mh-opsworks-recipes",
+        "url": "https://github.com/harvard-dce/oc-opsworks-recipes",
         "revision": "branch,tag,or git SHA"
       }
 

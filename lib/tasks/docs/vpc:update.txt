@@ -2,7 +2,7 @@ Update the cluster's VPC infrastructure via cloudformation
 
 This applies a new cloudformation template to an existing VPC. cloudformation
 will only modify those items that have changed. Use this to roll out new VPC
-features when they are added to mh-opsworks.
+features when they are added to oc-opsworks.
 
 SEE ALSO:
 

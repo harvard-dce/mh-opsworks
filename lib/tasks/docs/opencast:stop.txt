@@ -1,0 +1,8 @@
+Stop opencast daemon on all appropriate layers
+
+This recipe runs `service opencast stop` on Admin, Workers, and Engage
+layers in no particular order.
+
+SEE ALSO:
+
+opencast:restart, stack:instances:start, opencast:start

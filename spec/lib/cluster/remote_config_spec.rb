@@ -37,7 +37,7 @@ describe Cluster::RemoteConfig do
 
   context '#download' do
     it 'gets the remote content and saves to the correct file' do
-      with_no_mhopsworks_rc do
+      with_no_ocopsworks_rc do
         with_mocked_content(local: '', remote: '') do |remote_config|
           allow(remote_config).to receive(:remote_config_contents)
           allow(File).to receive(:open)
@@ -231,7 +231,7 @@ describe Cluster::RemoteConfig do
   context '#sync' do
     it 'saves the config to the local file with an incremented version' do
       config_file = 'spec/support/files/minimal_config.json'
-      with_no_mhopsworks_rc do
+      with_no_ocopsworks_rc do
         with_retained_config_file(config_file) do
           with_modified_env(CLUSTER_CONFIG_FILE: config_file) do
             allow(Cluster::Assets).to receive(:publish_support_asset_to)
@@ -248,7 +248,7 @@ describe Cluster::RemoteConfig do
 
     it 'uses Cluster::Assets to save the current cluster_config' do
       config_file = 'spec/support/files/minimal_config.json'
-      with_no_mhopsworks_rc do
+      with_no_ocopsworks_rc do
         with_retained_config_file(config_file) do
           with_modified_env(CLUSTER_CONFIG_FILE: config_file) do
             allow(Cluster::Assets).to receive(:publish_support_asset_to)

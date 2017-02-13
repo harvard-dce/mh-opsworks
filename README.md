@@ -1,7 +1,7 @@
-# mh-opsworks [![Build Status](https://secure.travis-ci.org/harvard-dce/mh-opsworks.png?branch=master)](https://travis-ci.org/harvard-dce/mh-opsworks) [![Code Climate](https://codeclimate.com/github/harvard-dce/mh-opsworks/badges/gpa.svg)](https://codeclimate.com/github/harvard-dce/mh-opsworks)
+# oc-opsworks [![Build Status](https://secure.travis-ci.org/harvard-dce/oc-opsworks.png?branch=master)](https://travis-ci.org/harvard-dce/oc-opsworks) [![Code Climate](https://codeclimate.com/github/harvard-dce/oc-opsworks/badges/gpa.svg)](https://codeclimate.com/github/harvard-dce/oc-opsworks)
 
 An amazon [OpsWorks](https://aws.amazon.com/opsworks/) implementation of a
-matterhorn cluster.
+opencast cluster.
 
 ## Requirements
 
@@ -11,17 +11,17 @@ matterhorn cluster.
 
 ## What you get
 
-* Complete isolation for matterhorn production, staging, and development environments with environment parity,
+* Complete isolation for opencast production, staging, and development environments with environment parity,
 * OpsWorks layers and EC2 instances for your admin, engage, worker, and support nodes,
 * Automated monitoring and alarms via Ganglia and aws cloudwatch,
 * A set of custom chef recipes that can be used to compose other layer and instance types,
 * A flexible configuration system allowing you to scale instance sizes appropriately for your cluster's role,
 * Security out of the box - instances can only be accessed via ssh keys and most instances are isolated to a private network,
-* Automated matterhorn git deployments via OpsWorks built-ins,
-* The ability to create and destroy matterhorn clusters completely, including all attached resources,
-* Optional tagged matterhorn logging to [loggly](http://loggly.com),
+* Automated opencast git deployments via OpsWorks built-ins,
+* The ability to create and destroy opencast clusters completely, including all attached resources,
+* Optional tagged opencast logging to [loggly](http://loggly.com),
 * Optional newrelic integration,
-* A set of high-level rake tasks designed to make managing your OpsWorks matterhorn cluster easier,
+* A set of high-level rake tasks designed to make managing your OpsWorks opencast cluster easier,
 * A way to switch between existing clusters to make collaboration easier,
 * A MySQL RDS database that's monitored with cloudwatch alarms, and
 * Rake level docs for each task, accessed via "rake -D <task name>".
@@ -33,7 +33,7 @@ matterhorn cluster.
 Ask an account administrator to create an IAM group with the
 "AWSOpsWorksFullAccess" managed policy and an inline policy as defined in
 `./templates/example_group_inline_policy.json`.  Name it something like
-`mh-opsworks-cluster-managers`. You only need to do this once per AWS account.
+`oc-opsworks-cluster-managers`. You only need to do this once per AWS account.
 
 This group allows a user to create / delete clusters including the VPC,
 cloudformation templates, SNS topics, cloudwatch metrics, alarms and
@@ -50,7 +50,7 @@ you'd like to use to SSH into your clusters. If your name is "Jane Smith", your
 IAM cluster manager user might be "janesmith-cluster-manager" while your stack
 SSH username would be "janesmith".
 
-### Step 2 - Install mh-opsworks
+### Step 2 - Install oc-opsworks
 
 You must have ruby 2 installed, ideally through something like rbenv or rvm,
 though if your system ruby is >= 2 you should be fine. `./bin/setup` installs
@@ -60,8 +60,8 @@ You should fill in the template `secrets.json` with the cluster manager user
 credentials you created previously and a `cluster_config_bucket_name` you'll
 use for your team to store your cluster configuration files.
 
-    git clone https://github.com/harvard-dce/mh-opsworks mh-opsworks/
-    cd mh-opsworks
+    git clone https://github.com/harvard-dce/oc-opsworks oc-opsworks/
+    cd oc-opsworks
     ./bin/setup # checks for dependencies and sets up template env files
 
 The base scripts (`rake`, mostly) live in `$REPO_ROOT/bin` and all paths below
@@ -88,7 +88,7 @@ and public key.  Following the example set in Step 1, it'd be "janesmith".
 It's easiest if your SSH user matches your default local unix username as
 the `stack:instances:ssh_to` rake task will work out of the box.
 
-A default git url can be provided by setting `MATTERHORN_GIT_URL` in your shell.
+A default git url can be provided by setting `OPENCAST_GIT_URL` in your shell.
 
 ### Step 4 - Sanity check your cluster configuration
 
@@ -138,7 +138,7 @@ You can watch the process via `./bin/rake stack:instances:list` or (better) via
 the AWS web console. Starting the entire cluster takes about 30 minutes the
 first time.  Subsequent instance restarts go significantly faster.
 
-Matterhorn is started automatically, and instances start in the correct order
+Opencast is started automatically, and instances start in the correct order
 to ensure dependent services are available for a properly provisioned cluster.
 
 ### Step 7 - Log in!
@@ -180,15 +180,15 @@ in with the password you set in your cluster configuration.
     # You can override this by passing in `ssh_user` to this rake target.
     $(./bin/rake stack:instances:ssh_to hostname=admin1)
 
-    # Use an alternate secrets file, overriding whatever's set in .mhopsworks.rc
+    # Use an alternate secrets file, overriding whatever's set in .ocopsworks.rc
     SECRETS_FILE="./some_other_secrets_file.json" ./bin/rake cluster:configtest
 
-    # Use an alternate config file, overriding whatever's set in .mhopsworks.rc
+    # Use an alternate config file, overriding whatever's set in .ocopsworks.rc
     # You should probably not use this unless you know what you're doing.
     CLUSTER_CONFIG_FILE="./some_other_cluster_config.json" ./bin/rake cluster:configtest
 
     # Deploy a new revision from the repo linked in your app. Be sure to restart
-    # matterhorn after the deployment is complete.
+    # opencast after the deployment is complete.
     ./bin/rake deployment:deploy_app
 
     # Force deploy the latest app revision. This should only be useful when
@@ -205,20 +205,20 @@ in with the password you set in your cluster configuration.
     # View the status of the deployment (it'll be the first at the top):
     ./bin/rake deployment:list
 
-    # Stop matterhorn:
-    ./bin/rake matterhorn:stop
+    # Stop opencast:
+    ./bin/rake opencast:stop
 
-    # Restart matterhorn - this is not order intelligent, the instances are restarted as opsworks gets to them.
-    ./bin/rake matterhorn:restart
+    # Restart opencast - this is not order intelligent, the instances are restarted as opsworks gets to them.
+    ./bin/rake opencast:restart
 
     # Execute a chef recipe against a set of layers
-    ./bin/rake stack:commands:execute_recipes_on_layers layers="Admin,Engage,Workers" recipes="mh-opsworks-recipes::some-excellent-recipe"
+    ./bin/rake stack:commands:execute_recipes_on_layers layers="Admin,Engage,Workers" recipes="oc-opsworks-recipes::some-excellent-recipe"
 
     # Execute a chef recipe on all instances
-    ./bin/rake stack:commands:execute_recipes_on_layers recipes="mh-opsworks-recipes::some-excellent-recipe"
+    ./bin/rake stack:commands:execute_recipes_on_layers recipes="oc-opsworks-recipes::some-excellent-recipe"
 
     # Execute a chef recipe against only specific instances
-    ./bin/rake stack:commands:execute_recipes_on_instances hostnames="admin1,workers2" recipes="mh-opsworks-recipes::some-excellent-recipe"
+    ./bin/rake stack:commands:execute_recipes_on_instances hostnames="admin1,workers2" recipes="oc-opsworks-recipes::some-excellent-recipe"
 
     # Check to see if your config file is up-to-date with the remotely stored authoritative config:
     ./bin/rake cluster:config_sync_check
@@ -235,7 +235,7 @@ instance profiles, VPCs, cloudformation stacks and templates, instance names,
 etc. We use your stack name to interrogate the AWS APIs to find resources
 related to your opsworks stack: changing your stack name will most definitely
 make your life difficult in a thousand little ways. Don't do it, via
-`mh-opsworks` or the AWS console.
+`oc-opsworks` or the AWS console.
 
 ### Chef
 
@@ -255,7 +255,7 @@ revision of the custom cookbook that you'd like to use.
       "custom_json": {},
       "custom_cookbooks_source": {
         "type": "git",
-        "url": "https://github.com/harvard-dce/mh-opsworks-recipes",
+        "url": "https://github.com/harvard-dce/oc-opsworks-recipes",
         "revision": "master"
       }
     }
@@ -272,12 +272,12 @@ This allows you to decouple from github and
 deployments be more robust because you're eliminating third party dependencies.
 
 If you're using the default
-[mh-opsworks-recipes](https://github.com/harvard-dce/mh-opsworks-recipes), the
+[oc-opsworks-recipes](https://github.com/harvard-dce/oc-opsworks-recipes), the
 steps are:
 
-* Check out the mh-opsworks-recipes repo.
+* Check out the oc-opsworks-recipes repo.
 * Check out the relevant tag, branch, or commit in the recipe repo.
-* Run `berks package mh-opsworks-recipes-[commit, tag, or branch].tar.gz`.
+* Run `berks package oc-opsworks-recipes-[commit, tag, or branch].tar.gz`.
 * Upload this file to s3, making it public or ensuring your instances have
   access to it otherwise.
 * Edit your cluster config to look like:
@@ -289,7 +289,7 @@ steps are:
     "chef": {
       "custom_cookbooks_source": {
         "type": "s3",
-        "url": "https://url-to-the-s3-bucket/mh-opsworks-recipes-[commit, tag, or branch].tar.gz",
+        "url": "https://url-to-the-s3-bucket/oc-opsworks-recipes-[commit, tag, or branch].tar.gz",
       }
     }
   }
@@ -308,7 +308,7 @@ The rake task `cluster:switch` looks for all configuration files stored in the
 s3 bucket defined in `cluster_config_bucket_name` and lets you choose from
 them.
 
-When you switch into a cluster, the file `.mhopsworks.rc` is written. This file
+When you switch into a cluster, the file `.ocopsworks.rc` is written. This file
 defines the cluster you're working with.
 
 ### Using different secrets files
@@ -360,9 +360,9 @@ right.
 
 The default cluster configuration assumes you're using NFS storage provided by
 the "Storage" layer.  If you use the default opsworks-managed storage,
-`mh-opsworks` will create an NFS server on the single ec2 instance defined in
+`oc-opsworks` will create an NFS server on the single ec2 instance defined in
 the "Storage" layer and connect the Admin, Engage, and Worker nodes to it via
-autofs / automount and the `mh-opsworks-recipes::nfs-client` chef recipe.
+autofs / automount and the `oc-opsworks-recipes::nfs-client` chef recipe.
 
 If you'd like to use NFS storage provided by some other service - [zadara
 storage](http://www.zadarastorage.com), for instance, please see
@@ -372,7 +372,7 @@ storage](http://www.zadarastorage.com), for instance, please see
 
 A dummy self-signed SSL cert is deployed by default to the engage node and
 linked into the nginx proxy by the
-`mh-opsworks-recipes::configure-engage-nginx-proxy` recipe.  The ssl certs are
+`oc-opsworks-recipes::configure-engage-nginx-proxy` recipe.  The ssl certs are
 configured in your cluster configuration:
 
 
@@ -485,18 +485,18 @@ Each node is monitored separately and under an aggregate app named after your
 stack.
 
 This feature requires that your maven build downloads and unpacks the correct
-newrelic agent jar - this is done by default in the DCE matterhorn
+newrelic agent jar - this is done by default in the DCE opencast
 distribution.
 
 Instance-level new relic logs are stored in the same directory as your
-matterhorn logs.
+opencast logs.
 
 ### Loggly
 
 The Admin, Engage, and Workers layers include a chef recipe to add an rsyslog
-drain to loggly for matterhorn logs. Update the stack's `custom_json` section
+drain to loggly for opencast logs. Update the stack's `custom_json` section
 of your cluster configuration to add your loggly URL and token, and ensure
-matterhorn is logging to syslog.
+opencast is logging to syslog.
 
 If you are using your cluster for dev work but you still wish to log to loggly,
 consider setting up a separate ["free tier"](https://www.loggly.com/plans-and-pricing/)
@@ -510,7 +510,7 @@ Log entries are tagged with:
 * A single string comprising stack and hostname.
 
 If you don't want to log to loggly, remove the
-`mh-opsworks-recipes::rsyslog-to-loggly` recipe from your cluster config and
+`oc-opsworks-recipes::rsyslog-to-loggly` recipe from your cluster config and
 remove the "loggly" stanza from your stack's `custom_json`.
 
 ### SMTP via amazon SES
@@ -552,7 +552,7 @@ cloudfront distribution with the external hostname of your cluster's s3
 distribution bucket for both the "origin domain name" and "origin id".
 
 Once you've got your cloudfront domain, you include a key in your stack's
-`custom_json` to have matterhorn deliver assets over cloudfront:
+`custom_json` to have opencast deliver assets over cloudfront:
 
 
 ```
@@ -571,7 +571,7 @@ You'll need to deploy to ensure the new cloudfront url is used.
 
 ### Live streaming support
 
-If you're using the DCE-specific matterhorn release, you should have live
+If you're using the DCE-specific opencast release, you should have live
 streaming support by default. Update the streaming-related keys in your cluster
 configuration with the appropriate values before provisioning your cluster.
 These keys include `live_streaming_url` and `live_stream_name` and are
@@ -580,7 +580,7 @@ used in the various `deploy-*` recipes.
 ### MySQL backups
 
 The MySQL database is dumped to the `backups/mysql` directory on your nfs mount
-every hour via the `mh-opsworks-recipes::install-mysql-backups` recipe. This
+every hour via the `oc-opsworks-recipes::install-mysql-backups` recipe. This
 recipe also adds a cloudwatch metric and alarm to ensure the dumps are
 happening correctly.
 
@@ -620,13 +620,13 @@ we're building ffmpeg.
 1. Update the `ffmpeg_version` opsworks stack `custom_json` value to the
    `ffmpeg_version` that you used above - 2.7.2, 2.8, etc.
 
-1. Run the recipe "mh-opsworks-recipes::install-ffmpeg" on instances of concern
+1. Run the recipe "oc-opsworks-recipes::install-ffmpeg" on instances of concern
    to re-deploy a new ffmpeg.  If everything is set up properly, ffmpeg will be
    installed the first time an instance starts as well.
 
-1. Ensure your matterhorn `config.properties` points to the correct path -
+1. Ensure your opencast `config.properties` points to the correct path -
    `/usr/local/bin/ffmpeg`. This is configured automatically in
-   `mh-opsworks-recipes`.
+   `oc-opsworks-recipes`.
 
 
 ### Horizontal worker scaling
@@ -666,7 +666,7 @@ DNS and glue everything together for you.
 networking on aws. Opsworks ubuntu 14.04 instances have enhanced networking
 enabled, but unfortunately use a driver too old to get full networking speed.
 
-The `mh-opsworks-recipes::enable-enhanced-networking` recipe patches and
+The `oc-opsworks-recipes::enable-enhanced-networking` recipe patches and
 installs the correct driver. This doubles multithreaded / multiprocess IO from
 around 5Gbps to 10Gbps and seems to have no deterimental effect on single
 threaded IO.
@@ -737,7 +737,7 @@ If you wanted to create a multi-az instance for a non-large cluster, you'd run
 ```
 {
   "rds": {
-    "db_name": "matterhorn",
+    "db_name": "opencast",
     "_other stuff . . ": "other stuff",
     "multi_az": true
   }
@@ -750,7 +750,7 @@ attributes.
 ### RDS instance hibernation
 
 Unlike the opsworks ec2 instances, RDS instances cannot be simply turned off/on.
-They either exist and are running, or are deleted. `mh-opsworks` allows for a form
+They either exist and are running, or are deleted. `oc-opsworks` allows for a form
 of RDS "hibernation" that involves taking a final snapshot followed by a deletion
 of the instance. "Restoring" involves recreating the instance from it's final
 snapshot. The naming format of the hibernation snapshot is `[db name]-hibernated`.
@@ -767,7 +767,7 @@ RDS instances can be manullay hibernated/restored using `rds:hibernate` and `rds
 The default aws resource limits are listed
 [here](https://docs.aws.amazon.com/general/latest/gr/aws_service_limits.html).
 
-Every mh-opsworks managed cluster provisions:
+Every oc-opsworks managed cluster provisions:
 
 * A vpc
 * An opsworks stack,
@@ -785,7 +785,7 @@ of clusters you'd like to deploy in your account.
 * Opsworks Stack Limit for the entire account, not limited per region.
 
 Fortunately error messages are fairly clear when a resource limit is hit,
-either in the shell output of mh-opsworks or in the aws web cloudformation (or
+either in the shell output of oc-opsworks or in the aws web cloudformation (or
 other) UIs.
 
 ### Custom Tags

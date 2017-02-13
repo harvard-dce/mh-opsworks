@@ -34,9 +34,9 @@ module Cluster
 
     def self.stop_all(hibernate_rds=true)
       with_existing_stack do |stack|
-        puts 'turning on maintenance mode, stopping matterhorn on engage and workers. . . '
+        puts 'turning on maintenance mode, stopping opencast on engage and workers. . . '
         Cluster::Deployment.execute_chef_recipes_on_layers(
-          recipes: ['mh-opsworks-recipes::maintenance-mode-on', 'mh-opsworks-recipes::stop-matterhorn'],
+          recipes: ['oc-opsworks-recipes::maintenance-mode-on', 'oc-opsworks-recipes::stop-opencast'],
           layers: ['Engage', 'Workers']
         )
         rds_hibernate = Celluloid::Future.new { hibernate_rds and Cluster::RDS.hibernate }

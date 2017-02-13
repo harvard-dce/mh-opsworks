@@ -3,7 +3,7 @@ Remove and reset cluster database, files, and solr indexes
 THIS IS DESTRUCTIVE. USE ONLY WHEN CERTAIN.
 
 This task resets a cluster to a clean state by reinitializing the database,
-removing files and clearing out solr indexes. It ensures that matterhorn is
+removing files and clearing out solr indexes. It ensures that opencast is
 started again after as well.
 
 SEE ALSO:

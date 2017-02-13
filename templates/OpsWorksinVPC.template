@@ -44,7 +44,7 @@
       "Description":"The SNS Topic for this stack, used to trigger cloudwatch alarms for NAT instance",
       "Type": "String",
       "Default": "",
-      "ConstraintDescription": "this is auto created by mh-opsworks."
+      "ConstraintDescription": "this is auto created by oc-opsworks."
     }
   },
 
@@ -367,10 +367,10 @@
         ]
       }
     },
-    "DirectAccessToMatterhornDaemon" : {
+    "DirectAccessToOpencastDaemon" : {
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
-        "GroupDescription" : "Enable direct access to the matterhorn java daemon for matterhorn nodes",
+        "GroupDescription" : "Enable direct access to the opencast java daemon for opencast nodes",
         "VpcId" : { "Ref" : "VPC" },
         "SecurityGroupIngress" : [
           { "IpProtocol" : "tcp", "FromPort" : "8080",  "ToPort" : "8080",  "CidrIp" : "0.0.0.0/0" },
@@ -382,7 +382,7 @@
           { "IpProtocol" : "tcp", "FromPort" : "8080",  "ToPort" : "8080",  "CidrIp" : "0.0.0.0/0" }
         ],
         "Tags" : [
-          { "Key" : "Name", "Value" : { "Fn::Join" : [ " ", [ { "Ref" : "AWS::StackName" }, "matterhorn direct security group" ] ] } }
+          { "Key" : "Name", "Value" : { "Fn::Join" : [ " ", [ { "Ref" : "AWS::StackName" }, "opencast direct security group" ] ] } }
         ]
       }
     }

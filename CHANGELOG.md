@@ -18,7 +18,7 @@
 * don't use the `--binstubs` flag in `bin/setup`
 * Include new `install-cwlogs` recipe in cluster config templates. 
   Add IAM policy permissions for managing cloudwatch log groups. 
-  On rollout the "mh-opsworks-cluster-managers" IAM group will need to be manually updated to 
+  On rollout the "oc-opsworks-cluster-managers" IAM group will need to be manually updated to 
   include the new "logs:*" and "sqs:*" permissions. Existing clusters will need to run 
   `./bin/rake stack:users:init` to sync their respective cluster manager user.
   Add deletion of additional cluster artifacts, including cloudwatch log groups
@@ -92,7 +92,7 @@
   were not being removed using the correct instance id.
 * Add event subscriptions to RDS clusters to watch for failure and failover
   events, sending notifications to the default SNS topic. To roll out, Be sure
-  to update the "mh-opsworks-cluster-managers" IAM group to include the new
+  to update the "oc-opsworks-cluster-managers" IAM group to include the new
   rights (it should match `templates/example_group_inline_policy.json`). New
   clusters will automatically get these subscriptions. To update an existing
   cluster, switch into it and run `./bin/rake rds:create_event_subscriptions`

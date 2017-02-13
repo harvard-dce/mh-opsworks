@@ -1,5 +1,5 @@
 Delete the app according to the current cluster config
 
 Delete the app associated with the current opsworks stack. You generally
-wouldn't use this in production, only when building or modifying mh-opsworks
+wouldn't use this in production, only when building or modifying oc-opsworks
 features.
