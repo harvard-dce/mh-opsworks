@@ -9,6 +9,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.provider "virtualbox" do |vb|
     vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
+    vb.customize ["modifyvm", :id, "--cableconnected1", "on"]
   end
 
   # Ensure the repo is up-to-date on the first provisioning run
