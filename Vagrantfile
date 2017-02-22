@@ -26,7 +26,7 @@ Vagrant.configure("2") do |config|
     run: 'always',
     inline: %Q{rm -Rf /etc/cron.d/opsworks-agent-updater}
 
-  config.vm.synced_folder "../dce-opencast", "/vagrant/dce-opencast"
+  config.vm.synced_folder "../matterhorn-dce-fork", "/vagrant/matterhorn-dce-fork"
   config.vm.synced_folder "../oc-opsworks-recipes", "/vagrant/oc-opsworks-recipes"
 
   config.vm.define "all-in-one" do |layer|

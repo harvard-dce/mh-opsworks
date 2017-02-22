@@ -23,8 +23,10 @@
       "recipe[oc-opsworks-recipes::create-opencast-user]",
       "recipe[oc-opsworks-recipes::configure-nginx-proxy]",
       "recipe[oc-opsworks-recipes::install-ffmpeg]",
+      "recipe[oc-opsworks-recipes::configure-activemq]",
       "recipe[oc-opsworks-recipes::write-root-my-dot-cnf]",
       "recipe[oc-opsworks-recipes::clean-up-package-cache]"
     ]
   }
 }
+

@@ -74,7 +74,7 @@
   },
   "capture_agent_query_url": "http://example.com",
   "user_tracking_authhost": "example.com",
-  "shared_asset_bucket_name": "oc-opsworks-shared-assets",
+  "shared_asset_bucket_name": "mh-opsworks-shared-assets",
   "rest_auth": {
     "user": "opencast_system_account",
     "pass": "fakepass"
