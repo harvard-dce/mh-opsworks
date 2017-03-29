@@ -44,7 +44,7 @@
   "capture_agent_query_url": "http://example.com",
   "user_tracking_authhost": "example.com",
   "shared_asset_bucket_name": "mh-opsworks-shared-assets",
-  "activemq_bind_host": "0.0.0.0",
+  "activemq_bind_host": "10.10.10.50",
   "deploy_action": "force_deploy",
   "db_seed_file": "docs/scripts/ddl/mysql5.sql",
   "rest_auth": {
