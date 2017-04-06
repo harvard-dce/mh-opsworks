@@ -184,7 +184,7 @@ module Cluster
           copy_tags_to_snapshot: true,
           engine: 'MySQL',
           multi_az: false,
-          engine_version: '5.6.23',
+          engine_version: '5.6.34',
           preferred_backup_window: "05:02-05:32",
           preferred_maintenance_window: "thu:09:31-thu:10:01",
       }.merge(base_parameters)
