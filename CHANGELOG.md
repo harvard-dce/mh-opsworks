@@ -2,6 +2,9 @@
 
 ## TO BE RELEASED
 
+* update rds mysql version
+* Vagrantfile config fix for local-up ssh timeout on Mac OS X (MATT-2293)
+
 ## 1.12.0 - 01/10/2017
 
 * Crowdstrike install recipe added to cluster config templates
