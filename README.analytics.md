@@ -77,7 +77,7 @@ to get the new node (which you can then start via the AWS console):
 to generate and query a large volume of user data during development, `m4.large` is recommended. 
 For prod, or If you're doing any intensive bulk operations, `m4.xlarge` should be preferred.
 * For a list of settings and defaults for the `"elk"` custom config, see the
-  `get_elk_info` [recipe helper](https://github.com/harvard-dce/oc-opsworks-recipes/blob/master/libraries/default.rb) method.
+  `get_elk_info` [recipe helper](https://github.com/harvard-dce/mh-opsworks-recipes/blob/master/libraries/default.rb) method.
 * for older existing clusters you may need to manually update your cluster's instance
   profile to add SQS access. You can find it by viewing any of your stack's
   instances in the ec2 console, then find the "IAM Role" in the instance

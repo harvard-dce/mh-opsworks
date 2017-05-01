@@ -5,7 +5,7 @@ monitoring node (monitoring-master1). It uses [the mo-scaler](https://github.com
 python software to increase and decrease the number of worker nodes for a cluster
 based on one of two strategies.
 
-The chef recipe [`oc-opsworks-recipes::install-moscaler`](https://github.com/harvard-dce/oc-opsworks-recipes/blob/master/recipes/install-moscaler.rb) installs the
+The chef recipe [`oc-opsworks-recipes::install-moscaler`](https://github.com/harvard-dce/mh-opsworks-recipes/blob/master/recipes/install-moscaler.rb) installs the
 necessary python requirements, the git repository and generates both a `.env` file
 and an `autoscale.json` config file with the necessary credentials and other variables from 
 your cluster config settings. If you change any of the scaling

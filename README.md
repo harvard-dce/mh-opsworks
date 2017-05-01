@@ -1,4 +1,4 @@
-# oc-opsworks [![Build Status](https://secure.travis-ci.org/harvard-dce/oc-opsworks.png?branch=master)](https://travis-ci.org/harvard-dce/oc-opsworks) [![Code Climate](https://codeclimate.com/github/harvard-dce/oc-opsworks/badges/gpa.svg)](https://codeclimate.com/github/harvard-dce/oc-opsworks)
+# oc-opsworks [![Build Status](https://secure.travis-ci.org/harvard-dce/oc-opsworks.png?branch=master)](https://travis-ci.org/harvard-dce/oc-opsworks) [![Code Climate](https://codeclimate.com/github/harvard-dce/mh-opsworks/badges/gpa.svg)](https://codeclimate.com/github/harvard-dce/mh-opsworks)
 
 An amazon [OpsWorks](https://aws.amazon.com/opsworks/) implementation of a
 opencast cluster.
@@ -60,7 +60,7 @@ You should fill in the template `secrets.json` with the cluster manager user
 credentials you created previously and a `cluster_config_bucket_name` you'll
 use for your team to store your cluster configuration files.
 
-    git clone https://github.com/harvard-dce/oc-opsworks oc-opsworks/
+    git clone https://github.com/harvard-dce/mh-opsworks oc-opsworks/
     cd oc-opsworks
     ./bin/setup # checks for dependencies and sets up template env files
 
@@ -255,7 +255,7 @@ revision of the custom cookbook that you'd like to use.
       "custom_json": {},
       "custom_cookbooks_source": {
         "type": "git",
-        "url": "https://github.com/harvard-dce/oc-opsworks-recipes",
+        "url": "https://github.com/harvard-dce/mh-opsworks-recipes",
         "revision": "master"
       }
     }
@@ -272,7 +272,7 @@ This allows you to decouple from github and
 deployments be more robust because you're eliminating third party dependencies.
 
 If you're using the default
-[oc-opsworks-recipes](https://github.com/harvard-dce/oc-opsworks-recipes), the
+[oc-opsworks-recipes](https://github.com/harvard-dce/mh-opsworks-recipes), the
 steps are:
 
 * Check out the oc-opsworks-recipes repo.
