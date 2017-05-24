@@ -46,7 +46,7 @@
   "shared_asset_bucket_name": "mh-opsworks-shared-assets",
   "activemq_bind_host": "10.10.10.50",
   "deploy_action": "force_deploy",
-  "db_seed_file": "docs/scripts/ddl/mysql5.sql",
+  "db_seed_file": "dce-config/docs/scripts/ddl/mysql5.sql",
   "rest_auth": {
     "user": "opencast_system_account",
     "pass": "fakepass"
