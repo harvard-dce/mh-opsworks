@@ -4,6 +4,7 @@
 
 * update rds mysql version
 * Vagrantfile config fix for local-up ssh timeout on Mac OS X (MATT-2293)
+* fix js typo in cluster config templates
 
 ## 1.12.0 - 01/10/2017
 
