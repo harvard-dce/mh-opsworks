@@ -7,7 +7,8 @@ connect a cluster to zadara (or perhaps other) external storage.
 
 1. Run './bin/rake cluster:new' and choose one of the zadara variants. If you
    don't know the path to volume you're exporting or the IP to the zadara NFS
-   server, that's fine. Enter anything that looks like a path or IP address and
+   server, that's fine. Our standard path is `/var/matterhorn`.
+   Enter anything that looks like a path or IP address and
    you can use `./bin/rake cluster:edit` to fix it later.
 1. Create your VPC via `./bin/rake vpc:init`
 1. Now create your zadara storage volumes (see below). Come back and continue
@@ -29,7 +30,7 @@ Zadara VPSA creation is discussed in more detail
 1. Create the VPSA in the main zadara web console with a controller and some drives
 1. Send an email to zadara with the AWS account name and account number, under
    the "my account" menu option in the aws web console.
-1. While you're waiting for the VPSA, create a virtual private gateway.
+1. While you're waiting for the VPSA, create a virtual private gateway or find one that's not already being used.
 1. Accept the virtual interface zadara created under "direct connect" in the
    aws console and link to the virtual private gateway you created above.
 
@@ -37,7 +38,7 @@ Zadara VPSA creation is discussed in more detail
 
 1. Attach the virtual private gateway to the VPC you created for your cluster.
 1. Allow the virtual private gateway provided routes to propagate in all the
-   route tables of your VPC - both private and public subnets. This is under
+   route tables of your VPC - both private and public subnets. **Important**: you must update the propogate setting for **all** the route tables. This is under
    "Route Tables", and then the "Route Propagation" tab. It probably makes sense
    to filter by your VPC to make things easier.  There's a UI bug that makes it
    look like routes are propagating but they may not be - switch to each route
@@ -51,10 +52,6 @@ Zadara VPSA creation is discussed in more detail
    successfully connected your cluster, you can remove the layer and the
    throwaway instance.
 1. Create a RAID group from your drives that'll be used to populate a pool.
-1. Create NAS users with username/UID mappings, for matterhorn, uid 2122 and
-   `custom_metrics` uid 997
-1. Create NAS groups with group name / GID mappings, for matterhorn, gid 2122
-   and `custom_metrics` uid 997
 1. Carve a NAS volume from the pool you previously created. The export name is
    set by the volume, as an NFS server can have multiple exports. Use a name
    that makes sense for your cluster.
