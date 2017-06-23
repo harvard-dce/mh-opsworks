@@ -96,7 +96,8 @@ module Cluster
 
       # restore doesn't take these params
       [ :db_name, :preferred_backup_window, :preferred_maintenance_window, :backup_retention_period,
-        :vpc_security_group_ids, :engine_version, :allocated_storage, :master_username, :master_user_password
+        :vpc_security_group_ids, :engine_version, :allocated_storage, :master_username, :master_user_password,
+        :db_parameter_group_name
       ].each do |s|
         parameters.delete(s)
       end
@@ -106,12 +107,18 @@ module Cluster
 
       # restore also doesn't let you set security groups on initial creation, so we have to do that in a follow-up call
       # also, we can now re-enable the backup setting
-      rds_client.modify_db_instance({
-        db_instance_identifier: rds_name,
-        backup_retention_period: rds_config[:backup_retention_period],
-        apply_immediately: true,
-        vpc_security_group_ids: [ sg_group_id ]
-      })
+      modify_params = {
+          db_instance_identifier: rds_name,
+          backup_retention_period: rds_config[:backup_retention_period],
+          vpc_security_group_ids: [ sg_group_id ],
+          # if unset instance will get the default mysql5.6 param group
+          db_parameter_group_name: rds_config[:db_parameter_group_name]
+      }
+      rds_client.modify_db_instance(modify_params)
+
+      puts "RDS instance restored. Rebooting to apply parameter group and other modifications."
+      rds_client.reboot_db_instance({ db_instance_identifier: rds_name, force_failover: false })
+      wait_until_rds_instance_available(rds_name)
 
       rds_client.delete_db_snapshot({ db_snapshot_identifier: db_hibernate_snapshot_id })
       construct_instance(response.db_instance)
