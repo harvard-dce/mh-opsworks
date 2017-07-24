@@ -93,6 +93,8 @@ buckets and add them to the list in the IAM user's inline policy (below).
   proxy.
 * Add the `mh-opsworks-recipes::create-squid-proxy-for-storage-cluster` recipe
   to the layer's `setup` lifecycle. Run it to create the squid3 proxy.
+* Add a rule to the layer's security group (e.g. Utility) that opens port 3128
+  to the IP of your VPSA
 * Create an s3 bucket to hold your snapshots. Default policies and access
   controls should be fine.
 * Create an IAM user with access credentials and a inline policy that looks

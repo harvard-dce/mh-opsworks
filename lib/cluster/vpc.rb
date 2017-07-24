@@ -53,6 +53,28 @@ module Cluster
       end
     end
 
+    def self.create_flowlog
+      vpc = find_existing
+      service_role = ServiceRole.find_or_create
+      begin
+        cwlogs_client.create_log_group({
+          log_group_name: "#{stack_shortname}-vpc-flowlogs"
+        })
+      rescue Aws::CloudWatchLogs::Errors::ResourceAlreadyExistsException
+      end
+      cwlogs_client.put_retention_policy({
+          log_group_name: "#{stack_shortname}-vpc-flowlogs",
+          retention_in_days: 90
+      })
+      ec2_client.create_flow_logs({
+          deliver_logs_permission_arn: service_role.arn,
+          log_group_name: "#{stack_shortname}-vpc-flowlogs",
+          resource_ids: [vpc.vpc_id],
+          resource_type: "VPC",
+          traffic_type: "ALL"
+      })
+    end
+
     private
 
     def self.get_parameters
@@ -74,10 +96,6 @@ module Cluster
           parameter_value: vpc_config[:db_cidr_block]
         },
         {
-          parameter_key: 'SNSTopicName',
-          parameter_value: topic_name
-        },
-        {
           parameter_key: 'PrimaryAZ',
           parameter_value: vpc_config[:primary_az]
         },
@@ -96,7 +114,7 @@ module Cluster
 
       {
         stack_name: vpc_name,
-        template_body: File.read(get_template_path),
+        template_body: get_cf_template,
         parameters: parameters,
         timeout_in_minutes: 15,
         tags: [
@@ -108,12 +126,16 @@ module Cluster
       }
     end
 
-    def self.get_template_path
+    def self.get_cf_template
       if supports_efs?
-        './templates/OpsWorksinVPCWithEFS.template'
-      else
-        './templates/OpsWorksinVPC.template'
+        return File.read('./templates/OpsWorksinVPCWithEFS.template.erb')
       end
+      erb = Erubis::Eruby.new(File.read('./templates/OpsWorksinVPC.template.erb'))
+      attributes = {
+          vpn_ips: stack_secrets[:vpn_ips],
+          ca_ips: stack_secrets[:ca_ips]
+      }
+      erb.result(attributes)
     end
 
     def self.build_efs_resources?

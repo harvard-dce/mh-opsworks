@@ -49,13 +49,12 @@ module Cluster
 
     def default_security_group_ids
       [
-        security_group_id_for("#{vpc_name}-InstancesAllowedToAccessEFS"),
-        security_group_id_for("AWS-OpsWorks-Custom-Server")
+        security_group_id_for("#{vpc_name}-OpsworksLayerSecurityGroupCommon"),
       ]
     end
 
     def get_security_group_for_public_layer
-      security_group_id_for("#{vpc_name}-DirectAccessToMatterhornDaemon")
+      security_group_id_for( "#{vpc_name}-OpsworksLayerSecurityGroup#{params[:name]}")
     end
 
     def get_security_group_for_private_layer

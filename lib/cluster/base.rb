@@ -100,6 +100,7 @@ module Cluster
                 "ec2:*",
                 "iam:PassRole",
                 "cloudwatch:*",
+                "logs:*",
                 "elasticloadbalancing:*",
                 "rds:*"
               ],
@@ -125,6 +126,14 @@ module Cluster
                 "Service" => "opsworks.amazonaws.com"
               },
               "Action" => "sts:AssumeRole"
+            },
+            {
+                "Sid": "",
+                "Effect": "Allow",
+                "Principal": {
+                    "Service": "vpc-flow-logs.amazonaws.com"
+                },
+                "Action": "sts:AssumeRole"
             }
           ]
         }

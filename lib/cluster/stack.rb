@@ -204,7 +204,8 @@ module Cluster
         default_instance_profile_arn: instance_profile.arn,
         default_subnet_id: vpc.subnets.first.id,
         default_root_device_type: stack_config.fetch(:default_root_device_type, 'ebs'),
-        default_ssh_key_name: stack_config.fetch(:default_ssh_key_name, '')
+        default_ssh_key_name: stack_config.fetch(:default_ssh_key_name, ''),
+        use_opsworks_security_groups: false
       }
     end
 

@@ -1,7 +1,7 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
 
-  "Description" : "This template creates a VPC environment for AWS OpsWorks. The stack contains 2 subnets: the first subnet is public and contains a NAT device for internet access from the private subnet. The second subnet is private.",
+  "Description" : "This template creates a VPC environment for AWS OpsWorks. The stack contains 2 subnets: the first subnet is public. The second subnet is private.",
 
   "Parameters" : {
     "CIDRBlock": {
@@ -39,20 +39,6 @@
       "Type": "String",
       "Default": "",
       "ConstraintDescription": "The secondary AZ for future expansion and RDS replication"
-    },
-    "SNSTopicName": {
-      "Description":"The SNS Topic for this stack, used to trigger cloudwatch alarms for NAT instance",
-      "Type": "String",
-      "Default": "",
-      "ConstraintDescription": "this is auto created by mh-opsworks."
-    }
-  },
-
-  "Mappings" : {
-    "AWSNATAMI" : {
-      "us-east-1"      : { "AMI" : "ami-4c9e4b24" },
-      "us-west-1"      : { "AMI" : "ami-2b2b296e" },
-      "us-west-2"      : { "AMI" : "ami-bb69128b" }
     }
   },
 
@@ -131,7 +117,8 @@
       "Properties" : {
         "VpcId" : { "Ref" : "VPC" },
         "Tags" : [
-          { "Key" : "Network", "Value" : "Public" }
+          { "Key" : "Network", "Value" : "Public" },
+          { "Key" : "Name", "Value" : { "Fn::Join" : [ " ", [ { "Ref" : "AWS::StackName" }, "public subnet network acl" ] ] } }
         ]
       }
     },
@@ -222,9 +209,13 @@
     "PrivateRoute" : {
       "Type" : "AWS::EC2::Route",
       "Properties" : {
-        "RouteTableId" : { "Ref" : "PrivateRouteTable" },
+        "RouteTableId" : {
+          "Ref" : "PrivateRouteTable"
+        },
         "DestinationCidrBlock" : "0.0.0.0/0",
-        "InstanceId" : { "Ref" : "NATDevice" }
+        "NatGatewayId" : {
+          "Ref" : "NATGateway"
+        }
       }
     },
 
@@ -273,119 +264,118 @@
       }
     },
 
-    "NATDevice" : {
-      "Type" : "AWS::EC2::Instance",
+    "NATGatewayEIP" : {
+      "Type" : "AWS::EC2::EIP",
       "Properties" : {
-        "InstanceType" : "t2.medium",
-        "SourceDestCheck" : "false",
-        "ImageId" : { "Fn::FindInMap" : [ "AWSNATAMI", { "Ref" : "AWS::Region" }, "AMI" ]},
-        "NetworkInterfaces": [
-          {
-            "AssociatePublicIpAddress": "true",
-            "DeviceIndex": "0",
-            "DeleteOnTermination": "true",
-            "GroupSet": [ { "Ref" : "NATSecurityGroup" } ],
-            "SubnetId" : { "Ref" : "PublicSubnet" }
-          }
-        ],
-        "Tags" : [
-          { "Key" : "Name", "Value" : { "Fn::Join" : [ " ", [ { "Ref" : "AWS::StackName" }, "NAT instance" ] ] } }
-        ]
+        "Domain" : "vpc"
       }
     },
 
-    "NATDeviceAlarmTopic": {
-      "Type": "AWS::SNS::Topic",
-      "Properties": {
-        "TopicName" : { "Ref" : "SNSTopicName"}
+    "NATGateway" : {
+      "Type" : "AWS::EC2::NatGateway",
+      "DependsOn" : "GatewayToInternet",
+      "Properties" : {
+        "AllocationId" : {
+          "Fn::GetAtt" : [
+            "NATGatewayEIP",
+            "AllocationId"
+          ]
+        },
+        "SubnetId" : {
+          "Ref" : "PublicSubnet"
+        }
       }
     },
 
-    "NATDeviceStatusCheckAlarm": {
-      "Type": "AWS::CloudWatch::Alarm",
-      "Properties": {
-        "ActionsEnabled": true,
-        "AlarmActions" : [ { "Ref": "NATDeviceAlarmTopic" } ],
-        "AlarmDescription" : { "Fn::Join" : [" ", [ { "Ref": "AWS::StackName" }, " NAT instance status check"  ] ] },
-        "AlarmName" : { "Fn::Join" : ["-", [ { "Ref": "AWS::StackName" }, "NATInstanceStatusCheck"  ] ] },
-        "ComparisonOperator" : "GreaterThanOrEqualToThreshold",
-        "Dimensions" : [
-          {
-            "Name": "InstanceId",
-            "Value": { "Ref": "NATDevice" }
-          }
-        ],
-        "EvaluationPeriods" : 2,
-        "MetricName" : "StatusCheckFailed",
-        "Namespace" : "AWS/EC2",
-        "OKActions" : [ { "Ref": "NATDeviceAlarmTopic" } ],
-        "Period" : 60,
-        "Statistic" : "Maximum",
-        "Threshold" : 1,
-        "Unit" : "Count"
-      }
+    "OpsworksLayerSecurityGroupAnalytics": {
+        "Type": "AWS::EC2::SecurityGroup",
+        "Properties": {
+            "GroupDescription" : "SG for the analytics layer",
+            "VpcId" : { "Ref" : "VPC" },
+            "SecurityGroupIngress" : [
+            ],
+            "SecurityGroupEgress" : [
+            ],
+            "Tags" : [
+              { "Key" : "Name", "Value" : { "Fn::Join" : [ " ", [ { "Ref" : "AWS::StackName" }, "opsworks analytics layer security group" ] ] } }
+            ]
+        }
     },
 
-    "NATSecurityGroup" : {
-      "Type" : "AWS::EC2::SecurityGroup",
-      "Properties" : {
-        "GroupDescription" : "Enable internal access to the NAT device",
-        "VpcId" : { "Ref" : "VPC" },
-        "SecurityGroupIngress" : [
-          { "IpProtocol" : "tcp", "FromPort" : "22",  "ToPort" : "22",  "SourceSecurityGroupId" : { "Ref" : "OpsWorksSecurityGroup" }} ,
-          { "IpProtocol" : "tcp", "FromPort" : "80",  "ToPort" : "80",  "SourceSecurityGroupId" : { "Ref" : "OpsWorksSecurityGroup" }} ,
-          { "IpProtocol" : "tcp", "FromPort" : "443", "ToPort" : "443", "SourceSecurityGroupId" : { "Ref" : "OpsWorksSecurityGroup" } },
-          { "IpProtocol" : "tcp", "FromPort" : "514", "ToPort" : "514", "SourceSecurityGroupId" : { "Ref" : "OpsWorksSecurityGroup" } },
-          { "IpProtocol" : "tcp", "FromPort" : "6514", "ToPort" : "6514", "SourceSecurityGroupId" : { "Ref" : "OpsWorksSecurityGroup" } },
-          { "IpProtocol" : "tcp", "FromPort" : "8081",  "ToPort" : "8081",  "SourceSecurityGroupId" : { "Ref" : "OpsWorksSecurityGroup" }},
-          { "IpProtocol" : "tcp", "FromPort" : "9418",  "ToPort" : "9418",  "SourceSecurityGroupId" : { "Ref" : "OpsWorksSecurityGroup" }},
-          { "IpProtocol" : "tcp", "FromPort" : "11371",  "ToPort" : "11371",  "SourceSecurityGroupId" : { "Ref" : "OpsWorksSecurityGroup" }}
-        ],
-        "SecurityGroupEgress" : [
-          { "IpProtocol" : "tcp", "FromPort" : "22",  "ToPort" : "22",  "CidrIp" : "0.0.0.0/0" } ,
-          { "IpProtocol" : "tcp", "FromPort" : "80",  "ToPort" : "80",  "CidrIp" : "0.0.0.0/0" } ,
-          { "IpProtocol" : "tcp", "FromPort" : "443", "ToPort" : "443", "CidrIp" : "0.0.0.0/0" },
-          { "IpProtocol" : "tcp", "FromPort" : "514", "ToPort" : "514", "CidrIp" : "0.0.0.0/0" },
-          { "IpProtocol" : "tcp", "FromPort" : "6514", "ToPort" : "6514", "CidrIp" : "0.0.0.0/0" },
-          { "IpProtocol" : "tcp", "FromPort" : "8081",  "ToPort" : "8081",  "CidrIp" : "0.0.0.0/0" },
-          { "IpProtocol" : "tcp", "FromPort" : "9418",  "ToPort" : "9418",  "CidrIp" : "0.0.0.0/0" },
-          { "IpProtocol" : "tcp", "FromPort" : "11371",  "ToPort" : "11371",  "CidrIp" : "0.0.0.0/0" }
-        ],
-        "Tags" : [
-          { "Key" : "Name", "Value" : { "Fn::Join" : [ " ", [ { "Ref" : "AWS::StackName" }, "security group" ] ] } }
-        ]
-      }
+    "OpsworksLayerSecurityGroupUtility": {
+        "Type": "AWS::EC2::SecurityGroup",
+        "Properties": {
+            "GroupDescription" : "SG for the utility layer",
+            "VpcId" : { "Ref" : "VPC" },
+            "SecurityGroupIngress" : [
+              { "IpProtocol" : "tcp", "FromPort" : "3128",  "ToPort" : "3128",  "CidrIp" : "10.0.0.0/8" },
+            ],
+            "SecurityGroupEgress" : [
+            ],
+            "Tags" : [
+              { "Key" : "Name", "Value" : { "Fn::Join" : [ " ", [ { "Ref" : "AWS::StackName" }, "opsworks utility layer security group" ] ] } }
+            ]
+        }
     },
 
-    "OpsWorksSecurityGroup" : {
-      "Type" : "AWS::EC2::SecurityGroup",
-      "Properties" : {
-        "GroupDescription" : "Allow the OpsWorks instances to access the NAT device",
-        "VpcId" : { "Ref" : "VPC" },
-        "Tags" : [
-          { "Key" : "Name", "Value" : { "Fn::Join" : [ " ", [ { "Ref" : "AWS::StackName" }, "opsworks nat security group" ] ] } }
-        ]
-      }
+    "OpsworksLayerSecurityGroupAdmin": {
+        "Type": "AWS::EC2::SecurityGroup",
+        "Properties": {
+            "GroupDescription" : "SG for the admin layer",
+            "VpcId" : { "Ref" : "VPC" },
+            "SecurityGroupIngress" : [
+              <% ca_ips.each do |ip| %>
+              { "IpProtocol" : "tcp", "FromPort" : "80",  "ToPort" : "80",  "CidrIp" : "<%= ip %>" },
+              { "IpProtocol" : "tcp", "FromPort" : "443",  "ToPort" : "443",  "CidrIp" : "<%= ip %>" },
+              { "IpProtocol" : "tcp", "FromPort" : "8080",  "ToPort" : "8080",  "CidrIp" : "<%= ip %>" },
+              <% end %>
+            ],
+            "SecurityGroupEgress" : [
+            ],
+            "Tags" : [
+              { "Key" : "Name", "Value" : { "Fn::Join" : [ " ", [ { "Ref" : "AWS::StackName" }, "opsworks admin layer security group" ] ] } }
+            ]
+        }
     },
-    "DirectAccessToMatterhornDaemon" : {
-      "Type" : "AWS::EC2::SecurityGroup",
-      "Properties" : {
-        "GroupDescription" : "Enable direct access to the matterhorn java daemon for matterhorn nodes",
-        "VpcId" : { "Ref" : "VPC" },
-        "SecurityGroupIngress" : [
-          { "IpProtocol" : "tcp", "FromPort" : "8080",  "ToPort" : "8080",  "CidrIp" : "0.0.0.0/0" },
-          { "IpProtocol" : "tcp", "FromPort" : "3128",  "ToPort" : "3128",  "CidrIp" : "10.0.0.0/8" },
-          { "IpProtocol" : "tcp", "FromPort" : "3128",  "ToPort" : "3128",  "CidrIp" : "172.16.0.0/12" },
-          { "IpProtocol" : "tcp", "FromPort" : "3128",  "ToPort" : "3128",  "CidrIp" : "192.168.0.0/16" }
-        ],
-        "SecurityGroupEgress" : [
-          { "IpProtocol" : "tcp", "FromPort" : "8080",  "ToPort" : "8080",  "CidrIp" : "0.0.0.0/0" }
-        ],
-        "Tags" : [
-          { "Key" : "Name", "Value" : { "Fn::Join" : [ " ", [ { "Ref" : "AWS::StackName" }, "matterhorn direct security group" ] ] } }
-        ]
-      }
-    }
+
+    "OpsworksLayerSecurityGroupEngage": {
+        "Type": "AWS::EC2::SecurityGroup",
+        "Properties": {
+            "GroupDescription" : "SG for the engage layer",
+            "VpcId" : { "Ref" : "VPC" },
+            "SecurityGroupIngress" : [
+              { "IpProtocol" : "tcp", "FromPort" : "80",  "ToPort" : "80",  "CidrIp" : "0.0.0.0/0" },
+              { "IpProtocol" : "tcp", "FromPort" : "443",  "ToPort" : "443",  "CidrIp" : "0.0.0.0/0" },
+            ],
+            "SecurityGroupEgress" : [
+            ],
+            "Tags" : [
+              { "Key" : "Name", "Value" : { "Fn::Join" : [ " ", [ { "Ref" : "AWS::StackName" }, "opsworks engage layer security group" ] ] } }
+            ]
+        }
+    },
+
+    "OpsworksLayerSecurityGroupCommon": {
+        "Type": "AWS::EC2::SecurityGroup",
+        "Properties": {
+            "GroupDescription" : "Common SG rules for all layers",
+            "VpcId" : { "Ref" : "VPC" },
+            "SecurityGroupIngress" : [
+              { "IpProtocol" : "tcp", "FromPort" : "0",  "ToPort" : "65535",  "CidrIp" : "10.0.0.0/8" },
+              { "IpProtocol" : "udp", "FromPort" : "0",  "ToPort" : "65535",  "CidrIp" : "10.0.0.0/8" },
+              <% vpn_ips.each_with_index do |ip, index| %>
+              { "IpProtocol" : "tcp", "FromPort" : "0",  "ToPort" : "65535",  "CidrIp" : "<%= ip %>" },
+              { "IpProtocol" : "udp", "FromPort" : "0",  "ToPort" : "65535",  "CidrIp" : "<%= ip %>" },
+              <% end %>
+            ],
+            "SecurityGroupEgress" : [
+            ],
+            "Tags" : [
+              { "Key" : "Name", "Value" : { "Fn::Join" : [ " ", [ { "Ref" : "AWS::StackName" }, "opsworks common layer security group" ] ] } }
+            ]
+        }
+    },
+
   },
 
   "Outputs" : {

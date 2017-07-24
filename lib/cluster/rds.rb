@@ -110,7 +110,7 @@ module Cluster
         db_instance_identifier: rds_name,
         backup_retention_period: rds_config[:backup_retention_period],
         apply_immediately: true,
-        vpc_security_group_ids: [ sg_group_id ]
+        vpc_security_group_ids: sg_group_ids
       })
 
       rds_client.delete_db_snapshot({ db_snapshot_identifier: db_hibernate_snapshot_id })
@@ -147,10 +147,12 @@ module Cluster
       end
     end
 
-    def self.sg_group_id
+    def self.sg_group_ids
       vpc = VPC.find_existing
       sg_finder = SecurityGroupFinder.new(vpc)
-      sg_finder.security_group_id_for('AWS-OpsWorks-Custom-Server')
+      [
+        sg_finder.security_group_id_for('OpsworksLayerSecurityGroupCommon')
+      ]
     end
 
     def self.construct_instance(rds)
@@ -175,7 +177,7 @@ module Cluster
       {
           db_instance_identifier: rds_name,
           db_subnet_group_name: db_subnet_group_name,
-          vpc_security_group_ids: [ sg_group_id ],
+          vpc_security_group_ids: sg_group_ids,
           tags: [{
             key: "opsworks:stack",
             value: stack_config[:name],

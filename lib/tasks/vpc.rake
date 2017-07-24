@@ -20,4 +20,13 @@ namespace :vpc do
   task delete: ['cluster:configtest', 'cluster:config_sync_check', 'cluster:production_failsafe'] do
     Cluster::VPC.delete
   end
+
+  desc Cluster::RakeDocs.new('vpc:create_flowlog').desc
+  task create_flowlog: ['cluster:configtest', 'cluster:config_sync_check'] do
+    begin
+      Cluster::VPC.create_flowlog
+    rescue Aws::EC2::Errors::FlowLogAlreadyExists
+      puts "Flow log already exists!"
+    end
+  end
 end

@@ -2,6 +2,10 @@
 
 ## TO BE RELEASED
 
+## 1.14.0 - 08/16/2017
+
+* Security changes for MATT-2377
+
 ## 1.13.0 - 08/10/2017
 
 * update rds mysql version

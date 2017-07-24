@@ -1,0 +1,8 @@
+Create a flowlog for this VPC, useful for debugging VPC and security group issues.
+
+This creates a new cloudwatch log group and a VPC flow log resource.
+For reference see: http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/flow-logs.html
+
+SEE ALSO:
+
+vpc:delete, vpc:init
