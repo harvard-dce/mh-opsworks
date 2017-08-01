@@ -82,12 +82,17 @@ namespace :cluster do
 
       if ['y','Y'].include?(answer)
         remote_config.sync
-        puts 'updating stack attributes. . .'
-        Cluster::Stack.update
-        puts 'updating app configuration. . .'
-        Cluster::App.update
-        puts 'updating layer configurations. . .'
-        Cluster::Layers.update
+        puts 'updating stack, app & layer attributes. . .'
+        fork do
+          Cluster::Stack.update
+        end
+        fork do
+          Cluster::App.update
+        end
+        fork do
+          Cluster::Layers.update
+        end
+        Process.waitall
       else
         puts "Quitting. Please resolve your config changes and try again."
         exit
