@@ -95,9 +95,30 @@ module Cluster
         return
       end
 
-      resource_ids = Stack.find_volume_ids
-      find_existing.each do |instance|
-        resource_ids.push(instance.ec2_instance_id)
+      vpc = VPC.find_existing
+
+      # ec2_client doesn't bring detached volumes, have to use opsworks_client
+      resource_ids = [].concat(Stack.find_volume_ids)
+
+      # opsworks_client doesn't bring the NAT instance, have to use ec2_client
+      # note that there will be duplicated volumes in the array
+      resp = ec2_client.describe_instances({
+        dry_run: false,
+        filters: [
+          {
+            name: "tag:opsworks:stack",
+            values: [Stack.stack_parameters(vpc)[:name]]
+          }
+        ]
+      })
+      resp.reservations.each do |reservation|
+        reservation.instances.each do |instance|
+          resource_ids.push(instance.instance_id)
+          instance.block_device_mappings.each do |volume|
+            # only ebs count, ephemeral is free
+            resource_ids.push(volume.ebs.volume_id)
+          end
+        end
       end
 
       ec2_client.create_tags({

@@ -219,7 +219,6 @@ module Cluster
       resp.volumes.each do |volume|
         volume_ids.push(volume.ec2_volume_id)
       end
-
       volume_ids
     end
   end
