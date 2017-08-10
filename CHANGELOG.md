@@ -2,6 +2,8 @@
 
 ## TO BE RELEASED
 
+## 1.13.0 - 08/10/2017
+
 * update rds mysql version
 * Vagrantfile config fix for local-up ssh timeout on Mac OS X (MATT-2293)
 * fix js typo in cluster config templates
