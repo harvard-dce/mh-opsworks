@@ -671,6 +671,8 @@ installs the correct driver. This doubles multithreaded / multiprocess IO from
 around 5Gbps to 10Gbps and seems to have no deterimental effect on single
 threaded IO.
 
+A useful technique for benchmarking / confirming enhanced networking can be found [here](https://aws.amazon.com/premiumsupport/knowledge-center/network-throughput-benchmark-linux-ec2/).
+
 ### Using a custom AMI for faster and more robust green instance deploys
 
 We've built tooling to create custom AMIs for faster and more robust green
