@@ -2,6 +2,10 @@
 
 ## TO BE RELEASED
 
+## 1.14.1 - 08/15/2017
+
+* fix formatting of service role policy doc entry
+
 ## 1.14.0 - 08/16/2017
 
 * Security changes for MATT-2377

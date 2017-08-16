@@ -128,12 +128,12 @@ module Cluster
               "Action" => "sts:AssumeRole"
             },
             {
-                "Sid": "",
-                "Effect": "Allow",
-                "Principal": {
-                    "Service": "vpc-flow-logs.amazonaws.com"
+                "Sid" => "",
+                "Effect" => "Allow",
+                "Principal" => {
+                    "Service" => "vpc-flow-logs.amazonaws.com"
                 },
-                "Action": "sts:AssumeRole"
+                "Action" => "sts:AssumeRole"
             }
           ]
         }
