@@ -403,17 +403,6 @@ all local disk mounts for free space.  You can subscribe to get notifications
 for these alarms in the amazon SNS console under the topic named for your
 cluster.
 
-#### Monitoring the NAT instance
-
-A cloudformation template is used to spin up / tear down the VPC and other
-associated infrastructure.  A NAT instance is hooked up to the private subnet
-to allow instances with no public IP egress routes to the world at large -
-including the opsworks API (which makes the NAT instance pretty important).
-
-We've created a cloudwatch alarm on the NAT instance against the default status
-checks that EC2 creates. Be sure to subscribe to the SNS topic as described
-above.
-
 ### Monitoring
 
 [Ganglia](http://ganglia.sourceforge.net) provides very deep instance-level
@@ -421,42 +410,16 @@ metrics automatically as nodes are added and removed. You can log in to ganglia
 with the username / password set in your `secrets.json` configuration. The url is
 `<your public admin node hostname>/ganglia`.
 
-### Deploying to a different region than the default of us-east-1
-
-We currently support:
-
-* us-east-1
-* us-west-1
-* us-west-2
+### Deploying to a different region
 
 By default, clusters are deployed to `us-east-1`. If you'd like to use a
 different region:
 
 1. Run `./bin/rake cluster:new` to generate your cluster config
 
-1. Change the `region` to one of the supported options via `./bin/rake
-   cluster:edit`.
+1. Change the `region` via `./bin/rake cluster:edit`.
 
 You must do this before creating your cluster via `./bin/rake admin:cluster:init`.
-
-### Supporting a new region
-
-If you'd like to deploy clusters to a currently unsupported region:
-
-1. find a NAT instance AMI in that region in the "community AMIs" section of
-   the EC2 AMI marketplace. Look for `Amazon Linux AMI VPC NAT x86_64 HVM EBS`,
-   for instance.
-
-1. Update the AWSNATAMI mapping for your region in
-   `templates/OpsWorksInVPC.template` with the AMI image ID you found above.
-
-1. Edit your cluster config to use the new region
-
-1. Run `./bin/rake admin:cluster:init`
-
-1. Work with the cluster as usual.
-
-Please submit a PR when you've confirmed everything works.
 
 ### New Relic
 
@@ -669,7 +632,8 @@ enabled, but unfortunately use a driver too old to get full networking speed.
 The `mh-opsworks-recipes::enable-enhanced-networking` recipe patches and
 installs the correct driver. This doubles multithreaded / multiprocess IO from
 around 5Gbps to 10Gbps and seems to have no deterimental effect on single
-threaded IO.
+threaded IO. Note that actually acheiving 10Gbps is dependent on instance
+placement and per AWS can only be guaranteed with the use of Placement Groups.
 
 A useful technique for benchmarking / confirming enhanced networking can be found [here](https://aws.amazon.com/premiumsupport/knowledge-center/network-throughput-benchmark-linux-ec2/).
 
@@ -839,6 +803,37 @@ json block:
 This would be useful in a situation where, for example, you wanted to create a stack
 that contained only an **Analytics** node. Without this setting the rake task will fail,
 complaining about a missing Admin layer.
+
+### Security Groups
+
+The Cloudformation stack generated during new cluster creation contains several secruity
+groups that are applied to the Opsworks layers based on their reponsibilities. Some of the
+secruity group rules are based on IP ranges that must be configured in your `secrets.json`
+file. See the comments in `templates/base-secrets.json` for details.
+
+The list of generated security groups is:
+
+* OpsworksLayerSecurityGroupAdmin
+* OpsworksLayerSecurityGroupAnalytics
+* OpsworksLayerSecurityGroupCommon
+* OpsworksLayerSecurityGroupEngage
+* OpsworksLayerSecurityGroupUtility
+
+The **OpsworksLayerSecurityGroupCommon** group will be attached to all instances in the
+cluster and opens all traffic on ports 0-65535 from internal IPs and the IPs listed in
+your `secrets.json` `vpn_ips` setting. This group is also attached to the RDS instance to 
+indicate that all instances with the common group are allowed to access RDS.
+
+The **OpsworksLayerSecurityGroupAdmin** group additionally opens ports 80, 443 and 8080 to IPs listed
+in your `secrets.json` `ca_ips` setting (capture agent IPs).
+
+The **OpsworksLayerSecurityGroupEngage** group opens ports 80 and 443 to the world.
+
+The **OpsworksLayerSecurityGroupUtility** group opens port 3128 (squid) to internal IPs. 
+If the cluster is using a [zadara](README.zadara.md) vpsa, the IP of the vpsa must be 
+manually added to this group.
+
+The **OpsworksLayerSecurityGroupAnalytics** does not at this time open additional ports.
 
 ## TODO
 
