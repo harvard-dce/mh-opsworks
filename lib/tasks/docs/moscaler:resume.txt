@@ -1,0 +1,7 @@
+Resume the horizontal scaling service.
+
+Creates the cron entries that execute the horizontal scaling service.
+
+SEE ALSO:
+
+moscaler:pause

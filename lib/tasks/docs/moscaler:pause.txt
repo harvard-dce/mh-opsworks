@@ -1,0 +1,8 @@
+Pause the horizontal scaling service.
+
+Removes the cron entries that execute the moscaler horizontal
+scaling service.
+
+SEE ALSO:
+
+moscaler:resume

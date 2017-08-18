@@ -203,3 +203,12 @@ After updating any of these settings you will need to rerun the recipe, either v
 or `mh-opsworks`:
 
 `./bin/rake stack:commands:execute_recipes_on_layers layers="Ganglia" recipes="mh-opsworks-recipes::install-moscaler"`
+
+### Pausing & Resuming
+
+There are times, partiuclarly during releases when it's necessary that all MH workers be up and online,
+when it's helpful to pause the horizontal scaling. For that there are a pair of rake tasks,
+
+    ./bin/rake moscaler:pause
+    ./bin/rake moscaler:resume
+    

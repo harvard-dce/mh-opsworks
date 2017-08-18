@@ -2,6 +2,8 @@
 
 ## TO BE RELEASED
 
+* new rake tasks for pausing & resuming horizontal scaling: `moscaler:pause` & `moscaler:resume`.
+
 ## 1.14.1 - 08/15/2017
 
 * fix formatting of service role policy doc entry
