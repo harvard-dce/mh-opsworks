@@ -190,6 +190,7 @@ namespace :cluster do
     session.choose_variant
     session.analytics_node
     session.get_cluster_name
+    session.get_cookbook_source_type
     session.get_git_url
     session.get_git_revision
     session.compute_cidr_block_root
@@ -212,7 +213,8 @@ namespace :cluster do
       primary_az: session.primary_az,
       secondary_az: session.secondary_az,
       default_users: JSON.pretty_generate(session.compute_default_users),
-      include_analytics: session.include_analytics
+      include_analytics: session.include_analytics,
+      cookbook_source_type: session.cookbook_source_type
     )
     rc_file = Cluster::RcFileSwitcher.new(config_file: config_file)
     rc_file.write

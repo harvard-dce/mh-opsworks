@@ -15,6 +15,7 @@ describe Cluster::ConfigCreator do
     expect(output).to include(config_attributes[:default_users])
     expect(output).to include(config_attributes[:primary_az])
     expect(output).to include(config_attributes[:secondary_az])
+    expect(output).to include(config_attributes[:cookbook_source_type])
   end
 
   it 'has multiple variants' do
@@ -65,6 +66,7 @@ describe Cluster::ConfigCreator do
     default_users = 'afoasdf'
     primary_az = 'us-east-1a'
     secondary_az = 'us-east-1d'
+    cookbook_source_type = 's3'
 
     attributes = {
       name: name,
@@ -75,7 +77,8 @@ describe Cluster::ConfigCreator do
       default_users: default_users,
       primary_az: primary_az,
       secondary_az: secondary_az,
-      include_analytics: true
+      include_analytics: true,
+      cookbook_source_type: cookbook_source_type
     }
   end
 end

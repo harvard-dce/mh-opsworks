@@ -8,7 +8,8 @@ module ClusterCreationHelpers
       default_users: '',
       primary_az: 'us-east-1a',
       secondary_az: 'us-east-1d',
-      include_analytics: true
+      include_analytics: true,
+      cookbook_source_type: 's3'
     }
   end
 end

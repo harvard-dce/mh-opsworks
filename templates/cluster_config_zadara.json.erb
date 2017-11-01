@@ -41,8 +41,10 @@
         }<%= base_secrets_content %>
       },
       "custom_cookbooks_source": {
-        "type": "git",
+        "type": "<%= cookbook_source_type %>",
+        <% if cookbook_source_type == "git" %>
         "url": "https://github.com/harvard-dce/mh-opsworks-recipes",
+        <% end %>
         "revision": "develop"
       }
     },

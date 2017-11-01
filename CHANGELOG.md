@@ -6,6 +6,7 @@
 * fail more nicely when VPN/capture agent IPs aren't configured in secrets
 * add NAT Gateway's IP to common security group ingress rules
 * include db parameter group value in rds params
+* `custom_cookbooks_source` can now be s3 (default) or git
 
 ## 1.15.0 - 08/24/2017
 
