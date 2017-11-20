@@ -2,6 +2,8 @@
 
 ## TO BE RELEASED
 
+* 'activesupport' gem updated to address security vulnerability
+
 ## 1.15.0 - 08/24/2017
 
 * new rake tasks for pausing & resuming horizontal scaling: `moscaler:pause` & `moscaler:resume`.
