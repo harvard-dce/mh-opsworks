@@ -3,6 +3,7 @@
 ## TO BE RELEASED
 
 * 'activesupport' gem updated to address security vulnerability
+* fail more nicely when VPN/capture agent IPs aren't configured in secrets
 
 ## 1.15.0 - 08/24/2017
 
