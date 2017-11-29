@@ -97,6 +97,7 @@
 
     "PublicRoute" : {
       "Type" : "AWS::EC2::Route",
+      "DependsOn": "GatewayToInternet",
       "Properties" : {
         "RouteTableId" : { "Ref" : "PublicRouteTable" },
         "DestinationCidrBlock" : "0.0.0.0/0",
@@ -208,6 +209,7 @@
 
     "PrivateRoute" : {
       "Type" : "AWS::EC2::Route",
+      "DependsOn": "GatewayToInternet",
       "Properties" : {
         "RouteTableId" : {
           "Ref" : "PrivateRouteTable"
@@ -363,6 +365,8 @@
             "SecurityGroupIngress" : [
               { "IpProtocol" : "tcp", "FromPort" : "0",  "ToPort" : "65535",  "CidrIp" : "10.0.0.0/8" },
               { "IpProtocol" : "udp", "FromPort" : "0",  "ToPort" : "65535",  "CidrIp" : "10.0.0.0/8" },
+              { "IpProtocol": "tcp", "FromPort": "0", "ToPort": "65535", "CidrIp" : { "Fn::Join": [ "", [ { "Ref": "NATGatewayEIP" }, "/32" ] ] } },
+              { "IpProtocol": "udp", "FromPort": "0", "ToPort": "65535", "CidrIp" : { "Fn::Join": [ "", [ { "Ref": "NATGatewayEIP" }, "/32" ] ] } },
               <% vpn_ips.each_with_index do |ip, index| %>
               { "IpProtocol" : "tcp", "FromPort" : "0",  "ToPort" : "65535",  "CidrIp" : "<%= ip %>" },
               { "IpProtocol" : "udp", "FromPort" : "0",  "ToPort" : "65535",  "CidrIp" : "<%= ip %>" },
