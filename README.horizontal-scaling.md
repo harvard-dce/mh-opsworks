@@ -202,7 +202,7 @@ for more info.
 After updating any of these settings you will need to rerun the recipe, either via the AWS console
 or `oc-opsworks`:
 
-`./bin/rake stack:commands:execute_recipes_on_layers layers="Ganglia" recipes="mh-opsworks-recipes::install-moscaler"`
+`./bin/rake stack:commands:execute_recipes_on_layers layers="Ganglia" recipes="oc-opsworks-recipes::install-moscaler"`
 
 ### Pausing & Resuming
 
