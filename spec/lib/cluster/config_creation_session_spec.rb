@@ -45,6 +45,17 @@ describe Cluster::ConfigCreationSession do
     end
   end
 
+  context '#get_cookbook_source_type' do
+    it 'uses "s3" as default source type' do
+      stub_stacks_with_other_stack_name
+      session = described_class.new
+      allow(STDIN).to receive(:gets).and_return('')
+      session.get_cookbook_source_type
+      expect(session.cookbook_source_type).to eq 's3'
+    end
+
+  end
+
   context '#get_git_url' do
     it 'accepts those beginning with "git@" or "https://"' do
       ['git@github.com:foo', 'https://github'].each do |git_url|

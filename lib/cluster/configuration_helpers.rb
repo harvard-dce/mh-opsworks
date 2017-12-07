@@ -92,6 +92,10 @@ module Cluster
       def stack_custom_tags
         stack_custom_json[:aws_custom_tags] || []
       end
+
+      def get_cookbook_source_s3_url(revision)
+        %Q|https://s3.amazonaws.com/#{shared_asset_bucket_name}/cookbooks/mh-opsworks-recipes-#{revision}.tar.gz|
+      end
     end
 
     def self.included(base)

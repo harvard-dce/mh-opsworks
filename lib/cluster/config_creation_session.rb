@@ -2,7 +2,7 @@ module Cluster
   class ConfigCreationSession
     attr_accessor :variant, :name, :cidr_block_root, :git_url, :git_revision,
       :export_root, :nfs_server_host, :primary_az, :secondary_az, :project_tag,
-      :include_analytics
+      :include_analytics, :cookbook_source_type
 
     def choose_variant
       puts "\nPlease choose the size of the cluster you'd like to deploy.\n\n"
@@ -159,6 +159,16 @@ module Cluster
 
       if include_analytics.downcase == 'y'
         @include_analytics = true
+      end
+    end
+
+    def get_cookbook_source_type
+      print "\nChoose the custom cookbook source [git/S3]: "
+      git_vs_s3 = STDIN.gets.strip.chomp
+      if git_vs_s3.downcase == "git"
+        @cookbook_source_type = "git"
+      else
+        @cookbook_source_type = "s3"
       end
     end
 

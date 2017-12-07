@@ -2,11 +2,13 @@
 
 ## TO BE RELEASED
 
+## 1.16.0 - 12/07/2017
+
 * 'activesupport' gem updated to address security vulnerability
 * fail more nicely when VPN/capture agent IPs aren't configured in secrets
 * add NAT Gateway's IP to common security group ingress rules
-* move `nfs-client` forward in execution order to allow for other recipes
-  to manipulate/create directories on the storage share
+* include db parameter group value in rds params
+* `custom_cookbooks_source` can now be s3 (default) or git
 
 ## 1.15.0 - 08/24/2017
 

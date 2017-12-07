@@ -181,7 +181,14 @@ module Cluster
 
     def self.stack_parameters(vpc)
       service_role = ServiceRole.find_or_create
+      cookbook_source = stack_chef_config.fetch(:custom_cookbooks_source, {})
+
+      if (cookbook_source[:type] == "s3") && (! cookbook_source.has_key? :url)
+        cookbook_source[:url] = get_cookbook_source_s3_url(cookbook_source[:revision])
+      end
+
       instance_profile = InstanceProfile.find_or_create
+
       {
         name: stack_config[:name],
         region: root_config[:region],
@@ -191,9 +198,9 @@ module Cluster
           version: '11.10'
         },
         use_custom_cookbooks: true,
-        custom_cookbooks_source: stack_chef_config.fetch(:custom_cookbooks_source, {}),
+        custom_cookbooks_source: cookbook_source,
         chef_configuration: {
-          manage_berkshelf: true,
+          manage_berkshelf: cookbook_source[:type] == "git",
           berkshelf_version: '3.2.0'
         },
         custom_json: json_encode(

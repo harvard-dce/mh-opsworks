@@ -239,14 +239,45 @@ make your life difficult in a thousand little ways. Don't do it, via
 
 ### Chef
 
-OpsWorks uses [chef](https://chef.io).  You configure the repository that
-contains custom recipes in the stack section of your active
-cluster configuration file.  These options are pretty much passed through to
+OpsWorks uses [chef](https://chef.io).  You configure the source of the custom 
+recipes in the stack section of your active cluster configuration file. 
+These options are pretty much passed through to
 the `opsworks` ruby client. [Details
 here](http://docs.aws.amazon.com/sdkforruby/api/Aws/OpsWorks/Client.html#create_stack-instance_method)
 about what options you can pass through to, say, control security or the
 revision of the custom cookbook that you'd like to use.
 
+There are two options for the custom cookbook source, "s3" (the default) and "git",
+and the choice of which source type to use is presented during the `cluster:new`
+prompt session. The default type of "s3" means your opsworks stack will look for a 
+prepackaged tar.gz archive in the cluster's shared assets bucket. The archive
+must be named named according to the recipe repo tag or branch specified in the
+"revision" setting. The archive is assumed to be the result of running the
+Berkshelf `package` command. [More info here](http://docs.aws.amazon.com/opsworks/latest/userguide/best-practices-packaging-cookbooks-locally.html).
+
+For example the following configuration will look for the cookbook source 
+at "https://s3.amazonaws.com/shared-assets-bucket/mh-opsworks-recipes-develop.tar.gz":
+```
+{
+  "stack": {
+    "chef": {
+      "custom_cookbooks_source": {
+        "type": "s3",
+        "revision": "develop",
+      }
+    }
+  }
+}
+```
+In this case the stack creation code will assemble the s3 archive url based on the 
+revision and the shared assets bucket name. If your configuration includes a custom
+url for the archive that will be used instead.
+
+Using prepackaged archives from s3 allows you to decouple from github and
+[supermarket.chef.io](https://supermarket.chef.io), which could help your
+deployments be more robust because you're eliminating third party dependencies.
+
+A cookbook source type of "git", on the other hand, would look like this:
 
 ```
 {
@@ -263,41 +294,9 @@ revision of the custom cookbook that you'd like to use.
 }
 ```
 
-Rather than use a git repo (which is certainly simple), you can also package
-your recipes into a tarball hosted on s3 - [see the opsworks docs
-here](https://docs.aws.amazon.com/opsworks/latest/userguide/workingcookbook-installingcustom-repo.html).
-
-This allows you to decouple from github and
-[supermarket.chef.io](https://supermarket.chef.io), which could help your
-deployments be more robust because you're eliminating third party dependencies.
-
-If you're using the default
-[oc-opsworks-recipes](https://github.com/harvard-dce/mh-opsworks-recipes), the
-steps are:
-
-* Check out the oc-opsworks-recipes repo.
-* Check out the relevant tag, branch, or commit in the recipe repo.
-* Run `berks package oc-opsworks-recipes-[commit, tag, or branch].tar.gz`.
-* Upload this file to s3, making it public or ensuring your instances have
-  access to it otherwise.
-* Edit your cluster config to look like:
-
-
-```
-{
-  "stack": {
-    "chef": {
-      "custom_cookbooks_source": {
-        "type": "s3",
-        "url": "https://url-to-the-s3-bucket/oc-opsworks-recipes-[commit, tag, or branch].tar.gz",
-      }
-    }
-  }
-}
-```
-
-And then proceed normally - update your chef recipes, deploy, etc. The linked
-archive on s3 will be used for your custom recipes.
+DCE uses a combination of AWS services, including Lambda and CodeBuild, and a Github
+webhook to provide an automated build pipeline for our [mh-opsworks-recipes](https://github.com/harvard-dce/mh-opsworks-recipes) cookbook.
+That project can be found at [harvard-dce/mh-opsworks-builder](https://github.com/harvard-dce/mh-opsworks-builder).
 
 To enable additional debug-level log output from chef, change the `chef_log_level` setting
 in your stack's custom json to "debug".
