@@ -2,6 +2,10 @@
 
 ## TO BE RELEASED
 
+## 1.16.1 - 12/13/2017
+
+* swap '/' for '-' in s3 cookbook source package names
+
 ## 1.16.0 - 12/07/2017
 
 * 'activesupport' gem updated to address security vulnerability

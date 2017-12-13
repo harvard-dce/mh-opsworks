@@ -94,7 +94,8 @@ module Cluster
       end
 
       def get_cookbook_source_s3_url(revision)
-        %Q|https://s3.amazonaws.com/#{shared_asset_bucket_name}/cookbooks/mh-opsworks-recipes-#{revision}.tar.gz|
+        revision_file_label = revision.gsub("/", "-")
+        %Q|https://s3.amazonaws.com/#{shared_asset_bucket_name}/cookbooks/mh-opsworks-recipes-#{revision_file_label}.tar.gz|
       end
     end
 
