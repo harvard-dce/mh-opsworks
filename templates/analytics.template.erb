@@ -1,0 +1,67 @@
+AWSTemplateFormatVersion : '2010-09-09'
+Description: DCE Opencast Analytics services & tools
+
+Parameters:
+
+  ESInstanceCount:
+    Type: Number
+
+  ESInstanceType:
+    Type: String
+
+  OpsworksVPCStackName:
+    Type: String
+
+Resources:
+
+  StuffBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "${AWS::StackName}-stuff"
+
+  AnalyticsES:
+    Type: AWS::Elasticsearch::Domain
+    Properties:
+      ElasticsearchClusterConfig:
+        InstanceCount: !Ref ESInstanceCount
+        InstanceType: !Ref ESInstanceType
+      EBSOptions:
+        EBSEnabled: true
+        VolumeSize: 10
+        VolumeType: gp2
+      SnapshotOptions:
+        AutomatedSnapshotStartHour: 6
+      VPCOptions:
+        SubnetIds:
+          - Fn::ImportValue:
+              !Sub "${OpsworksVPCStackName}-private-subnet"
+        SecurityGroupIds:
+          - Fn::ImportValue:
+              !Sub "${OpsworksVPCStackName}-common-sg"
+
+  AnalyticsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${AWS::StackName}-role"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: sts:AssumeRole
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+      Policies:
+        - PolicyName: !Sub "${AWS::StackName}-policy"
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "es:*"
+                Resource: !Ref AnalyticsES
+
+Outputs:
+
+  StuffBucket:
+    Description: "A bucket for analytics stuff"
+    Value: !Ref StuffBucket

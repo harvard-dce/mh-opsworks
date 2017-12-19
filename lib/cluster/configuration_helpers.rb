@@ -17,6 +17,10 @@ module Cluster
         config.parsed[:vpc]
       end
 
+      def analytics_config
+        config.parsed[:analytics]
+      end
+
       def deployment_private_ssh_key
         stack_custom_json[:deployment_private_ssh_key]
       end

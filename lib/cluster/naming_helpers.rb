@@ -60,6 +60,10 @@ module Cluster
       def useractions_queue_name
         %Q|#{stack_shortname}-user-actions|
       end
+
+      def analytics_stack_name
+        %Q|#{stack_shortname}-analytics|
+      end
     end
 
     def self.included(base)

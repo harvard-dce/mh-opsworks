@@ -386,17 +386,34 @@
 
     "VPC" : {
       "Description" : "VPC",
-      "Value" : {"Ref" : "VPC"}
+      "Value" : {"Ref" : "VPC"},
+      "Export": {
+        "Name": { "Fn::Sub": "${AWS::StackName}" }
+      }
     },
 
     "PublicSubnets" : {
       "Description" : "Public Subnet",
-      "Value" : {"Ref" : "PublicSubnet" }
+      "Value" : {"Ref" : "PublicSubnet" },
+      "Export": {
+        "Name": { "Fn::Sub": "${AWS::StackName}-public-subnet" }
+      }
     },
 
     "PrivateSubnets" : {
       "Description" : "Private Subnet",
-      "Value" : {"Ref" : "PrivateSubnet" }
+      "Value" : {"Ref" : "PrivateSubnet" },
+      "Export": {
+        "Name": { "Fn::Sub": "${AWS::StackName}-private-subnet" }
+      }
+    },
+
+    "CommonSecurityGroup": {
+      "Description": "Opsworks Stack Common Security Group",
+      "Value": { "Fn::GetAtt" : ["OpsworksLayerSecurityGroupCommon", "GroupId"] },
+      "Export": {
+        "Name": { "Fn::Sub": "${AWS::StackName}-common-sg" }
+      }
     }
   }
 }

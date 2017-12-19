@@ -20,7 +20,7 @@ module Cluster
         cloudformation_client.delete_stack(
           stack_name: stack.stack_id
         )
-        wait_until_stack_delete_completed(stack.stack_id)
+        wait_until_vpc_stack_delete_completed(stack.stack_id)
       end
     end
 
@@ -28,7 +28,7 @@ module Cluster
       parameters = get_parameters
       parameters.delete(:timeout_in_minutes)
       stack = cloudformation_client.update_stack(parameters)
-      wait_until_stack_update_completed(stack.stack_id)
+      wait_until_vpc_stack_update_completed(stack.stack_id)
       find_existing
     end
 
@@ -41,7 +41,7 @@ module Cluster
       end
       stack = cloudformation_client.create_stack(get_parameters)
 
-      wait_until_stack_build_completed(stack.stack_id)
+      wait_until_vpc_stack_build_completed(stack.stack_id)
 
       find_existing
     end
