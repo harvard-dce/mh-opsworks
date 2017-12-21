@@ -6,7 +6,9 @@ module Cluster
     def self.all
       stacks = []
       cloudformation_client.describe_stacks.inject([]){ |memo, page| memo + page.stacks }.each do |stack|
-        stacks << construct_instance(stack.stack_id)
+        if stack.tags.any? { |t| t.key == 'analytics_stack_for' }
+          stacks << construct_instance(stack.stack_id)
+        end
       end
       stacks
     end
@@ -57,8 +59,8 @@ module Cluster
 
       template_params = [
           {
-              parameter_key: 'OpsworksVPCStackName',
-              parameter_value: vpc_name
+              parameter_key: 'OpsworksStackName',
+              parameter_value: stack_shortname
           },
           {
               parameter_key: 'ESInstanceCount',
@@ -76,9 +78,14 @@ module Cluster
         parameters: template_params,
         timeout_in_minutes: 60,
         capabilities: ["CAPABILITY_NAMED_IAM"],
+        disable_rollback: true,
         tags: [
           {
             key: 'opsworks:stack',
+            value: stack_config[:name]
+          },
+          {
+            key: 'analytics_stack_for',
             value: stack_config[:name]
           }
         ].concat(stack_custom_tags)
@@ -86,7 +93,7 @@ module Cluster
     end
 
     def self.get_cf_template
-      erb = Erubis::Eruby.new(File.read('./templates/analytics.template.erb'))
+      erb = Erubis::Eruby.new(File.read('./templates/analytics.template.yml'))
       attributes = {}
       erb.result(attributes)
     end

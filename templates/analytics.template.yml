@@ -9,7 +9,7 @@ Parameters:
   ESInstanceType:
     Type: String
 
-  OpsworksVPCStackName:
+  OpsworksStackName:
     Type: String
 
 Resources:
@@ -22,22 +22,34 @@ Resources:
   AnalyticsES:
     Type: AWS::Elasticsearch::Domain
     Properties:
+      ElasticsearchVersion: 6.0
       ElasticsearchClusterConfig:
+        DedicatedMasterEnabled: true
         InstanceCount: !Ref ESInstanceCount
         InstanceType: !Ref ESInstanceType
+        DedicatedMasterType: !Ref ESInstanceType
+        DedicatedMasterCount: 3
       EBSOptions:
         EBSEnabled: true
         VolumeSize: 10
         VolumeType: gp2
       SnapshotOptions:
         AutomatedSnapshotStartHour: 6
+      AccessPolicies:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: '*'
+            Action: 'es:*'
+            Resource: "*"
       VPCOptions:
         SubnetIds:
-          - Fn::ImportValue:
-              !Sub "${OpsworksVPCStackName}-private-subnet"
+           - Fn::ImportValue:
+              !Sub "${OpsworksStackName}-vpc-private-subnet"
         SecurityGroupIds:
-          - Fn::ImportValue:
-              !Sub "${OpsworksVPCStackName}-common-sg"
+           - Fn::ImportValue:
+              !Sub "${OpsworksStackName}-vpc-common-sg"
 
   AnalyticsRole:
     Type: AWS::IAM::Role
@@ -46,10 +58,10 @@ Resources:
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
-        - Action: sts:AssumeRole
-          Effect: Allow
-          Principal:
-            Service: lambda.amazonaws.com
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
       Policies:
         - PolicyName: !Sub "${AWS::StackName}-policy"
           PolicyDocument:
@@ -57,8 +69,8 @@ Resources:
             Statement:
               - Effect: Allow
                 Action:
-                  - "es:*"
-                Resource: !Ref AnalyticsES
+                   - "es:*"
+                Resource: !GetAtt [AnalyticsES, DomainArn]
 
 Outputs:
 
