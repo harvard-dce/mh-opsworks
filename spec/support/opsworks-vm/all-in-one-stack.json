@@ -16,7 +16,7 @@
     "opencast": {
       "application_type": "other",
       "scm": {
-        "repository": "matterhorn-dce-fork/"
+        "repository": "dce-opencast/"
       },
       "database": {
         "host": "10.10.10.50",
