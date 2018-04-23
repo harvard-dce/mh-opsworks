@@ -56,7 +56,10 @@ Zadara VPSA creation is discussed in more detail
    set by the volume, as an NFS server can have multiple exports. Use a name
    that makes sense for your cluster.
 1. Create a server with a CIDR block that matches your VPC and/or relevant
-   subnets. Ensure that "root squash" is enabled.
+   subnets. ~~Ensure that "root squash" is enabled.~~. **Note** enabling of "root squash"
+   does not seem to be required. From [the docs](http://guides.zadarastorage.com/vpsa-guide/1605-sp2/managing-volumes-snapshots-and-clones.html):
+   
+    > NFS Root Squash – Select this checkbox to block external root access to this share. If this box is not checked, the system maps requests from uid/gid 0 (root) to the anonymous uid/gid.
 1. Attach the volume you created above to this server.
 1. You should now have the information you need to update your
    cluster configuration for external storage. Return the previous section.
