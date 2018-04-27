@@ -2,6 +2,8 @@
 
 ## TO BE RELEASED
 
+* insert missing `install-cwlogs` recipe in zadara cluster config template
+
 ## 1.16.1 - 12/13/2017
 
 * swap '/' for '-' in s3 cookbook source package names
