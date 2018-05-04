@@ -118,7 +118,11 @@ namespace :stack do
 
     desc Cluster::RakeDocs.new('stack:instances:start').desc
     task start: ['cluster:configtest', 'cluster:config_sync_check'] do
-      Cluster::Stack.start_all
+      num_workers = ENV.fetch("num_workers", nil)
+      unless num_workers.nil?
+        num_workers = num_workers.to_i
+      end
+      Cluster::Stack.start_all(num_workers)
       Cluster::Instances.create_custom_tags
     end
   end

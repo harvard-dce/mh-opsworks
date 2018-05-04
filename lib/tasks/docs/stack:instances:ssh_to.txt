@@ -22,6 +22,14 @@ Example:
     $(./bin/rake stack:instances:ssh_to hostname=admin1)
     $(./bin/rake stack:instances:ssh_to hostname=workers1)
 
+As a handy shortcut, you can add this to your ~/.bash_profile or ~/.bash_aliases:
+
+    function ssh_to { $(pwd)/bin/rake stack:instances:ssh_to hostname=$1; }
+
+This shortens the amount of typing, e.g.:
+
+    $(ssh_to admin1)
+
 SEE ALSO:
 
 cluster:edit, cluster:new

@@ -49,14 +49,22 @@ module Cluster
       end
     end
 
-    def self.start_all
+    def self.start_all(num_workers)
       with_existing_stack do |stack|
         rds_restore = Celluloid::Future.new { Cluster::RDS.restore }
         start_all_in_layers(['storage'])
         join = rds_restore.value
         start_all_in_layers(['admin'])
-        start_all_in_layers(['workers', 'engage','monitoring-master'])
-        start_all_other_instances
+        if num_workers.nil?
+          start_all_in_layers(['workers', 'engage','monitoring-master'])
+        else
+          workers_start = Celluloid::Future.new {
+            start_some_in_layer('workers', num_workers)
+          }
+          start_all_in_layers(['engage','monitoring-master'])
+          join = workers_start.value
+        end
+        start_all_other_instances(include_workers = num_workers.nil?)
       end
     end
 
@@ -111,9 +119,9 @@ module Cluster
       end
     end
 
-    def self.start_all_other_instances
+    def self.start_all_other_instances(include_workers = true)
       instance_ids = Cluster::Instances.find_existing_always_on_instances.find_all do |instance|
-        instance.status != 'online'
+        instance.status != 'online' && (include_workers || !instance.hostname.start_with?("worker"))
       end.map(&:instance_id)
       if instance_ids.any?
         puts "Starting #{instance_ids.length} other instances"
@@ -149,14 +157,25 @@ module Cluster
       end
     end
 
-    def self.start_all_in_layers(shortnames=[])
-      instance_ids = Cluster::Instances.find_manageable_instances_by_layer_shortname(
-        shortnames
+    def self.instance_ids_in_layers(shortnames=[])
+      Cluster::Instances.find_manageable_instances_by_layer_shortname(
+          shortnames
       ).find_all { |instance| instance.status != 'online' }.map(&:instance_id)
+    end
 
+    def self.start_all_in_layers(shortnames=[])
+      instance_ids = instance_ids_in_layers(shortnames)
       if instance_ids.any?
         puts "Starting #{shortnames.join(', ')} instances"
         start_and_wait_for_instances(instance_ids)
+      end
+    end
+
+    def self.start_some_in_layer(layer_shortname, num_instances)
+      instance_ids = instance_ids_in_layers([layer_shortname])
+      if instance_ids.any?
+        puts "Starting #{num_instances} #{layer_shortname} instances"
+        start_and_wait_for_instances(instance_ids.sample(num_instances))
       end
     end
 
