@@ -14,6 +14,10 @@ Custom tags are created or updated when starting instances via this command.
 
 The cluster's RDS instance is restored from it's "-hibernated" snapshot.
 
+To start only a subset of workers pass in a `num_workers` argument, like so:
+
+    ./bin/rake stack:instances:start num_workers=2
+
 SEE ALSO:
 
 admin:cluster:init, stack:instances:stop

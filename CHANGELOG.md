@@ -2,6 +2,11 @@
 
 ## TO BE RELEASED
 
+## 1.17.0 - 05/11/2018
+
+* insert missing `install-cwlogs` recipe in zadara cluster config template
+* add `num_workers=n` option to `stack:instances:start` to allow only starting *n* workers.
+
 ## 1.16.1 - 12/13/2017
 
 * swap '/' for '-' in s3 cookbook source package names
