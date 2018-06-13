@@ -2,6 +2,11 @@
 
 ## TO BE RELEASED
 
+## 1.17.1 - 06/05/2018
+
+* MI-89: Don't bother specifying ebs optimization in layer settings. Instance types where we'd want
+  it will have it enabled automatically anyway.
+
 ## 1.17.0 - 05/11/2018
 
 * insert missing `install-cwlogs` recipe in zadara cluster config template
