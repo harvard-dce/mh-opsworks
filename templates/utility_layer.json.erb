@@ -1,0 +1,34 @@
+{
+  "name": "Utility",
+  "shortname": "utility",
+  "enable_auto_healing": true,
+  "install_updates_on_boot": true,
+  "type": "custom",
+  "auto_assign_elastic_ips": true,
+  "auto_assign_public_ips": true,
+  "custom_recipes": {
+    "setup": [
+      "oc-opsworks-recipes::set-timezone",
+      "oc-opsworks-recipes::fix-raid-mapping",
+      "oc-opsworks-recipes::set-bash-as-default-shell",
+      "oc-opsworks-recipes::install-utils",
+      "oc-opsworks-recipes::install-crowdstrike",
+      "oc-opsworks-recipes::enable-postfix-smarthost",
+      "oc-opsworks-recipes::install-custom-metrics",
+      "oc-opsworks-recipes::create-alerts-from-opsworks-metrics",
+      "oc-opsworks-recipes::enable-enhanced-networking",
+      "oc-opsworks-recipes::nfs-client",
+      "oc-opsworks-recipes::install-cwlogs",
+      "oc-opsworks-recipes::create-squid-proxy-for-storage-cluster",
+      "oc-opsworks-recipes::clean-up-package-cache"
+    ],
+    "shutdown": [
+      "oc-opsworks-recipes::remove-alarms"
+    ]
+  },
+  "instances": {
+    "number_of_instances": 1,
+    "instance_type": "<%= utility_instance_type %>",
+    "root_device_type": "ebs"
+  }
+}

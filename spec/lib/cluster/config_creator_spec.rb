@@ -78,7 +78,8 @@ describe Cluster::ConfigCreator do
       primary_az: primary_az,
       secondary_az: secondary_az,
       include_analytics: true,
-      cookbook_source_type: cookbook_source_type
+      cookbook_source_type: cookbook_source_type,
+      include_utility: true
     }
   end
 end

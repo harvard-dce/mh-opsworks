@@ -189,6 +189,13 @@ namespace :cluster do
     session.get_project_tag
     session.choose_variant
     session.analytics_node
+
+    if session.zadara_variant?
+      session.include_utility = true
+    else
+      session.utility_node
+    end
+
     session.get_cluster_name
     session.get_cookbook_source_type
     session.get_git_url
@@ -214,7 +221,8 @@ namespace :cluster do
       secondary_az: session.secondary_az,
       default_users: JSON.pretty_generate(session.compute_default_users),
       include_analytics: session.include_analytics,
-      cookbook_source_type: session.cookbook_source_type
+      cookbook_source_type: session.cookbook_source_type,
+      include_utility: session.include_utility
     )
     rc_file = Cluster::RcFileSwitcher.new(config_file: config_file)
     rc_file.write

@@ -1,61 +1,42 @@
-# Enabling the capture agent manager app
+# Utility Node
 
-The capture-agent-manager app is meant to be deployed in the utilities layer of
+The utility node currently has two main responsibilities:
+
+* Capture Agent Manager app - this is the app that controls our live stream redundancy switcher
+* In a cluster with an attached Zadara VPSA the utility node provides an instance of squid proxy
+  to facilitate more efficient and cheaper backup transfer from Zadar to S3 
+
+## Enabling the capture agent manager app
+
+The capture-agent-manager app is meant to be deployed in the utility layer of
 a mh cluster.
 
 The capture-agent-manager app is a flask-gunicorn web app to keep capture agent
 inventory, and provide an api/ui for configuring capture agents, as well as
 switching from primary to secondary live stream..
 
-* Modify your cluster config to include the following layer config:
+There are two ways to get a utility node:
+
+* Say "Y" when prompted during the `cluster:new` task
+* For an existing cluster...
+  * Copy/paste the layer config from `templates/utility_layer.json.erb` into your cluster's layer list
+  * Run `admin:cluster:init` to have opsworks create the layer
+  * Run `stack:instances:start` to start the utility node
+
+You'll need to insert the following recipes into the "setup" phase run list:
 
 ```
-      {
-        "name": "Utility",
-        "shortname": "utility",
-        "type": "custom",
-        "enable_auto_healing": true,
-        "install_updates_on_boot": true,
-        "use_ebs_optimized_instances": true,
-        "auto_assign_elastic_ips": true,
-        "auto_assign_public_ips": true,
-        "custom_recipes": {
-          "setup": [
-            "oc-opsworks-recipes::set-timezone",
-            "oc-opsworks-recipes::fix-raid-mapping",
-            "oc-opsworks-recipes::set-bash-as-default-shell",
-            "oc-opsworks-recipes::install-utils",
-            "oc-opsworks-recipes::install-crowdstrike",
-            "oc-opsworks-recipes::enable-postfix-smarthost",
-            "oc-opsworks-recipes::install-custom-metrics",
-            "oc-opsworks-recipes::create-alerts-from-opsworks-metrics",
-            "oc-opsworks-recipes::enable-enhanced-networking",
-            "oc-opsworks-recipes::install-cwlogs",
-            "oc-opsworks-recipes::clean-up-package-cache",
-            "oc-opsworks-recipes::create-capture-agent-manager-user",
-            "oc-opsworks-recipes::create-capture-agent-manager-directories",
-            "oc-opsworks-recipes::install-capture-agent-manager-packages",
-            "oc-opsworks-recipes::install-capture-agent-manager",
-            "oc-opsworks-recipes::configure-capture-agent-manager-gunicorn",
-            "oc-opsworks-recipes::configure-capture-agent-manager-nginx-proxy",
-            "oc-opsworks-recipes::configure-capture-agent-manager-supervisor"
-          ],
-          "shutdown": [
-            "oc-opsworks-recipes::remove-alarms"
-          ]
-        },
-        "volume_configurations": [
-
-        ],
-        "instances": {
-          "number_of_instances": 1,
-          "instance_type": "t2.medium",
-          "root_device_type": "ebs"
-        }
-      },
+    "oc-opsworks-recipes::create-capture-agent-manager-user",                                                                                                                                                    
+    "oc-opsworks-recipes::create-capture-agent-manager-directories",                                                                                                                                             
+    "oc-opsworks-recipes::install-capture-agent-manager-packages",                                                                                                                                               
+    "oc-opsworks-recipes::install-capture-agent-manager",                                                                                                                                                        
+    "oc-opsworks-recipes::configure-capture-agent-manager-gunicorn",                                                                                                                                             
+    "oc-opsworks-recipes::configure-capture-agent-manager-nginx-proxy",                                                                                                                                          
+    "oc-opsworks-recipes::configure-capture-agent-manager-supervisor",                                                                                                                                           
+    "oc-opsworks-recipes::install-ca-timedrift-metric",  
 ```
 
-* Update your "custom_json" block to provide the following info to `cadash`:
+There is also quite a bit of configuration that needs to go in the `custom_json` block of your config
 
 ```
     {

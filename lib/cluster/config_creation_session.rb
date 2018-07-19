@@ -2,7 +2,7 @@ module Cluster
   class ConfigCreationSession
     attr_accessor :variant, :name, :cidr_block_root, :git_url, :git_revision,
       :export_root, :nfs_server_host, :primary_az, :secondary_az, :project_tag,
-      :include_analytics, :cookbook_source_type
+      :include_analytics, :cookbook_source_type, :include_utility
 
     def choose_variant
       puts "\nPlease choose the size of the cluster you'd like to deploy.\n\n"
@@ -169,6 +169,15 @@ module Cluster
         @cookbook_source_type = "git"
       else
         @cookbook_source_type = "s3"
+      end
+    end
+
+    def utility_node
+      print "\nWould you like a utility node? [y/N]: "
+      include_utility = STDIN.gets.strip.chomp
+
+      if include_utility.downcase == 'y'
+        @include_utility = true
       end
     end
 

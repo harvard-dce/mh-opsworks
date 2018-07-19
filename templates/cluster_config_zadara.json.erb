@@ -278,6 +278,14 @@
           "root_device_size": "<%= root_device_size %>"
         }
       }
+
+      <% if include_analytics %>
+        ,<%= ERB.new(analytics_layer_template).result(binding) %>
+      <% end %>
+
+      <% if include_utility %>
+        ,<%= ERB.new(utility_layer_template).result(binding) %>
+      <% end %>
     ],
     "app": {
       "shortname": "opencast",

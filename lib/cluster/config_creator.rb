@@ -29,6 +29,8 @@ module Cluster
         analytics_instance_type: 't2.large',
         analytics_disk_size: '20',
 
+        utility_instance_type: 't2.medium',
+
         opencast_root_size: '20',
         root_device_size: '8',
         opencast_workspace_size: '50'
@@ -59,6 +61,8 @@ module Cluster
 
         analytics_instance_type: 'm4.large',
         analytics_disk_size: '50',
+
+        utility_instance_type: 't2.medium',
 
         opencast_root_size: '20',
         root_device_size: '8',
@@ -91,6 +95,8 @@ module Cluster
         analytics_instance_type: 'm4.xlarge',
         analytics_disk_size: '500',
 
+        utility_instance_type: 't2.large',
+
         opencast_root_size: '50',
         root_device_size: '16',
         opencast_workspace_size: '250'
@@ -119,6 +125,8 @@ module Cluster
         analytics_instance_type: 'm4.large',
         analytics_disk_size: '50',
 
+        utility_instance_type: 'm5.large',
+
         opencast_root_size: '20',
         root_device_size: '8',
         opencast_workspace_size: '50'
@@ -146,6 +154,8 @@ module Cluster
 
         analytics_instance_type: 'm4.xlarge',
         analytics_disk_size: '500',
+
+        utility_instance_type: 'm5.large',
 
         opencast_root_size: '50',
         root_device_size: '16',
@@ -276,8 +286,8 @@ module Cluster
         merge(database_user_info).
         merge(s3_distribution_bucket_name_from(attributes[:name])).
         merge(s3_file_archive_bucket_name_from(attributes[:name])).
-        merge(analytics_layer_content)
-
+        merge(analytics_layer_content).
+        merge(utility_layer_content)
       erb.result(all_attributes)
     end
 
@@ -285,7 +295,13 @@ module Cluster
 
     def analytics_layer_content
       {
-        analytics_layer_template: File.read('templates/analytics_layer.json.erb')
+          analytics_layer_template: File.read('templates/analytics_layer.json.erb')
+      }
+    end
+
+    def utility_layer_content
+      {
+        utility_layer_template: File.read('templates/utility_layer.json.erb')
       }
     end
 

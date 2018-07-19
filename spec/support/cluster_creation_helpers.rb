@@ -9,7 +9,8 @@ module ClusterCreationHelpers
       primary_az: 'us-east-1a',
       secondary_az: 'us-east-1d',
       include_analytics: true,
-      cookbook_source_type: 's3'
+      cookbook_source_type: 's3',
+      include_utility: true
     }
   end
 end
