@@ -1,7 +1,7 @@
 module Cluster
   class ConfigCreationSession
     attr_accessor :variant, :name, :cidr_block_root, :git_url, :git_revision,
-      :export_root, :nfs_server_host, :primary_az, :secondary_az, :project_tag,
+      :export_root, :nfs_server_host, :subnet_azs, :project_tag,
       :include_analytics, :cookbook_source_type, :include_utility
 
     def choose_variant
@@ -84,8 +84,7 @@ module Cluster
 
     def compute_azs
       picker = Cluster::AZPicker.new
-      @primary_az = picker.primary_az
-      @secondary_az = picker.secondary_az
+      @subnet_azs = picker.subnet_azs
     end
 
     def compute_default_users

@@ -32,8 +32,23 @@ module Cluster
     end
 
     def create_new_instances
-      instance_count_delta.times.map do
-        Cluster::Instance.find_or_create_in_layer(layer, instances_config, type)
+      vpc = Cluster::VPC.find_existing
+      instance_count_delta.times.map do |i|
+
+        if layer.auto_assign_public_ips == false && layer.auto_assign_elastic_ips == false
+          private_subnet_cidr_blocks = Cluster::VPC.get_private_subnet_cidr_blocks
+          subnets = vpc.subnets.find_all { |subnet|
+            private_subnet_cidr_blocks.include? subnet.cidr_block
+          }.shuffle
+
+          # do basic round-robin selection from available subnets
+          subnet = subnets[i % subnets.length]
+        else
+          public_subnet_cidr_block = Cluster::VPC.get_public_subnet_cidr_block
+          subnet = vpc.subnets.find{|subnet| subnet.cidr_block == public_subnet_cidr_block }
+        end
+
+        Cluster::Instance.find_or_create_in_layer(layer, instances_config, type, subnet)
       end
     end
 

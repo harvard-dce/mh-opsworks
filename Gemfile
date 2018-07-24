@@ -15,3 +15,4 @@ gem 'diffy', '~> 3.0.7'
 gem 'simplecov', require: false
 gem 'celluloid'
 gem 'colorize'
+gem 'netaddr'

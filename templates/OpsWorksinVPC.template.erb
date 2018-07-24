@@ -14,19 +14,19 @@
       "Description":"The public subnet CIDR block",
       "Type": "String",
       "Default": "",
-      "ConstraintDescription": "the CIDR block for the public part of this VPC, e.g. 10.1.1.0/26"
+      "ConstraintDescription": "CIDR block for the public part of this VPC"
     },
-    "PrivateCIDRBlock": {
-      "Description":"The private subnet CIDR block",
-      "Type": "String",
+    "PrivateCIDRBlocks": {
+      "Description":"The private subnet CIDR blocks",
+      "Type": "CommaDelimitedList",
       "Default": "",
-      "ConstraintDescription": "the CIDR block for the private part of this VPC, e.g. 10.1.1.64/26"
+      "ConstraintDescription": "the list of CIDR blocks for the private part of this VPC"
     },
     "DbCIDRBlock": {
       "Description":"The db subnet CIDR block",
       "Type": "String",
       "Default": "",
-      "ConstraintDescription": "the CIDR block for the DB subnet in a separate AZ, e.g. 10.1.1.128/28"
+      "ConstraintDescription": "CIDR block for the DB subnet in a separate AZ"
     },
     "PrimaryAZ": {
       "Description":"Primary AZ",
@@ -39,6 +39,12 @@
       "Type": "String",
       "Default": "",
       "ConstraintDescription": "The secondary AZ for future expansion and RDS replication"
+    },
+    "PrivateSubnetAZs": {
+      "Description": "AZs for the Private Subnets",
+      "Type": "CommaDelimitedList",
+      "Default": "",
+      "ConstraintDescription": "the list of AZs to use for private subnets"
     }
   },
 
@@ -60,9 +66,9 @@
       "Properties" : {
         "AvailabilityZone": { "Ref": "PrimaryAZ" },
         "VpcId" : { "Ref" : "VPC" },
-        "CidrBlock" : { "Ref" : "PublicCIDRBlock" },
+        "CidrBlock" : { "Ref": "PublicCIDRBlock" },
         "Tags" : [
-          { "Key" : "Name", "Value" : { "Fn::Join" : [ " ", [ { "Ref" : "AWS::StackName" }, "Public subnet" ] ] } },
+          { "Key" : "Name", "Value" : { "Fn::Join" : [ " ", [ { "Ref" : "AWS::StackName" }, "Public Subnet" ] ] } },
           { "Key" : "Network", "Value" : "Public" }
         ]
       }
@@ -162,7 +168,7 @@
       "Properties" : {
         "AvailabilityZone": { "Ref": "SecondaryAZ" },
         "VpcId" : { "Ref" : "VPC" },
-        "CidrBlock" : { "Ref" : "DbCIDRBlock" },
+        "CidrBlock" : { "Ref": "DbCIDRBlock" },
         "Tags" : [
           { "Key" : "Name", "Value" : { "Fn::Join" : [ " ", [ { "Ref" : "AWS::StackName" }, "db subnet" ] ] } }
         ]
@@ -173,18 +179,58 @@
       "Type" : "AWS::RDS::DBSubnetGroup",
       "Properties": {
         "DBSubnetGroupDescription": { "Fn::Join" : [ " ", [ { "Ref" : "AWS::StackName" }, "db subnet group" ] ] },
-        "SubnetIds": [{ "Ref" : "DbSubnet" }, { "Ref" : "PrivateSubnet" }, { "Ref": "PublicSubnet" } ]
+        "SubnetIds": [
+          { "Ref": "DbSubnet" },
+          { "Ref": "PrivateSubnet1" },
+          { "Ref": "PrivateSubnet2" }
+        ]
       }
     },
 
-    "PrivateSubnet" : {
+    "PrivateSubnet1" : {
       "Type" : "AWS::EC2::Subnet",
       "Properties" : {
-        "AvailabilityZone": { "Ref": "PrimaryAZ" },
+        "AvailabilityZone": { "Fn::Select" : [ "0", { "Ref" : "PrivateSubnetAZs" } ] },
         "VpcId" : { "Ref" : "VPC" },
-        "CidrBlock" : { "Ref" : "PrivateCIDRBlock" },
+        "CidrBlock" : { "Fn::Select" : [ "0", { "Ref": "PrivateCIDRBlocks" } ] },
         "Tags" : [
-          { "Key" : "Name", "Value" : { "Fn::Join" : [ " ", [ { "Ref" : "AWS::StackName" }, "private subnet" ] ] } }
+          { "Key" : "Name", "Value" : { "Fn::Join" : [ " ", [ { "Ref" : "AWS::StackName" }, "private subnet 1" ] ] } }
+        ]
+      }
+    },
+
+    "PrivateSubnet2" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "AvailabilityZone": { "Fn::Select" : [ "1", { "Ref" : "PrivateSubnetAZs" } ] },
+        "VpcId" : { "Ref" : "VPC" },
+        "CidrBlock" : { "Fn::Select" : [ "1", { "Ref": "PrivateCIDRBlocks" } ] },
+        "Tags" : [
+          { "Key" : "Name", "Value" : { "Fn::Join" : [ " ", [ { "Ref" : "AWS::StackName" }, "private subnet 2" ] ] } }
+        ]
+      }
+    },
+
+    "PrivateSubnet3" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "AvailabilityZone": { "Fn::Select" : [ "2", { "Ref" : "PrivateSubnetAZs" } ] },
+        "VpcId" : { "Ref" : "VPC" },
+        "CidrBlock" : { "Fn::Select" : [ "2", { "Ref": "PrivateCIDRBlocks" } ] },
+        "Tags" : [
+          { "Key" : "Name", "Value" : { "Fn::Join" : [ " ", [ { "Ref" : "AWS::StackName" }, "private subnet 3" ] ] } }
+        ]
+      }
+    },
+
+    "PrivateSubnet4" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "AvailabilityZone": { "Fn::Select" : [ "3", { "Ref" : "PrivateSubnetAZs" } ] },
+        "VpcId" : { "Ref" : "VPC" },
+        "CidrBlock" : { "Fn::Select" : [ "3", { "Ref": "PrivateCIDRBlocks" } ] },
+        "Tags" : [
+          { "Key" : "Name", "Value" : { "Fn::Join" : [ " ", [ { "Ref" : "AWS::StackName" }, "private subnet 4" ] ] } }
         ]
       }
     },
@@ -199,10 +245,34 @@
       }
     },
 
-    "PrivateSubnetRouteTableAssociation" : {
+    "PrivateSubnet1RouteTableAssociation" : {
       "Type" : "AWS::EC2::SubnetRouteTableAssociation",
       "Properties" : {
-        "SubnetId" : { "Ref" : "PrivateSubnet" },
+        "SubnetId" : { "Ref" : "PrivateSubnet1" },
+        "RouteTableId" : { "Ref" : "PrivateRouteTable" }
+      }
+    },
+
+    "PrivateSubnet2RouteTableAssociation" : {
+      "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties" : {
+        "SubnetId" : { "Ref" : "PrivateSubnet2" },
+        "RouteTableId" : { "Ref" : "PrivateRouteTable" }
+      }
+    },
+
+    "PrivateSubnet3RouteTableAssociation" : {
+      "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties" : {
+        "SubnetId" : { "Ref" : "PrivateSubnet3" },
+        "RouteTableId" : { "Ref" : "PrivateRouteTable" }
+      }
+    },
+
+    "PrivateSubnet4RouteTableAssociation" : {
+      "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties" : {
+        "SubnetId" : { "Ref" : "PrivateSubnet4" },
         "RouteTableId" : { "Ref" : "PrivateRouteTable" }
       }
     },
@@ -258,10 +328,34 @@
       }
     },
 
-    "PrivateSubnetNetworkAclAssociation" : {
+    "PrivateSubnet1NetworkAclAssociation" : {
       "Type" : "AWS::EC2::SubnetNetworkAclAssociation",
       "Properties" : {
-        "SubnetId" : { "Ref" : "PrivateSubnet" },
+        "SubnetId" : { "Ref" : "PrivateSubnet1" },
+        "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" }
+      }
+    },
+
+    "PrivateSubnet2NetworkAclAssociation" : {
+      "Type" : "AWS::EC2::SubnetNetworkAclAssociation",
+      "Properties" : {
+        "SubnetId" : { "Ref" : "PrivateSubnet2" },
+        "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" }
+      }
+    },
+
+    "PrivateSubnet3NetworkAclAssociation" : {
+      "Type" : "AWS::EC2::SubnetNetworkAclAssociation",
+      "Properties" : {
+        "SubnetId" : { "Ref" : "PrivateSubnet3" },
+        "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" }
+      }
+    },
+
+    "PrivateSubnet4NetworkAclAssociation" : {
+      "Type" : "AWS::EC2::SubnetNetworkAclAssociation",
+      "Properties" : {
+        "SubnetId" : { "Ref" : "PrivateSubnet4" },
         "NetworkAclId" : { "Ref" : "PrivateNetworkAcl" }
       }
     },
@@ -310,7 +404,15 @@
             "GroupDescription" : "SG for the utility layer",
             "VpcId" : { "Ref" : "VPC" },
             "SecurityGroupIngress" : [
-              { "IpProtocol" : "tcp", "FromPort" : "3128",  "ToPort" : "3128",  "CidrIp" : "10.0.0.0/8" },
+              <% if nfs_server_host %>
+              {
+                "IpProtocol" : "tcp",
+                "FromPort" : "3128",
+                "ToPort" : "3128",
+                "CidrIp" : "<%= nfs_server_host %>/32",
+                "Description": "Zadara"
+              }
+              <% end %>
             ],
             "SecurityGroupEgress" : [
             ],
@@ -327,9 +429,36 @@
             "VpcId" : { "Ref" : "VPC" },
             "SecurityGroupIngress" : [
               <% ca_ips.each do |ip| %>
-              { "IpProtocol" : "tcp", "FromPort" : "80",  "ToPort" : "80",  "CidrIp" : "<%= ip %>" },
-              { "IpProtocol" : "tcp", "FromPort" : "443",  "ToPort" : "443",  "CidrIp" : "<%= ip %>" },
-              { "IpProtocol" : "tcp", "FromPort" : "8080",  "ToPort" : "8080",  "CidrIp" : "<%= ip %>" },
+              {
+                "IpProtocol" : "tcp",
+                "FromPort" : "80",
+                "ToPort" : "80",
+                "CidrIp" : "<%= ip %>",
+                "Description": "Capture Agents"
+              },
+              {
+                "IpProtocol" : "tcp",
+                "FromPort" : "443",
+                "ToPort" : "443",
+                "CidrIp" : "<%= ip %>",
+                "Description": "Capture Agents"
+              },
+              {
+                "IpProtocol" : "tcp",
+                "FromPort" : "8080",
+                "ToPort" : "8080",
+                "CidrIp" : "<%= ip %>",
+                "Description": "Capture Agents"
+              },
+              <% end %>
+              <% ibm_watson_ips.each do |ip| %>
+              {
+                "IpProtocol" : "tcp",
+                "FromPort" : "80",
+                "ToPort" : "80",
+                "CidrIp" : "<%= ip %>",
+                "Description": "IBM watson callback"
+              },
               <% end %>
             ],
             "SecurityGroupEgress" : [
@@ -365,11 +494,35 @@
             "SecurityGroupIngress" : [
               { "IpProtocol" : "tcp", "FromPort" : "0",  "ToPort" : "65535",  "CidrIp" : "10.0.0.0/8" },
               { "IpProtocol" : "udp", "FromPort" : "0",  "ToPort" : "65535",  "CidrIp" : "10.0.0.0/8" },
-              { "IpProtocol": "tcp", "FromPort": "0", "ToPort": "65535", "CidrIp" : { "Fn::Join": [ "", [ { "Ref": "NATGatewayEIP" }, "/32" ] ] } },
-              { "IpProtocol": "udp", "FromPort": "0", "ToPort": "65535", "CidrIp" : { "Fn::Join": [ "", [ { "Ref": "NATGatewayEIP" }, "/32" ] ] } },
+              {
+                "IpProtocol": "tcp",
+                "FromPort": "0",
+                "ToPort":"65535",
+                "CidrIp" : { "Fn::Join": [ "", [ { "Ref": "NATGatewayEIP" }, "/32" ] ] },
+                "Description": "NAT Gateway"
+              },
+              {
+                "IpProtocol": "udp",
+                "FromPort": "0",
+                "ToPort": "65535",
+                "CidrIp" : { "Fn::Join": [ "", [ { "Ref": "NATGatewayEIP" }, "/32" ] ] },
+                "Description": "NAT Gateway"
+              },
               <% vpn_ips.each_with_index do |ip, index| %>
-              { "IpProtocol" : "tcp", "FromPort" : "0",  "ToPort" : "65535",  "CidrIp" : "<%= ip %>" },
-              { "IpProtocol" : "udp", "FromPort" : "0",  "ToPort" : "65535",  "CidrIp" : "<%= ip %>" },
+              {
+                "IpProtocol" : "tcp",
+                "FromPort" : "0",
+                "ToPort" : "65535",
+                "CidrIp" : "<%= ip %>",
+                "Description": "VPN"
+              },
+              {
+                "IpProtocol" : "udp",
+                "FromPort" : "0",
+                "ToPort" : "65535",
+                "CidrIp" : "<%= ip %>",
+                "Description": "VPN"
+              },
               <% end %>
             ],
             "SecurityGroupEgress" : [
@@ -388,14 +541,42 @@
       "Value" : {"Ref" : "VPC"}
     },
 
-    "PublicSubnets" : {
+    "PublicSubnet" : {
       "Description" : "Public Subnet",
       "Value" : {"Ref" : "PublicSubnet" }
     },
 
     "PrivateSubnets" : {
-      "Description" : "Private Subnet",
-      "Value" : {"Ref" : "PrivateSubnet" }
+      "Description" : "Private Subnets",
+      "Value" : {
+        "Fn::Join" : [ ",", [
+          {"Ref" : "PrivateSubnet1" },
+          {"Ref" : "PrivateSubnet2" },
+          {"Ref" : "PrivateSubnet3" },
+          {"Ref" : "PrivateSubnet4" }
+          ]
+        ]
+      }
+    },
+
+    "NATGatewayIP": {
+      "Description": "NAT Gateway IP",
+      "Value": { "Ref": "NATGatewayEIP" }
+    },
+
+    "AdminSecurityGroup": {
+      "Description": "Security Group used by the cluster's admin layer instances",
+      "Value": { "Ref": "OpsworksLayerSecurityGroupAdmin" }
+    },
+
+    "EngageSecurityGroup": {
+      "Description": "Security Group used by the cluster's engage layer instances",
+      "Value": { "Ref": "OpsworksLayerSecurityGroupEngage" }
+    },
+
+    "CommonSecurityGroup": {
+      "Description": "Common Security Group used by all cluster instances",
+      "Value": { "Ref": "OpsworksLayerSecurityGroupCommon" }
     }
   }
 }

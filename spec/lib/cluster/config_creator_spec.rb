@@ -13,8 +13,7 @@ describe Cluster::ConfigCreator do
     expect(output).to include(config_attributes[:app_git_revision])
     expect(output).to include(variant_attributes[:storage_instance_type])
     expect(output).to include(config_attributes[:default_users])
-    expect(output).to include(config_attributes[:primary_az])
-    expect(output).to include(config_attributes[:secondary_az])
+    expect(output).to include(config_attributes[:subnet_azs])
     expect(output).to include(config_attributes[:cookbook_source_type])
   end
 
@@ -64,8 +63,7 @@ describe Cluster::ConfigCreator do
     app_git_url = 'http://foobar'
     app_git_revision = 'unique_revision'
     default_users = 'afoasdf'
-    primary_az = 'us-east-1a'
-    secondary_az = 'us-east-1d'
+    subnet_azs = 'us-east-1a,us-east-1d'
     cookbook_source_type = 's3'
 
     attributes = {
@@ -75,8 +73,7 @@ describe Cluster::ConfigCreator do
       variant: variant,
       app_git_revision: app_git_revision,
       default_users: default_users,
-      primary_az: primary_az,
-      secondary_az: secondary_az,
+      subnet_azs: subnet_azs,
       include_analytics: true,
       cookbook_source_type: cookbook_source_type,
       include_utility: true

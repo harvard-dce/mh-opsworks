@@ -1,9 +1,10 @@
 describe Cluster::AZPicker do
-  it 'picks different AZs for the primary and secondary AZ' do
-    allow(described_class).to receive(:all).and_return(['first_az', 'second_az'])
+  it 'picks a random sample of 4 available AZs' do
+    allow(described_class).to receive(:all).and_return(['foo', 'far', 'faz', 'bar', 'baz', 'blerg', 'boo'])
     picker = described_class.new
 
-    expect(picker.primary_az).to be
-    expect(picker.primary_az).not_to eq picker.secondary_az
+    expect(picker.subnet_azs).to be_an_instance_of(Array)
+    expect(picker.subnet_azs.length).to eq 4
+    expect(Cluster::AZPicker.all).to include(*picker.subnet_azs)
   end
 end
