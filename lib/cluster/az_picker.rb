@@ -1,6 +1,6 @@
 module Cluster
   class AZPicker < Base
-    attr_reader :primary_az, :secondary_az
+    attr_reader :subnet_azs
 
     def initialize
       populate
@@ -10,8 +10,7 @@ module Cluster
 
     def populate
       azs = self.class.all
-      @primary_az = azs.sample
-      @secondary_az = (azs - [@primary_az]).sample
+      @subnet_azs = azs.sample(4)
     end
 
     def self.all

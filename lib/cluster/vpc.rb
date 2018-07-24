@@ -75,6 +75,24 @@ module Cluster
       })
     end
 
+    def self.get_subnet_cidr_blocks(idx, len)
+      ip = NetAddr::IPv4Net.parse(vpc_config[:cidr_block])
+      (idx..(idx + len - 1)).map { |i| ip.nth_subnet(27, i).to_s }
+    end
+
+    def self.get_public_subnet_cidr_block
+      get_subnet_cidr_blocks(0, 1).first
+    end
+
+    def self.get_db_subnet_cidr_block
+      get_subnet_cidr_blocks(1, 1).first
+    end
+
+    def self.get_private_subnet_cidr_blocks
+      get_subnet_cidr_blocks(2, 4)
+    end
+
+
     private
 
     def self.get_parameters
@@ -85,23 +103,27 @@ module Cluster
         },
         {
           parameter_key: 'PublicCIDRBlock',
-          parameter_value: vpc_config[:public_cidr_block]
+          parameter_value: get_public_subnet_cidr_block
         },
         {
-          parameter_key: 'PrivateCIDRBlock',
-          parameter_value: vpc_config[:private_cidr_block]
+          parameter_key: 'PrivateCIDRBlocks',
+          parameter_value: get_private_subnet_cidr_blocks.join(',')
         },
         {
           parameter_key: 'DbCIDRBlock',
-          parameter_value: vpc_config[:db_cidr_block]
+          parameter_value: get_db_subnet_cidr_block
         },
         {
           parameter_key: 'PrimaryAZ',
-          parameter_value: vpc_config[:primary_az]
+          parameter_value: primary_az
         },
         {
           parameter_key: 'SecondaryAZ',
-          parameter_value: vpc_config[:secondary_az]
+          parameter_value: secondary_az
+        },
+        {
+          parameter_key: "PrivateSubnetAZs",
+          parameter_value: subnet_azs
         }
       ]
 
@@ -133,7 +155,9 @@ module Cluster
       erb = Erubis::Eruby.new(File.read('./templates/OpsWorksinVPC.template.erb'))
       attributes = {
           vpn_ips: stack_secrets[:vpn_ips],
-          ca_ips: stack_secrets[:ca_ips]
+          ca_ips: stack_secrets[:ca_ips],
+          ibm_watson_ips: ibm_watson_config.fetch(:ips, []),
+          nfs_server_host: storage_config.fetch(:nfs_server_host, nil)
       }
       erb.result(attributes)
     end

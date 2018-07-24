@@ -17,6 +17,18 @@ module Cluster
         config.parsed[:vpc]
       end
 
+      def subnet_azs
+        vpc_config[:subnet_azs]
+      end
+
+      def primary_az
+        subnet_azs.split(',').map(&:strip)[0]
+      end
+
+      def secondary_az
+        subnet_azs.split(',').map(&:strip)[1]
+      end
+
       def deployment_private_ssh_key
         stack_custom_json[:deployment_private_ssh_key]
       end
@@ -96,6 +108,10 @@ module Cluster
       def get_cookbook_source_s3_url(revision)
         revision_file_label = revision.gsub("/", "-")
         %Q|https://s3.amazonaws.com/#{shared_asset_bucket_name}/cookbooks/mh-opsworks-recipes-#{revision_file_label}.tar.gz|
+      end
+
+      def ibm_watson_config
+        stack_custom_json[:ibm_watson_service_auth]
       end
     end
 

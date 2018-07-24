@@ -106,15 +106,14 @@ describe Cluster::ConfigCreationSession do
   context '#pick_az' do
     it 'uses the AZ picker' do
       az_picker = double('az picker')
-      allow(az_picker).to receive_messages([:primary_az, :secondary_az])
+      allow(az_picker).to receive_messages([:subnet_azs])
       allow(Cluster::AZPicker).to receive(:new).and_return(az_picker)
 
       session = described_class.new
       session.compute_azs
 
       expect(Cluster::AZPicker).to have_received(:new)
-      expect(az_picker).to have_received(:primary_az)
-      expect(az_picker).to have_received(:secondary_az)
+      expect(az_picker).to have_received(:subnet_azs)
     end
   end
 

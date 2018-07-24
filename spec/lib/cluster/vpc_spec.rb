@@ -61,6 +61,25 @@ describe Cluster::VPC do
       expect(vpc.vpc_id).to eq existing_vpc[:vpc_id]
       expect(vpc.cidr_block).to eq existing_cidr_block
     end
+
+    it 'correctly generates the subnet cidr blocks' do
+      stub_config_to_include(
+          vpc: { cidr_block: existing_cidr_block }
+      )
+      subnet_blocks = Cluster::VPC.get_subnet_cidr_blocks(0, 8)
+      expect(subnet_blocks.length).to be 8
+    end
+
+    it 'correctly returns the public, private and db subnet cidr blocks' do
+      stub_config_to_include(
+          vpc: { cidr_block: existing_cidr_block }
+      )
+      expect(Cluster::VPC.get_public_subnet_cidr_block).to eq '10.0.0.0/27'
+      expect(Cluster::VPC.get_db_subnet_cidr_block).to eq '10.0.0.32/27'
+
+      private_cidr_blocks = ['10.0.0.64/27','10.0.0.96/27','10.0.0.128/27','10.0.0.160/27']
+      expect(Cluster::VPC.get_private_subnet_cidr_blocks).to match_array private_cidr_blocks
+    end
   end
 
   def existing_vpc

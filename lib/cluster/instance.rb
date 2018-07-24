@@ -26,22 +26,15 @@ module Cluster
       )
     end
 
-    def self.find_or_create_in_layer(layer, instances_config, type)
-      vpc = Cluster::VPC.find_existing
-      subnet = nil
+    def self.find_or_create_in_layer(layer, instances_config, type, subnet)
       ami_info = {}
 
-      if layer.auto_assign_public_ips == false &&
-          layer.auto_assign_elastic_ips == false
-        # Private instance
-        subnet = vpc.subnets.find{|subnet| subnet.cidr_block == vpc_config[:private_cidr_block] }
+      if layer.auto_assign_public_ips == false && layer.auto_assign_elastic_ips == false
         if stack_custom_json[:base_private_ami_id]
           ami_info[:os] = 'Custom'
           ami_info[:ami_id] = stack_custom_json[:base_private_ami_id]
         end
       else
-        # Public instance
-        subnet = vpc.subnets.find{|subnet| subnet.cidr_block == vpc_config[:public_cidr_block] }
         if stack_custom_json[:base_public_ami_id]
           ami_info[:os] = 'Custom'
           ami_info[:ami_id] = stack_custom_json[:base_public_ami_id]

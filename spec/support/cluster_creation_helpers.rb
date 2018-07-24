@@ -6,8 +6,7 @@ module ClusterCreationHelpers
       app_git_url: '',
       app_git_revision: '',
       default_users: '',
-      primary_az: 'us-east-1a',
-      secondary_az: 'us-east-1d',
+      subnet_azs: ['us-east-1a','us-east-1d','us-east-1f','us-east-1b'],
       include_analytics: true,
       cookbook_source_type: 's3',
       include_utility: true
