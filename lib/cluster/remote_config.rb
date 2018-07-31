@@ -92,15 +92,6 @@ module Cluster
       end
     end
 
-    def update_efs_server_hostname(hostname)
-      current_config = config
-      current_values = current_config.parsed
-
-      current_values[:stack][:chef][:custom_json][:storage][:nfs_server_host] = hostname
-      write_config_with(current_values)
-      initialize_config_object
-    end
-
     def sync
       current_config = config
       current_values = current_config.parsed

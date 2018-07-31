@@ -31,14 +31,6 @@ module Cluster
       stack_custom_json.fetch(:storage, {})
     end
 
-    def self.supports_efs?
-      root_config[:region] == 'us-west-2'
-    end
-
-    def self.is_using_efs_storage?
-      storage_config[:subtype] == 'efs'
-    end
-
     def self.external_storage?
       storage_config[:type] == 'external'
     end

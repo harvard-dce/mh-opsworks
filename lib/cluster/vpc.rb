@@ -127,13 +127,6 @@ module Cluster
         }
       ]
 
-      if supports_efs?
-        parameters << {
-          parameter_key: 'CreateEFS',
-          parameter_value: build_efs_resources?
-        }
-      end
-
       {
         stack_name: vpc_name,
         template_body: get_cf_template,
@@ -149,9 +142,6 @@ module Cluster
     end
 
     def self.get_cf_template
-      if supports_efs?
-        return File.read('./templates/OpsWorksinVPCWithEFS.template.erb')
-      end
       erb = Erubis::Eruby.new(File.read('./templates/OpsWorksinVPC.template.erb'))
       attributes = {
           vpn_ips: stack_secrets[:vpn_ips],
@@ -160,14 +150,6 @@ module Cluster
           nfs_server_host: storage_config.fetch(:nfs_server_host, nil)
       }
       erb.result(attributes)
-    end
-
-    def self.build_efs_resources?
-      if is_using_efs_storage?
-        'yes'
-      else
-        'no'
-      end
     end
 
     def self.construct_instance(vpc_id)

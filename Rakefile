@@ -8,13 +8,6 @@ namespace :admin do
     task init: ['cluster:configtest', 'cluster:config_sync_check'] do
       stack = Cluster::Stack.find_or_create
 
-      if Cluster::Base.is_using_efs_storage?
-        remote_config = Cluster::RemoteConfig.new
-        remote_config.update_efs_server_hostname(Cluster::Filesystem.primary_efs_ip_address)
-        remote_config.sync
-        Cluster::Stack.update
-      end
-
       puts %Q|Stack "#{stack.name}" initialized, id: #{stack.stack_id}|
       layers = Cluster::Layers.find_or_create
 

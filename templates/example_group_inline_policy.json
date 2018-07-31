@@ -31,7 +31,6 @@
                 "cloudwatch:*",
                 "logs:*",
                 "s3:*",
-                "elasticfilesystem:*",
                 "rds:describe*",
                 "rds:createDBSubnetGroup",
                 "rds:deleteDBSubnetGroup",
