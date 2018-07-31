@@ -2,14 +2,6 @@ module Cluster
   module ClientHelpers
     module ClassMethods
 
-      def efs_client
-        Aws::EFS::Client.new(
-          region: config.parsed[:region],
-          credentials: config.credentials,
-          retry_limit: 6
-        )
-      end
-
       def sns_client
         Aws::SNS::Client.new(
           region: config.parsed[:region],
