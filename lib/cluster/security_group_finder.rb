@@ -7,9 +7,10 @@ module Cluster
     end
 
     def find(name)
-      self.class.ec2_client.describe_security_groups.inject([]){ |memo, page| memo + page.security_groups }.find do |group|
+      vpc_filter = { filters: [{ name: "vpc-id", values: [vpc.vpc_id] }] }
+      self.class.ec2_client.describe_security_groups(vpc_filter).inject([]){ |memo, page| memo + page.security_groups }.find do |group|
         # This is tightly coupled to the implementation in templates/OpsWorksinVPC.template
-        group.group_name.match(/#{name}/) && group.vpc_id == vpc.vpc_id
+        group.group_name.match(/#{name}/)
       end
     end
 
