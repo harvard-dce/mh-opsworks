@@ -2,6 +2,8 @@
 
 ## TO BE RELEASED
 
+* add vpc filter to security group finder API call because performance
+
 ## 1.17.1 - 06/05/2018
 
 * MI-89: Don't bother specifying ebs optimization in layer settings. Instance types where we'd want
