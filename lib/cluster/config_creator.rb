@@ -41,7 +41,7 @@ module Cluster
 
         description: 'Appropriate for processing small workloads and testing capture agent integration. Uses a storage layer to export a filesystem.',
 
-        storage_instance_type: 'c4.xlarge',
+        storage_instance_type: 'm5.large',
         storage_disk_size: '250',
 
         database_instance_type: 'db.t2.medium',
@@ -49,17 +49,17 @@ module Cluster
         database_param_group: 'dce-oc-mysql-5-6',
         multi_az: false,
 
-        admin_instance_type: 'c4.xlarge',
+        admin_instance_type: 'm5.large',
 
-        workers_instance_type: 'c4.xlarge',
+        workers_instance_type: 'c5.xlarge',
         workers_instance_count: 2,
 
-        engage_instance_type: 'c4.xlarge',
+        engage_instance_type: 'm5.large',
 
         ganglia_instance_type: 't2.medium',
         ganglia_disk_size: '20',
 
-        analytics_instance_type: 'm4.large',
+        analytics_instance_type: 'm5.large',
         analytics_disk_size: '50',
 
         utility_instance_type: 't2.medium',
@@ -74,25 +74,25 @@ module Cluster
 
         description: 'Appropriate for large workloads, fairly expensive to deploy. Uses a storage layer to export a filesystem.',
 
-        storage_instance_type: 'c4.8xlarge',
+        storage_instance_type: 'm5.2xlarge',
         storage_disk_size: '2000',
 
-        database_instance_type: 'db.m4.2xlarge',
+        database_instance_type: 'db.r4.xlarge',
         database_disk_size: '250',
         database_param_group: 'dce-oc-mysql-5-6',
         multi_az: true,
 
-        admin_instance_type: 'c4.8xlarge',
+        admin_instance_type: 'm5.4xlarge',
 
-        workers_instance_type: 'c4.8xlarge',
+        workers_instance_type: 'c5.9xlarge',
         workers_instance_count: 2,
 
-        engage_instance_type: 'c4.8xlarge',
+        engage_instance_type: 'm5.4xlarge',
 
-        ganglia_instance_type: 'c4.large',
+        ganglia_instance_type: 't2.medium',
         ganglia_disk_size: '100',
 
-        analytics_instance_type: 'm4.xlarge',
+        analytics_instance_type: 'm5.2xlarge',
         analytics_disk_size: '500',
 
         utility_instance_type: 't2.large',
@@ -112,19 +112,20 @@ module Cluster
         database_param_group: 'dce-oc-mysql-5-6',
         multi_az: false,
 
-        admin_instance_type: 'c4.xlarge',
+        admin_instance_type: 'm5.large',
 
-        workers_instance_type: 'c4.xlarge',
+        workers_instance_type: 'c5.xlarge',
         workers_instance_count: 2,
 
-        engage_instance_type: 'c4.xlarge',
+        engage_instance_type: 'm5.large',
 
         ganglia_instance_type: 't2.medium',
         ganglia_disk_size: '20',
 
-        analytics_instance_type: 'm4.large',
+        analytics_instance_type: 'm5.large',
         analytics_disk_size: '50',
 
+        # big enough to get high throughput network for squid/s3 backup
         utility_instance_type: 'm5.large',
 
         opencast_root_size: '20',
@@ -142,17 +143,17 @@ module Cluster
         database_param_group: 'dce-oc-mysql-5-6',
         multi_az: true,
 
-        admin_instance_type: 'c4.8xlarge',
+        admin_instance_type: 'm5.4xlarge',
 
-        workers_instance_type: 'c4.8xlarge',
+        workers_instance_type: 'c5.9xlarge',
         workers_instance_count: 2,
 
-        engage_instance_type: 'c4.8xlarge',
+        engage_instance_type: 'm5.4xlarge',
 
-        ganglia_instance_type: 'c4.large',
+        ganglia_instance_type: 't2.medium',
         ganglia_disk_size: '100',
 
-        analytics_instance_type: 'm4.xlarge',
+        analytics_instance_type: 'm5.2xlarge',
         analytics_disk_size: '500',
 
         utility_instance_type: 'm5.large',

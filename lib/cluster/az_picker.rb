@@ -18,7 +18,8 @@ module Cluster
       ec2_client.describe_availability_zones.inject([]){ |memo, page| memo + page.availability_zones }.each do |az|
         availability_zones << az.zone_name
       end
-      availability_zones
+      # new instance classes not yet available in us-east-1e
+      availability_zones - ["us-east-1e"]
     end
   end
 end
