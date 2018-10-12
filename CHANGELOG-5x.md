@@ -1,5 +1,7 @@
 # CHANGELOG
 
+* open iperf3 port from capture agents in common security group
+
 * set default cluster cookbook revision to "oc-opsworks-5.x-recipes" (for now)
 
 * MI-100: add vpc filter to security group finder api call (cherry-picked from main line)

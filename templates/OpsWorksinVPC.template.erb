@@ -524,6 +524,15 @@
                 "Description": "VPN"
               },
               <% end %>
+              <% ca_ips.each do |ip| %>
+              {
+                "IpProtocol" : "tcp",
+                "FromPort" : "5201",
+                "ToPort" : "5201",
+                "CidrIp" : "<%= ip %>",
+                "Description": "Capture Agents iperf3 testing"
+              },
+              <% end %>
             ],
             "SecurityGroupEgress" : [
             ],
