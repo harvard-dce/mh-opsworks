@@ -20,6 +20,7 @@ build_ami() {
     $ssh_connection sudo rm -rf /etc/aws/opsworks/ /opt/aws/opsworks/ /var/log/aws/opsworks/ \
       /var/lib/aws/opsworks/ /etc/monit.d/opsworks-agent.monitrc \
       /etc/monit/conf.d/opsworks-agent.monitrc /var/lib/cloud/ &&
+    $ssh_connection sudo apt-get -y autoremove
     $ssh_connection sudo aptitude clean
 
   if [[ `id -u` != 0 ]]; then

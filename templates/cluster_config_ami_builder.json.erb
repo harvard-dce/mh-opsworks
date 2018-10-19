@@ -3,11 +3,7 @@
   "region": "us-east-1",
   "vpc": {
     "cidr_block": "<%= cidr_block_root %>.0/24",
-    "public_cidr_block": "<%= cidr_block_root %>.0/26",
-    "private_cidr_block": "<%= cidr_block_root %>.64/26",
-    "db_cidr_block": "<%= cidr_block_root %>.128/28",
-    "primary_az": "<%= primary_az %>",
-    "secondary_az": "<%= secondary_az %>",
+    "subnet_azs": "<%= subnet_azs %>",
     "_cidr_block_comment": "10.1.1.0/24 gives you 254 ips"
   },
   "rds": {
@@ -37,9 +33,11 @@
         }<%= base_secrets_content %>
       },
       "custom_cookbooks_source": {
-        "type": "git",
+        "type": "<%= cookbook_source_type %>",
+        <% if cookbook_source_type == "git" %>
         "url": "https://github.com/harvard-dce/mh-opsworks-recipes",
-        "revision": "develop"
+        <% end %>
+        "revision": "oc-opsworks-5.x-recipes"
       }
     },
     "layers": [
@@ -60,6 +58,7 @@
             "oc-opsworks-recipes::install-oc-base-packages",
             "oc-opsworks-recipes::create-opencast-user",
             "oc-opsworks-recipes::enable-enhanced-networking",
+            "oc-opsworks-recipes::install-aws-kernel",
             "oc-opsworks-recipes::install-ffmpeg",
             "oc-opsworks-recipes::clean-up-package-cache"
           ],
@@ -70,7 +69,7 @@
         "volume_configurations": [ ],
         "instances": {
           "number_of_instances": "1",
-          "instance_type": "c4.xlarge",
+          "instance_type": "c5.xlarge",
           "root_device_type": "ebs",
           "root_device_size": "<%= root_device_size %>"
         }
@@ -91,6 +90,7 @@
             "oc-opsworks-recipes::install-oc-base-packages",
             "oc-opsworks-recipes::create-opencast-user",
             "oc-opsworks-recipes::enable-enhanced-networking",
+            "oc-opsworks-recipes::install-aws-kernel",
             "oc-opsworks-recipes::install-ffmpeg",
             "oc-opsworks-recipes::clean-up-package-cache"
           ],
@@ -101,7 +101,7 @@
         "volume_configurations": [ ],
         "instances": {
           "number_of_instances": "1",
-          "instance_type": "c4.xlarge",
+          "instance_type": "c5.xlarge",
           "root_device_type": "ebs",
           "root_device_size": "<%= root_device_size %>"
         }
