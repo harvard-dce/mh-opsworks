@@ -43,6 +43,17 @@ describe Cluster::ConfigCreationSession do
 
       expect(session.name).to eq 'cluster name'
     end
+
+    it 'forces names to lowercase' do
+      stub_stacks_with_other_stack_name
+      session = described_class.new
+
+      allow(STDIN).to receive(:gets).and_return('An Uppercase Cluster-Name')
+
+      session.get_cluster_name
+
+      expect(session.name).to eq 'an uppercase cluster-name'
+    end
   end
 
   context '#get_cookbook_source_type' do

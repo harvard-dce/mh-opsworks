@@ -71,11 +71,11 @@ module Cluster
       end
 
       if ! cluster_name_ok?(name_choice)
-        puts "Cluster names should be only letters, numbers, spaces and hyphens."
+        puts "Cluster names should be only lowercase letters, numbers, spaces and hyphens."
         return get_cluster_name
       end
 
-      @name = name_choice
+      @name = name_choice.downcase
     end
 
     def compute_cidr_block_root
