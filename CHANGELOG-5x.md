@@ -1,5 +1,7 @@
 # CHANGELOG
 
+* b/MI-119: set storage type to general pupose ssd
+
 * t/MI-118: force cluster names to lowercase
 
 * open iperf3 port from capture agents in common security group
