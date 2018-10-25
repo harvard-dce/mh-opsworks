@@ -194,6 +194,7 @@ module Cluster
           engine: 'MySQL',
           multi_az: false,
           engine_version: '5.6.34',
+          storage_type: 'gp2',
           preferred_backup_window: "05:02-05:32",
           preferred_maintenance_window: "thu:09:31-thu:10:01",
       }.merge(base_parameters)
