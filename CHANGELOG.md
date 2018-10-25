@@ -2,6 +2,8 @@
 
 ## TO BE RELEASED
 
+## 1.17.2 - 10/25/2018
+
 * set rds `storage_type` to 'gp2' as default is not what we want
 * add vpc filter to security group finder API call because performance
 
