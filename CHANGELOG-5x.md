@@ -1,5 +1,11 @@
 # CHANGELOG
 
+* t/MI-122: update all gems to latest versions
+
+* b/MI-124: redo db subnet group; remove db subnet
+
+* b/MI-119: set storage type to general pupose ssd
+
 * t/MI-118: force cluster names to lowercase
 
 * open iperf3 port from capture agents in common security group
