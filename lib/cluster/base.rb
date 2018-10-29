@@ -2,7 +2,6 @@ module Cluster
   class Base
     require 'uri'
     require 'json'
-    require 'celluloid'
     include ConfigurationHelpers
     include NamingHelpers
     include ClientHelpers
