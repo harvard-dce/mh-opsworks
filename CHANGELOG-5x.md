@@ -1,5 +1,7 @@
 # CHANGELOG
 
+* t/MI-122: update all gems to latest versions
+
 * t/MI-118: force cluster names to lowercase
 
 * open iperf3 port from capture agents in common security group

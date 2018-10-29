@@ -39,30 +39,34 @@ module Cluster
           recipes: ['oc-opsworks-recipes::maintenance-mode-on', 'oc-opsworks-recipes::stop-opencast'],
           layers: ['Engage', 'Workers']
         )
-        rds_hibernate = Celluloid::Future.new { hibernate_rds and Cluster::RDS.hibernate }
+        fork do
+          hibernate_rds and Cluster::RDS.hibernate
+        end
         stop_all_in_layers(
           ['workers', 'admin', 'engage', 'monitoring-master']
         )
         stop_all_in_layers(['storage'])
         stop_all_other_instances
-        join = rds_hibernate.value
+        Process.waitall
       end
     end
 
     def self.start_all(num_workers)
       with_existing_stack do |stack|
-        rds_restore = Celluloid::Future.new { Cluster::RDS.restore }
+        fork do
+          Cluster::RDS.restore
+        end
         start_all_in_layers(['storage'])
-        join = rds_restore.value
+        Process.waitall
         start_all_in_layers(['admin'])
         if num_workers.nil?
           start_all_in_layers(['workers', 'engage','monitoring-master'])
         else
-          workers_start = Celluloid::Future.new {
+          fork do
             start_some_in_layer('workers', num_workers)
-          }
+          end
           start_all_in_layers(['engage','monitoring-master'])
-          join = workers_start.value
+          Process.waitall
         end
         start_all_other_instances(include_workers = num_workers.nil?)
       end
