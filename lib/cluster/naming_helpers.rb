@@ -18,15 +18,23 @@ module Cluster
       end
 
       def rds_name
+        %Q|#{stack_shortname}-cluster|
+      end
+
+      def rds_instance_prefix
         %Q|#{stack_shortname}-database|
       end
 
-      def db_hibernate_snapshot_id
-        %Q|#{rds_name}-hibernated|
+      def rds_cfn_stack_name
+        %Q|#{stack_shortname}-rds|
       end
 
       def vpc_name
         %Q|#{stack_shortname}-vpc|
+      end
+
+      def cfn_stack_name_from_id(cfn_stack_id)
+        cfn_stack_id.match(/stack\/([^\/]+)/).captures.first
       end
 
       def instance_profile_name

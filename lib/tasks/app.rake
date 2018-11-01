@@ -5,6 +5,11 @@ namespace :app do
     puts "App: #{app.name} created"
   end
 
+  desc Cluster::RakeDocs.new('app:update').desc
+  task update: ['cluster:configtest', 'cluster:config_sync_check', 'cluster:production_failsafe'] do
+    Cluster::App.update
+  end
+
   desc Cluster::RakeDocs.new('app:delete').desc
   task delete: ['cluster:configtest', 'cluster:config_sync_check', 'cluster:production_failsafe'] do
     Cluster::App.delete

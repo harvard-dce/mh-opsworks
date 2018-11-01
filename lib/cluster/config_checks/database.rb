@@ -1,7 +1,7 @@
 module Cluster
   module ConfigChecks
     class RDSUserInfoNotDefined < StandardError; end
-    class RDSDatabaseInstanceNotDefined < StandardError; end
+    class RDSDatabaseUnsupportedInstanceClass < StandardError; end
     class RDSDatabaseNameNotDefined < StandardError; end
 
     class Database < Base
@@ -9,8 +9,8 @@ module Cluster
         if ! rds_config[:master_user_password] || ! rds_config[:master_username]
           raise RDSUserInfoNotDefined.new('You need to define a master_user_password and master_username in the RDS configuration')
         end
-        if ! rds_config[:allocated_storage] || ! rds_config[:db_instance_class]
-          raise RDSDatabaseInstanceNotDefined.new('You need to define the allocated_storage and db_instance_class in the RDS configuration')
+        if ! rds_config[:db_instance_class] || ! rds_config[:db_instance_class].match(/^db\.r/)
+          raise RDSDatabaseUnsupportedInstanceClass.new('DB instance classes other than r3|r4 are not supported')
         end
         if ! rds_config[:db_name]
           raise RDSDatabaseNameNotDefined.new('You need to define the database name in the RDS configuration')

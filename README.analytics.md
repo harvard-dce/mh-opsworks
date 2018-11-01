@@ -18,7 +18,6 @@ to get the new node (which you can then start via the AWS console):
    "type": "custom",
    "auto_assign_elastic_ips": true,
    "auto_assign_public_ips": true,
-   "use_ebs_optimized_instances": true,
    "custom_recipes": {
      "setup": [
        "oc-opsworks-recipes::set-timezone",

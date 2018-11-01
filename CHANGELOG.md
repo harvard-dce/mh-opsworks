@@ -9,6 +9,7 @@
 * sleep a little longer waiting for the `ssh_users` deployment to inititate
 * include `create-opencast-directories` recipe in local vagrant setup runlists to ensure
   directories are created on first `up` / deployment
+* MI-97: RDS Aurora clusters
 
 ## 1.17.2 - 10/25/2018
 

@@ -12,8 +12,6 @@ module Cluster
         storage_disk_size: '100',
 
         database_instance_type: 'db.t2.medium',
-        database_disk_size: '20',
-        database_param_group: 'dce-oc-mysql-5-6',
         multi_az: false,
 
         admin_instance_type: 't2.medium',
@@ -44,9 +42,7 @@ module Cluster
         storage_instance_type: 'm5.large',
         storage_disk_size: '250',
 
-        database_instance_type: 'db.t2.medium',
-        database_disk_size: '20',
-        database_param_group: 'dce-oc-mysql-5-6',
+        database_instance_type: 'db.r4.large',
         multi_az: false,
 
         admin_instance_type: 'm5.large',
@@ -78,8 +74,6 @@ module Cluster
         storage_disk_size: '2000',
 
         database_instance_type: 'db.r4.xlarge',
-        database_disk_size: '250',
-        database_param_group: 'dce-oc-mysql-5-6',
         multi_az: true,
 
         admin_instance_type: 'm5.4xlarge',
@@ -107,9 +101,7 @@ module Cluster
 
         description: 'Appropriate for processing small workloads and testing capture agent integration. Uses zadara storage - see README.zadara.md for instructions. ',
 
-        database_instance_type: 'db.t2.medium',
-        database_disk_size: '20',
-        database_param_group: 'dce-oc-mysql-5-6',
+        database_instance_type: 'db.r4.large',
         multi_az: false,
 
         admin_instance_type: 'm5.large',
@@ -138,9 +130,7 @@ module Cluster
 
         description: 'Appropriate for large workloads. Uses zadara storage - see README.zadara.md for instructions. ',
 
-        database_instance_type: 'db.m4.2xlarge',
-        database_disk_size: '250',
-        database_param_group: 'dce-oc-mysql-5-6',
+        database_instance_type: 'db.r4.xlarge',
         multi_az: true,
 
         admin_instance_type: 'm5.4xlarge',
@@ -172,8 +162,6 @@ module Cluster
         storage_disk_size: '200',
 
         database_instance_type: 'db.t2.micro',
-        database_disk_size: '20',
-        database_param_group: 'dce-oc-mysql-5-6',
         multi_az: false,
 
         admin_instance_type: 't2.medium',

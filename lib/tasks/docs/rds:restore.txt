@@ -1,7 +1,0 @@
-Restore the RDS instance
-
-This restores the RDS instance from it's hibernated, snapshot state
-
-SEE ALSO:
-
-rds:hibernate

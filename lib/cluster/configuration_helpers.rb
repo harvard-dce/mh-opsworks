@@ -41,9 +41,14 @@ module Cluster
         iam_client.get_user.data.user.arn.match(/(\d+)/)[0]
       end
 
-      def rds_db_instance_arn
+      def rds_db_cluster_arn
         region = config.parsed[:region]
-        %Q|arn:aws:rds:#{region}:#{get_account_number}:db:#{rds_name}|
+        %Q|arn:aws:rds:#{region}:#{get_account_number}:cluster:#{rds_name}|
+      end
+
+      def rds_db_instance_arn(rds_instance_identifier)
+        region = config.parsed[:region]
+        %Q|arn:aws:rds:#{region}:#{get_account_number}:db:#{rds_instance_identifier}|
       end
 
       def deployment_config
@@ -68,6 +73,10 @@ module Cluster
 
       def dev_or_testing_cluster?
         ['development', 'test'].include?(stack_custom_json[:cluster_env])
+      end
+
+      def prod_cluster?
+        stack_shortname.match(/prod|prd/i) or !dev_or_testing_cluster?
       end
 
       def skip_configtest?

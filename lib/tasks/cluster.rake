@@ -83,16 +83,12 @@ namespace :cluster do
       if ['y','Y'].include?(answer)
         remote_config.sync
         puts 'updating stack, app & layer attributes. . .'
-        fork do
-          Cluster::Stack.update
+        futures = ["Stack", "App", "Layers"].map do |cluster_class|
+          Concurrent::Future.execute {
+            eval("Cluster::#{cluster_class}.update")
+          }
         end
-        fork do
-          Cluster::App.update
-        end
-        fork do
-          Cluster::Layers.update
-        end
-        Process.waitall
+        futures.map(&:value!)
       else
         puts "Quitting. Please resolve your config changes and try again."
         exit

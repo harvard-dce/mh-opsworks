@@ -13,7 +13,13 @@ module Cluster
       app = find_existing
       if app
         parameters = app_parameters
-        [:stack_id, :shortname].each do |key|
+
+        # the update_app method doesn't like the ARNs for our rds cluster instances, possibly a bug
+        # for now we'll just skip sending the :data_source information since it only otherwise contains the
+        # db name, which is unlikely to change. In addition, the actual db instance registered with the
+        # app doesn't matter because we override the "host" value of the db during deployment
+        # see: Cluster::Stack.stack_parameters
+        [:stack_id, :shortname, :data_sources].each do |key|
           parameters.delete(key)
         end
         opsworks_client.update_app(
@@ -43,6 +49,7 @@ module Cluster
     def self.app_parameters
       stack = Stack.find_existing
       app_source = app_config[:app_source]
+      rds_arn = Cluster::RDS.writer_instance_arn
 
       if deployment_private_ssh_key
         app_source[:ssh_key] = deployment_private_ssh_key
@@ -51,7 +58,7 @@ module Cluster
       data_source = {
         type: 'RdsDbInstance',
         database_name: rds_config[:db_name],
-        arn: rds_db_instance_arn
+        arn: rds_arn
       }
 
       {

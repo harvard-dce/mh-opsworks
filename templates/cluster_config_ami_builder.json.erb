@@ -9,11 +9,10 @@
   "rds": {
     "db_name": "opencast",
     "db_instance_class": "<%= database_instance_type %>",
-    "allocated_storage": "<%= database_disk_size %>",
-    "db_parameter_group_name": "<%= database_param_group %>",
     "master_username": "root",
     "master_user_password": "<%= master_user_password %>",
     "backup_retention_period": 1,
+    "enable_performance_insights": false,
     "multi_az": <%= multi_az %>
   },
   "stack": {

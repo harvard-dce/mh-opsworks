@@ -186,19 +186,6 @@
       }
     },
 
-    "DBSubnetGroup": {
-      "Type" : "AWS::RDS::DBSubnetGroup",
-      "Properties": {
-        "DBSubnetGroupDescription": { "Fn::Join" : [ " ", [ { "Ref" : "AWS::StackName" }, "db subnet group" ] ] },
-        "SubnetIds": [
-          { "Ref": "PrivateSubnet1" },
-          { "Ref": "PrivateSubnet2" },
-          { "Ref": "PrivateSubnet3" },
-          { "Ref": "PrivateSubnet4" }
-        ]
-      }
-    },
-
     "PrivateSubnet1" : {
       "Type" : "AWS::EC2::Subnet",
       "Properties" : {
@@ -463,14 +450,14 @@
                 "Description": "Capture Agents"
               },
               <% end %>
-              <% ibm_watson_ips.each do |ip| %>
+              <% ibm_watson_ips.each_with_index do |ip, i| %>
               {
                 "IpProtocol" : "tcp",
                 "FromPort" : "80",
                 "ToPort" : "80",
                 "CidrIp" : "<%= ip %>",
                 "Description": "IBM watson callback"
-              },
+              }<%= ',' if i < (ibm_watson_ips.size - 1) %>
               <% end %>
             ],
             "SecurityGroupEgress" : [
@@ -488,7 +475,7 @@
             "VpcId" : { "Ref" : "VPC" },
             "SecurityGroupIngress" : [
               { "IpProtocol" : "tcp", "FromPort" : "80",  "ToPort" : "80",  "CidrIp" : "0.0.0.0/0" },
-              { "IpProtocol" : "tcp", "FromPort" : "443",  "ToPort" : "443",  "CidrIp" : "0.0.0.0/0" },
+              { "IpProtocol" : "tcp", "FromPort" : "443",  "ToPort" : "443",  "CidrIp" : "0.0.0.0/0" }
             ],
             "SecurityGroupEgress" : [
             ],
@@ -536,14 +523,14 @@
                 "Description": "VPN"
               },
               <% end %>
-              <% ca_ips.each do |ip| %>
+              <% ca_ips.each_with_index do |ip, i| %>
               {
                 "IpProtocol" : "tcp",
                 "FromPort" : "5201",
                 "ToPort" : "5201",
                 "CidrIp" : "<%= ip %>",
                 "Description": "Capture Agents iperf3 testing"
-              },
+              }<%= ',' if i < (ca_ips.size - 1) %>
               <% end %>
             ],
             "SecurityGroupEgress" : [
@@ -552,14 +539,17 @@
               { "Key" : "Name", "Value" : { "Fn::Join" : [ " ", [ { "Ref" : "AWS::StackName" }, "opsworks common layer security group" ] ] } }
             ]
         }
-    },
+    }
   },
 
   "Outputs" : {
 
     "VPC" : {
       "Description" : "VPC",
-      "Value" : {"Ref" : "VPC"}
+      "Value" : {"Ref" : "VPC"},
+      "Export" : {
+        "Name": { "Fn::Sub": "${AWS::StackName}-vpc-id" }
+      }
     },
 
     "PublicSubnets" : {
@@ -570,6 +560,9 @@
           {"Ref" : "PublicSubnet2" }
           ]
         ]
+      },
+      "Export" : {
+        "Name": { "Fn::Sub": "${AWS::StackName}-public-subnet-ids" }
       }
     },
 
@@ -583,27 +576,42 @@
           {"Ref" : "PrivateSubnet4" }
           ]
         ]
+      },
+      "Export" : {
+        "Name": { "Fn::Sub": "${AWS::StackName}-private-subnet-ids" }
       }
     },
 
     "NATGatewayIP": {
       "Description": "NAT Gateway IP",
-      "Value": { "Ref": "NATGatewayEIP" }
+      "Value": { "Ref": "NATGatewayEIP" },
+      "Export" : {
+        "Name": { "Fn::Sub": "${AWS::StackName}-nat-gateway-ip" }
+      }
     },
 
     "AdminSecurityGroup": {
       "Description": "Security Group used by the cluster's admin layer instances",
-      "Value": { "Ref": "OpsworksLayerSecurityGroupAdmin" }
+      "Value": { "Ref": "OpsworksLayerSecurityGroupAdmin" },
+      "Export" : {
+        "Name": { "Fn::Sub": "${AWS::StackName}-admin-sg-id" }
+      }
     },
 
     "EngageSecurityGroup": {
       "Description": "Security Group used by the cluster's engage layer instances",
-      "Value": { "Ref": "OpsworksLayerSecurityGroupEngage" }
+      "Value": { "Ref": "OpsworksLayerSecurityGroupEngage" },
+      "Export" : {
+        "Name": { "Fn::Sub": "${AWS::StackName}-engage-sg-id" }
+      }
     },
 
     "CommonSecurityGroup": {
       "Description": "Common Security Group used by all cluster instances",
-      "Value": { "Ref": "OpsworksLayerSecurityGroupCommon" }
+      "Value": { "Ref": "OpsworksLayerSecurityGroupCommon" },
+      "Export" : {
+        "Name": { "Fn::Sub": "${AWS::StackName}-common-sg-id" }
+      }
     }
   }
 }

@@ -38,4 +38,12 @@ module ClientStubHelpers
       yield client if block_given?
     end
   end
+
+  def stub_rds_client
+    Aws::RDS::Client.new(stub_responses: true).tap do |client|
+      allow(client).to receive(:wait_until)
+      allow(Cluster::Base).to receive(:rds_client).and_return(client)
+      yield client if block_given?
+    end
+  end
 end

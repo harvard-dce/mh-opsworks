@@ -32,41 +32,63 @@ module Cluster
       end
     end
 
-    def self.stop_all(hibernate_rds=true)
+    def self.stop_all(stop_rds=true)
       with_existing_stack do |stack|
         puts 'turning on maintenance mode, stopping opencast on engage and workers. . . '
         Cluster::Deployment.execute_chef_recipes_on_layers(
           recipes: ['oc-opsworks-recipes::maintenance-mode-on', 'oc-opsworks-recipes::stop-opencast'],
           layers: ['Engage', 'Workers']
         )
-        fork do
-          hibernate_rds and Cluster::RDS.hibernate
-        end
+
+        rds_stop = Concurrent::Future.execute {
+          stop_rds and Cluster::RDS.stop
+        }
+
         stop_all_in_layers(
           ['workers', 'admin', 'engage', 'monitoring-master']
         )
         stop_all_in_layers(['storage'])
         stop_all_other_instances
-        Process.waitall
+
+        begin
+          rds_stop.value!
+        rescue => e
+          puts "Something went wrong stopping the rds cluster: #{rds_stop.reason}"
+          puts e.backtrace
+        end
       end
     end
 
     def self.start_all(num_workers)
       with_existing_stack do |stack|
-        fork do
-          Cluster::RDS.restore
-        end
+
+        rds_start = Concurrent::Future.execute {
+          Cluster::RDS.start
+        }
+
         start_all_in_layers(['storage'])
-        Process.waitall
+
+        begin
+          rds_start.value!
+        rescue => e
+          puts "Something went wrong starting the rds cluster: #{rds_start.reason}"
+          puts e.backtrace
+        end
+
         start_all_in_layers(['admin'])
         if num_workers.nil?
           start_all_in_layers(['workers', 'engage','monitoring-master'])
         else
-          fork do
+          workers_start = Concurrent::Future.execute {
             start_some_in_layer('workers', num_workers)
-          end
+          }
           start_all_in_layers(['engage','monitoring-master'])
-          Process.waitall
+          begin
+            workers_start.value!
+          rescue => e
+            puts "Something went wrong starting the workers: #{workers_start.reason}"
+            puts e.backtrace
+          end
         end
         start_all_other_instances(include_workers = num_workers.nil?)
       end
@@ -212,6 +234,29 @@ module Cluster
 
       instance_profile = InstanceProfile.find_or_create
 
+      custom_json = stack_custom_json
+      rds_cluster = Cluster::RDS.find_existing
+
+      # IMPORTANT:
+      # Here we override the stack's deployment information for the database
+      # with the endpoint of the *cluster*. When the opsworks stack/app is
+      # initialized it gets the endpoint for whichever db instance is currently
+      # the "writer" (in a cluster with > 1 db instance, one is the writer and
+      # the rest are "readers", i.e. replicas). We want our stack/app to talk
+      # to the cluster's wrapper endpoint, so, in the case of a failover, we're
+      # always connecting to the primary "writer" instance. This is a bit of a
+      # hack/workaround, but was provided by AWS support as the accepted workaround
+      # until opsworks more fully implements support for rds clusters.
+      if rds_cluster
+        custom_json[:deploy] = {
+            app_config[:shortname].to_sym => {
+                :database => {
+                    :host => rds_cluster.endpoint
+                }
+            }
+        }
+      end
+
       {
         name: stack_config[:name],
         region: root_config[:region],
@@ -227,7 +272,7 @@ module Cluster
           berkshelf_version: '3.2.0'
         },
         custom_json: json_encode(
-          stack_custom_json
+          custom_json
         ),
         default_os: 'Ubuntu 14.04 LTS',
         service_role_arn: service_role.arn,

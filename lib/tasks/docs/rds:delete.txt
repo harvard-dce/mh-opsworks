@@ -1,0 +1,5 @@
+Delete the RDS cloudformation stack
+
+SEE ALSO:
+
+rds:create

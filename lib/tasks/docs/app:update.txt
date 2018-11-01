@@ -1,0 +1,5 @@
+Update the app according to the current cluster config
+
+Update the app associated with the current opsworks stack. You generally
+wouldn't use this in production, only when building or modifying oc-opsworks
+features.

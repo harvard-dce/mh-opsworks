@@ -27,8 +27,15 @@ module Cluster
     def self.update
       parameters = get_parameters
       parameters.delete(:timeout_in_minutes)
-      stack = cloudformation_client.update_stack(parameters)
-      wait_until_stack_update_completed(stack.stack_id)
+      begin
+        stack = cloudformation_client.update_stack(parameters)
+        wait_until_stack_update_completed(stack.stack_id)
+      rescue => e
+        puts e.message
+        unless e.message.start_with? "No updates"
+          raise
+        end
+      end
       find_existing
     end
 

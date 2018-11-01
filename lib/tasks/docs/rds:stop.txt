@@ -1,0 +1,5 @@
+Stop the RDS cluster
+
+SEE ALSO:
+
+rds:start

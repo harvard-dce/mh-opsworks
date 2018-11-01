@@ -115,12 +115,12 @@ AWS opsworks console.
 At this point your opsworks instances have been initialized but no ec2 instances
 have been created. The RDS instance **has** been created and will be running (and
 incurring AWS costs). If you do not intend to go on to the next step at this time
-you should consider running `./bin/rake rds:hibernate` which will create a 
-snapshot of the db and remove the instance. When you are eventually ready to move
-on to step 6, the `stack:instances:start` command will re-create and restore the
-RDS instance from it's "hibernated" snapshot.
+you should consider running `./bin/rake rds:stop` which will turn off the RDS cluster. 
+When you are eventually ready to move
+on to step 6, the `stack:instances:start` command will restore the
+RDS cluster from it's stopped state.
 
-**Note**: running `rds:hibernate` immediately after `admin:cluster:init`
+**Note**: running `rds:stop` immediately after `admin:cluster:init`
 can sometimes return an error that the RDS instance is in a non-modifiable state.
 This is fine; it's just the instance doing it's usual automated backup when it first 
 comes online. Wait 5-10m or so and try again.
@@ -711,21 +711,6 @@ If you wanted to create a multi-az instance for a non-large cluster, you'd run
 
 and then create your cluster.  This pattern is similar for other RDS-specific
 attributes.
-
-### RDS instance hibernation
-
-Unlike the opsworks ec2 instances, RDS instances cannot be simply turned off/on.
-They either exist and are running, or are deleted. `oc-opsworks` allows for a form
-of RDS "hibernation" that involves taking a final snapshot followed by a deletion
-of the instance. "Restoring" involves recreating the instance from it's final
-snapshot. The naming format of the hibernation snapshot is `[db name]-hibernated`.
-
-Hibernation of the RDS instance happens automatically during a `stack:instances:stop` 
-operation. Restoration of the RDS instance happens during `stack:instances:start`, with
-the exception of a new, just-initialized cluster, because in that situation the
-RDS instance should already exist.
-
-RDS instances can be manullay hibernated/restored using `rds:hibernate` and `rds:restore`.
 
 ### Potentially problematic aws resource limits
 

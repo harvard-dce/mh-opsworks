@@ -1,6 +1,6 @@
 Stops all instances in the current cluster
 
-This shuts down opencast and, stops all instances in the cluster, and hibernates the RDS instance.
+This shuts down opencast and, stops all instances in the cluster, and stops the RDS cluster.
 
 SEE ALSO:
 

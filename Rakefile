@@ -6,16 +6,19 @@ namespace :admin do
   namespace :cluster do
     desc Cluster::RakeDocs.new('admin:cluster:init').desc
     task init: ['cluster:configtest', 'cluster:config_sync_check'] do
+
+      vpc = Cluster::VPC.find_or_create
+
+      rds_create = Concurrent::Future.execute do
+        Cluster::RDS.find_or_create
+      end
+
       stack = Cluster::Stack.find_or_create
 
       puts %Q|Stack "#{stack.name}" initialized, id: #{stack.stack_id}|
       layers = Cluster::Layers.find_or_create
 
-      Cluster::RDS.find_or_create
-      Cluster::RegistersRDSInstance.register
-
       Cluster::Instances.find_or_create
-      Cluster::App.find_or_create
       Cluster::S3DistributionBucket.find_or_create(Cluster::Base.distribution_bucket_name)
       Cluster::S3ArchiveBucket.find_or_create(Cluster::Base.s3_file_archive_bucket_name)
 
@@ -26,10 +29,23 @@ namespace :admin do
         end
       end
 
+      begin
+        rds_create.value!
+      rescue => e
+        puts "Something went wrong creating rds cluster: #{rds_create.reason}"
+        puts e.backtrace
+      end
+
+      Cluster::RegistersRDSInstance.register
+      Cluster::App.find_or_create
+
+      # update the stack config so it gets the RDS cluster endpoint
+      Cluster::Stack.update
+
       puts
       puts %Q|Initializing the cluster does not start instances. To start them, use "./bin/rake stack:instances:start"|
       puts
-      puts %Q|Initializing the cluster starts your RDS instance! Please run 'rds:hibernate' if you're not starting the cluster right away!|.yellow
+      puts %Q|Initializing the cluster starts your RDS cluster! Please run 'rds:cluster' if you're not starting the opsworks cluster right away!|.yellow
     end
 
     desc Cluster::RakeDocs.new('admin:cluster:delete').desc
@@ -40,11 +56,20 @@ namespace :admin do
       puts 'deleting sns topic and subscriptions'
       Cluster::SNS.delete
 
+      rds_delete = Concurrent::Future.execute do
+        puts 'deleting RDS cluster'
+
+        # RDS Clusters won't delete when in a stopped state! :(
+        existing_rds = Cluster::RDS.find_existing
+        if existing_rds
+          Cluster::RDS.start
+        end
+
+        Cluster::RDS.delete
+      end
+
       puts 'deleting instances'
       Cluster::Instances.delete
-
-      puts 'deleting RDS instance'
-      Cluster::RDS.delete
 
       puts 'deleting stack'
       Cluster::Stack.delete
@@ -67,6 +92,16 @@ namespace :admin do
 
       puts 'deleting SQS queues'
       Cluster::SQS.delete_queue(Cluster::Base.useractions_queue_name)
+
+      begin
+        rds_delete.value!
+      rescue => e
+        puts "Something went wrong deleting the rds cluster: #{rds_delete.reason}"
+        # reraise the exception to stop execution of the delete
+        # (not sure this is better than continuing, but seems less likely to result
+        # in orphaned rds resources if the vpc and cluster config hang around too)
+        raise
+      end
 
       puts 'deleting VPC'
       Cluster::VPC.delete

@@ -12,7 +12,7 @@ Subsequent starts go much faster, maybe 10 to 15 minutes.
 
 Custom tags are created or updated when starting instances via this command.
 
-The cluster's RDS instance is restored from it's "-hibernated" snapshot.
+The cluster's RDS cluster is started (if it's not already "avaialble").
 
 To start only a subset of workers pass in a `num_workers` argument, like so:
 

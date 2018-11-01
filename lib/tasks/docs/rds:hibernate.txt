@@ -1,7 +1,0 @@
-Hibernate the RDS instance
-
-This "hibernates" the RDS instance by saving state to a final snapshot and deletinng the instance.
-
-SEE ALSO:
-
-rds:restore

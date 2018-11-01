@@ -1,0 +1,165 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: "Creates RDS Aurora cluster and associated resources"
+
+Parameters:
+
+  DBClusterIdentifier:
+    Description: "Name of the RDS cluster"
+    Type: "String"
+  DBInstancePrefix:
+    Description: "Name of the RDS intance(s)"
+    Type: "String"
+  ParentVpcStack:
+    Description: "VPC Cloudformation stack this RDS cluster will associated with"
+    Type: "String"
+  DBMasterUser:
+    Description: "Database master user"
+    Type: "String"
+  DBMasterUserPassword:
+    Description: "Database master user password"
+    Type: "String"
+  PreferredBackupWindow:
+    Description: "Time window in which AWS will perform automated backups"
+    Type: "String"
+  PreferredMaintenanceWindow:
+    Description: "Time window in which AWS will perform automated maintenance"
+    Type: "String"
+  DBInstanceClass:
+    Description: "Instance type of database instances"
+    Type: "String"
+  DBName:
+    Description: "Name of the database to create in each instance"
+    Type: "String"
+  MultiAZ:
+    Description: "If 'true' a 2nd replica db instance will be created"
+    Type: "String"
+  EnablePerformanceInsights:
+    Description: "Turn on the extra performance insights interface"
+    Type: "String"
+  SnsTopicArn:
+    Description: "ARN of the SNS topic the cluster will send events to"
+    Type: "String"
+  BackupRetentionPeriod:
+    Description: "Number of days to keep automated backups"
+    Type: "String"
+
+Conditions:
+  CreateReplica: !Not [!Equals [!Ref MultiAZ, 'false']]
+
+Resources:
+
+  DBSubnetGroup:
+    Type: 'AWS::RDS::DBSubnetGroup'
+    Properties:
+      DBSubnetGroupDescription: !Sub "${AWS::StackName} db subnet group"
+      SubnetIds: !Split [',', {'Fn::ImportValue': !Sub '${ParentVpcStack}-private-subnet-ids'}]
+
+  DBClusterParameterGroup:
+    Type: 'AWS::RDS::DBClusterParameterGroup'
+    Properties:
+      Description: !Sub "${AWS::StackName} cluster-level settings"
+      Family: 'aurora5.6'
+      Parameters:
+        lower_case_table_names: "1"
+
+
+  DBParameterGroup:
+    Type: 'AWS::RDS::DBParameterGroup'
+    Properties:
+      Description: !Sub "${AWS::StackName} instance-level settings"
+      Family: "aurora5.6"
+      Parameters:
+        slow_query_log: "1"
+
+  DBCluster:
+    Type: 'AWS::RDS::DBCluster'
+    DeletionPolicy: Delete
+    Properties:
+      DBClusterIdentifier: !Ref DBClusterIdentifier
+      BacktrackWindow: 86400 # one day
+      BackupRetentionPeriod: !Ref BackupRetentionPeriod
+      DBClusterParameterGroupName: !Ref DBClusterParameterGroup
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      Engine: "aurora"
+      EngineMode: provisioned
+      MasterUsername: !Ref DBMasterUser
+      MasterUserPassword: !Ref DBMasterUserPassword
+      DatabaseName: !Ref DBName
+      PreferredBackupWindow: !Ref PreferredBackupWindow
+      PreferredMaintenanceWindow: !Ref PreferredMaintenanceWindow
+      EnableCloudwatchLogsExports:
+        - "error"
+        - "general"
+        - "slowquery"
+      VpcSecurityGroupIds:
+      - {'Fn::ImportValue': !Sub '${ParentVpcStack}-common-sg-id'}
+
+  DBInstance1:
+    Type: 'AWS::RDS::DBInstance'
+    DeletionPolicy: Delete
+    Properties:
+      AllowMajorVersionUpgrade: false
+      AutoMinorVersionUpgrade: false
+      CopyTagsToSnapshot: true
+      Engine: "aurora"
+      DBClusterIdentifier: !Ref DBCluster
+      DBInstanceIdentifier: !Join ['-', [!Ref DBInstancePrefix, '1']]
+      DBInstanceClass: !Ref DBInstanceClass
+      DBParameterGroupName: !Ref DBParameterGroup
+      EnablePerformanceInsights: !Ref EnablePerformanceInsights
+
+  DBInstance2:
+    Type: 'AWS::RDS::DBInstance'
+    Condition: CreateReplica
+    Properties:
+      AllowMajorVersionUpgrade: false
+      AutoMinorVersionUpgrade: false
+      CopyTagsToSnapshot: true
+      Engine: "aurora"
+      DBClusterIdentifier: !Ref DBCluster
+      DBInstanceIdentifier: !Join ['-', [!Ref DBInstancePrefix, '2']]
+      DBInstanceClass: !Ref DBInstanceClass
+      DBParameterGroupName: !Ref DBParameterGroup
+      EnablePerformanceInsights: !Ref EnablePerformanceInsights
+
+  DBClusterEventSubscription:
+    Type: 'AWS::RDS::EventSubscription'
+    Properties:
+      EventCategories:
+      - failover
+      - failure
+      - notification
+      SnsTopicArn: !Ref SnsTopicArn
+      SourceIds: [!Ref DBCluster]
+      SourceType: 'db-cluster'
+
+Outputs:
+  ClusterName:
+    Description: 'The name of the cluster'
+    Value: !Ref DBCluster
+    Export:
+      Name: !Sub "${AWS::StackName}-cluster-name"
+  InstanceName:
+    Description: 'The name of the instance'
+    Value: !Ref DBInstance1
+    Export:
+      Name: !Sub "${AWS::StackName}-instance-name"
+  ReplicaName:
+    Description: 'The name of the replica instance'
+    Value: !Ref DBInstance2
+    Condition: CreateReplica
+    Export:
+      Name: !Sub "${AWS::StackName}-replica-name"
+  DBSubnetGroupId:
+    Description: 'The name of the db subnet group'
+    Value: !Ref DBSubnetGroup
+    Export:
+      Name: !Sub "${AWS::StackName}-subnet-group"
+  EventSubscription:
+    Description: 'RDS event subscription name'
+    Value: !Ref DBClusterEventSubscription
+    Export:
+      Name: !Sub "${AWS::StackName}-rds-event-subscription"
+
+

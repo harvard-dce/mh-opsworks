@@ -3,16 +3,16 @@ module Cluster
     module ClassMethods
 
       def wait_until_rds_instance_available(db_instance_identifier)
-        puts "Waiting for RDS instance to be available..."
+        puts "Waiting for #{db_instance_identifier} to be available..."
         rds_client.wait_until(
           :db_instance_available, db_instance_identifier: db_instance_identifier
         ) do |w|
           ::Cluster::Instance.apply_wait_options(w)
         end
-        puts " RDS instance is available!"
+        puts " #{db_instance_identifier} is available!"
       end
 
-      def wait_for_rds_instance_modification(db_instance_identifier)
+      def wait_for_rds_cluster_modification(db_instance_identifier)
         puts "Waiting for RDS instance modification to complete..."
         sleep(30)
         rds_client.wait_until(
@@ -32,6 +32,24 @@ module Cluster
         puts " RDS instance is deleted!"
       end
 
+      # Note that rds cluster waiters use a custom block as there's no built-in waiters
+      # for db cluster states
+      def wait_until_rds_cluster_available(rds_cluster)
+        puts "Waiting for RDS cluster to be available..."
+        rds_cluster.wait_until(**custom_waiter_params) { |cluster|
+          cluster.status == "available"
+        }
+        puts "RDS cluster is available"
+      end
+
+      def wait_until_rds_cluster_stopped(rds_cluster)
+        puts "Waiting for RDS cluster to be stopped..."
+        rds_cluster.wait_until(**custom_waiter_params) { |cluster|
+          cluster.status == "stopped"
+        }
+        puts "RDS cluster is stopped"
+      end
+
       def wait_until_deployment_completed(deployment_id)
         print "Waiting for deployment, command, or recipe to execute successfully: "
         opsworks_client.wait_until(
@@ -43,7 +61,8 @@ module Cluster
       end
 
       def wait_until_stack_update_completed(cfn_stack_id)
-        print "Waiting for vpc infrastructure to be updated for #{vpc_name}: "
+        cfn_stack_name = cfn_stack_name_from_id(cfn_stack_id)
+        print "Waiting for cloudformation infrastructure to be updated for #{cfn_stack_name}... "
         cloudformation_client.wait_until(
           :stack_update_complete, stack_name: cfn_stack_id
         ) do |w|
@@ -53,7 +72,8 @@ module Cluster
       end
 
       def wait_until_stack_build_completed(cfn_stack_id)
-        print "Waiting for vpc infrastructure to be built for #{vpc_name}: "
+        cfn_stack_name = cfn_stack_name_from_id(cfn_stack_id)
+        print "Waiting for cloudformation infrastructure to be built for #{cfn_stack_name}... "
         cloudformation_client.wait_until(
           :stack_create_complete, stack_name: cfn_stack_id
         ) do |w|
@@ -63,7 +83,8 @@ module Cluster
       end
 
       def wait_until_stack_delete_completed(cfn_stack_id)
-        print "Waiting for vpc infrastructure to be deleted for #{vpc_name}: "
+        cfn_stack_name = cfn_stack_name_from_id(cfn_stack_id)
+        print "Waiting for cloudformation infrastructure to be deleted for #{cfn_stack_name}... "
         cloudformation_client.wait_until(
           :stack_delete_complete, stack_name: cfn_stack_id
         ) do |w|
@@ -158,6 +179,17 @@ module Cluster
           end
         end
       end
+
+      # I'm not good enough at ruby to figure out a more elegant way to pass a custom
+      # waiter {...} block but also wrap it with our waiter params so here I just
+      # create a throwaway waiter object to get the correct param values to use
+      def custom_waiter_params
+        throwaway_waiter = apply_wait_options(Aws::Waiters::Waiter.new())
+        throwaway_waiter.instance_variables.each_with_object({}) {|var, hash|
+          hash[var.to_s.delete("@").to_sym] = throwaway_waiter.instance_variable_get(var)
+        }
+      end
+
     end
 
     def self.included(base)

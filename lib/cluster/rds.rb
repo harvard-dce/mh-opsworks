@@ -3,169 +3,100 @@ module Cluster
     include Waiters
 
     def self.all
-      rds_instances = []
-      rds_client.describe_db_instances.inject([]){ |memo, page| memo + page.db_instances }.each do |rds|
-        rds_instances << construct_instance(rds)
+      clusters = []
+      rds_client.describe_db_clusters.inject([]){ |memo, page| memo + page.db_clusters }.each do |cluster|
+        clusters << construct_cluster(cluster)
       end
-      rds_instances
-    end
-
-    def self.find_or_create
-      rds = find_existing
-      rds_instance = if rds
-                       construct_instance(rds)
-                     else
-                       create_rds
-                     end
-      create_event_subscriptions
-
-      rds_instance
+      clusters
     end
 
     def self.delete
-      if find_existing
-        parameters = {
-          db_instance_identifier: rds_name,
-          skip_final_snapshot: true
-        }
-        rds_client.delete_db_instance(parameters)
-        wait_until_rds_instance_deleted(rds_name)
+      stack = cloudformation_client.describe_stacks.inject([]){ |memo, page| memo + page.stacks }.find do |stack|
+        stack.stack_name == rds_cfn_stack_name
       end
-      if hibernate_snapshot_exists
-        puts "Deleting RDS hibernate snapshot"
-        rds_client.delete_db_snapshot({ db_snapshot_identifier: db_hibernate_snapshot_id })
+
+      if stack
+        cloudformation_client.delete_stack(
+            stack_name: stack.stack_id
+        )
+        wait_until_stack_delete_completed(stack.stack_id)
       end
     end
 
-    def self.delete_with_snapshot(final_snapshot)
-      if find_existing
-        parameters = {
-          db_instance_identifier: rds_name,
-          final_db_snapshot_identifier: final_snapshot
-        }
-        rds_client.delete_db_instance(parameters)
-        wait_until_rds_instance_deleted(rds_name)
+    def self.update
+      parameters = get_parameters
+      parameters.delete(:timeout_in_minutes)
+
+      begin
+        stack = cloudformation_client.update_stack(parameters)
+        wait_until_stack_update_completed(stack.stack_id)
+      rescue => e
+        puts e.message
+        unless e.message.start_with? "No updates"
+          raise
+        end
       end
+
+      find_existing
+    end
+
+    def self.find_or_create
+      cluster = find_existing
+
+      if cluster
+        return construct_cluster(cluster)
+      end
+
+      parameters = get_parameters
+      stack = cloudformation_client.create_stack(parameters)
+      wait_until_stack_build_completed(stack.stack_id)
+      find_existing
     end
 
     def self.find_existing
-      all.find do |rds|
-        rds.db_instance_identifier == rds_name
+      all.find do |cluster|
+        cluster.db_cluster_identifier == rds_name
       end
     end
 
-    def self.hibernate
-      if stack_shortname.match(/prod|prd/i)
-        puts "Refusing to hibernate prod db"
-        return
+    def self.writer_instance_arn
+      cluster = find_existing
+      writer = cluster.db_cluster_members.find do |member|
+        member.is_cluster_writer
       end
+      rds_db_instance_arn(writer.db_instance_identifier)
+    end
 
-      if find_existing
-        puts "Hibernating RDS instance via snapshot + delete"
-        # turn off auto backups. without this the restore wastes time doing an immediate backup.
-        # we'll turn it back on at the end of the restore operation
-        rds_client.modify_db_instance({
-          backup_retention_period: 0,
-          apply_immediately: true,
-          db_instance_identifier: rds_name
-        })
-        # wait until our modification is complete and the instance is available again
-        wait_for_rds_instance_modification(rds_name)
-
-        delete_with_snapshot(db_hibernate_snapshot_id)
+    def self.start
+      cluster = find_existing
+      if !cluster
+        puts "No db cluster found!"
+      elsif cluster.status == "available"
+        puts "DB cluster is already online"
       else
-        puts "No RDS instance to hibernate"
+        rds_client.start_db_cluster({ db_cluster_identifier: cluster.db_cluster_identifier })
+        wait_until_rds_cluster_available(cluster)
       end
     end
 
-    def self.restore
-      if find_existing
-        puts "RDS instance already online"
+    def self.stop
+
+      if prod_cluster?
+        puts "Refusing to stop production cluster db"
         return
       end
 
-      unless hibernate_snapshot_exists
-        puts "Unable to find hibernate snapshot: #{ db_hibernate_snapshot_id }... creating a fresh instance"
-        return create_rds
+      cluster = find_existing
+      if cluster && cluster.status == "available"
+        rds_client.stop_db_cluster({ db_cluster_identifier: cluster.db_cluster_identifier })
+        wait_until_rds_cluster_stopped(cluster)
       end
-
-      puts "Restoring RDS instance"
-
-      parameters = get_create_params
-      parameters[:db_snapshot_identifier] = db_hibernate_snapshot_id
-
-      # restore doesn't take these params
-      [ :db_name, :preferred_backup_window, :preferred_maintenance_window, :backup_retention_period,
-        :vpc_security_group_ids, :engine_version, :allocated_storage, :master_username, :master_user_password,
-        :db_parameter_group_name
-      ].each do |s|
-        parameters.delete(s)
-      end
-
-      response = rds_client.restore_db_instance_from_db_snapshot(parameters)
-      wait_until_rds_instance_available(rds_name)
-
-      # restore also doesn't let you set security groups on initial creation, so we have to do that in a follow-up call
-      # also, we can now re-enable the backup setting
-      # also, enable performance insights
-      modify_params = {
-          db_instance_identifier: rds_name,
-          backup_retention_period: rds_config[:backup_retention_period],
-          vpc_security_group_ids: sg_group_ids,
-          # if unset instance will get the default mysql5.6 param group
-          db_parameter_group_name: rds_config[:db_parameter_group_name],
-          enable_performance_insights: true
-      }
-      rds_client.modify_db_instance(modify_params)
-
-      puts "RDS instance restored. Rebooting to apply parameter group and other modifications."
-      rds_client.reboot_db_instance({ db_instance_identifier: rds_name, force_failover: false })
-      wait_until_rds_instance_available(rds_name)
-
-      rds_client.delete_db_snapshot({ db_snapshot_identifier: db_hibernate_snapshot_id })
-      construct_instance(response.db_instance)
-    end
-
-    def self.create_rds
-      parameters = get_create_params
-
-      # don't set this on initial create as it causes rds to do an immediate backup (which slows us down)
-      backup_retention_period = parameters.delete(:backup_retention_period)
-
-      # this can't go in the standard create params because it's not supported when
-      # restoring from a snapshot
-      parameters[:enable_performance_insights] = true
-
-      response = rds_client.create_db_instance(parameters)
-      wait_until_rds_instance_available(rds_name)
-
-      # set the backup retention period now as now that the instance exists the immediate backup
-      # can happen concurrent with other, subsequent cluster init stuff
-      rds_client.modify_db_instance({
-          db_instance_identifier: rds_name,
-          backup_retention_period: backup_retention_period
-      })
-      construct_instance(response.db_instance)
     end
 
     private
 
-    def self.create_event_subscriptions
-      EventSubscriptionCreator.create
-    end
-
-    def self.find_db_subnet_group
-      rds_client.describe_db_subnet_groups.inject([]){ |memo, page| memo + page.db_subnet_groups }.find do |db_subnet_group|
-        db_subnet_group.db_subnet_group_name.match(/^#{vpc_name}-dbsubnetgroup/)
-      end
-    end
-
-    def self.sg_group_ids
-      vpc = VPC.find_existing
-      sg_finder = SecurityGroupFinder.new(vpc)
-      [
-        sg_finder.security_group_id_for('OpsworksLayerSecurityGroupCommon')
-      ]
+    def self.construct_cluster(rds)
+      Aws::RDS::DBCluster.new(rds.db_cluster_identifier, client: rds_client)
     end
 
     def self.construct_instance(rds)
@@ -178,39 +109,81 @@ module Cluster
       end
 
       rds_client.add_tags_to_resource({
-        resource_name: rds_db_instance_arn,
+        resource_name: rds_db_cluster_arn,
         tags: stack_custom_tags
       })
     end
 
-    def self.get_create_params
-      db_subnet_group_name = find_db_subnet_group.db_subnet_group_name
+    def self.get_parameters
       base_parameters = rds_config
+      parameters = [
+          {
+              parameter_key: 'DBClusterIdentifier',
+              parameter_value: rds_name
+          },
+          {
+              parameter_key: 'DBInstancePrefix',
+              parameter_value: rds_instance_prefix
+          },
+          {
+              parameter_key: 'ParentVpcStack',
+              parameter_value: vpc_name
+          },
+          {
+              parameter_key: 'DBMasterUser',
+              parameter_value: base_parameters[:master_username]
+          },
+          {
+              parameter_key: 'DBMasterUserPassword',
+              parameter_value: base_parameters[:master_user_password]
+          },
+          {
+              parameter_key: 'PreferredBackupWindow',
+              parameter_value: "05:02-05:32"
+          },
+          {
+              parameter_key: 'PreferredMaintenanceWindow',
+              parameter_value: "thu:09:31-thu:10:01"
+          },
+          {
+              parameter_key: "DBInstanceClass",
+              parameter_value: base_parameters[:db_instance_class]
+          },
+          {
+              parameter_key: "DBName",
+              parameter_value: base_parameters[:db_name]
+          },
+          {
+              parameter_key: "EnablePerformanceInsights",
+              parameter_value: base_parameters[:enable_performance_insights].to_s
+          },
+          {
+              parameter_key: "MultiAZ",
+              parameter_value: base_parameters[:multi_az].to_s
+          },
+          {
+              parameter_key: "BackupRetentionPeriod",
+              parameter_value: base_parameters[:backup_retention_period].to_s
+          },
+          {
+              parameter_key: "SnsTopicArn",
+              parameter_value: get_topic_arn
+          }
+      ]
 
       {
-          db_instance_identifier: rds_name,
-          db_subnet_group_name: db_subnet_group_name,
-          vpc_security_group_ids: sg_group_ids,
-          tags: [{
-            key: "opsworks:stack",
-            value: stack_config[:name],
-          }].concat(stack_custom_tags),
-          auto_minor_version_upgrade: false,
-          copy_tags_to_snapshot: true,
-          engine: 'MySQL',
-          multi_az: false,
-          engine_version: '5.6.41',
-          storage_type: 'gp2',
-          preferred_backup_window: "05:02-05:32",
-          preferred_maintenance_window: "thu:09:31-thu:10:01"
-      }.merge(base_parameters)
+          stack_name: rds_cfn_stack_name,
+          template_body: File.read('./templates/RDSCluster.template.yml'),
+          parameters: parameters,
+          timeout_in_minutes: 30,
+          tags: [
+              {
+                  key: 'opsworks:stack',
+                  value: stack_config[:name]
+              }
+          ].concat(stack_custom_tags)
+      }
     end
 
-    def self.hibernate_snapshot_exists
-      rds_client.describe_db_snapshots({
-          db_instance_identifier: rds_name,
-          db_snapshot_identifier: db_hibernate_snapshot_id
-      }).db_snapshots.any?
-    end
   end
 end
