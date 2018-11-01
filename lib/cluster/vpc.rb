@@ -80,12 +80,8 @@ module Cluster
       (idx..(idx + len - 1)).map { |i| ip.nth_subnet(27, i).to_s }
     end
 
-    def self.get_public_subnet_cidr_block
-      get_subnet_cidr_blocks(0, 1).first
-    end
-
-    def self.get_db_subnet_cidr_block
-      get_subnet_cidr_blocks(1, 1).first
+    def self.get_public_subnet_cidr_blocks
+      get_subnet_cidr_blocks(0, 2)
     end
 
     def self.get_private_subnet_cidr_blocks
@@ -102,16 +98,12 @@ module Cluster
           parameter_value: vpc_config[:cidr_block]
         },
         {
-          parameter_key: 'PublicCIDRBlock',
-          parameter_value: get_public_subnet_cidr_block
+          parameter_key: 'PublicCIDRBlocks',
+          parameter_value: get_public_subnet_cidr_blocks.join(',')
         },
         {
           parameter_key: 'PrivateCIDRBlocks',
           parameter_value: get_private_subnet_cidr_blocks.join(',')
-        },
-        {
-          parameter_key: 'DbCIDRBlock',
-          parameter_value: get_db_subnet_cidr_block
         },
         {
           parameter_key: 'PrimaryAZ',

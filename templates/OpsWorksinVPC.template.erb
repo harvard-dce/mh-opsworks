@@ -10,23 +10,17 @@
       "Default": "",
       "ConstraintDescription": "the entire CIDR block for this VPC, e.g. 10.1.1.0/24"
     },
-    "PublicCIDRBlock": {
-      "Description":"The public subnet CIDR block",
-      "Type": "String",
+    "PublicCIDRBlocks": {
+      "Description":"The public subnet CIDR blocks",
+      "Type": "CommaDelimitedList",
       "Default": "",
-      "ConstraintDescription": "CIDR block for the public part of this VPC"
+      "ConstraintDescription": "this list of CIDR blocks for the public part of this VPC"
     },
     "PrivateCIDRBlocks": {
       "Description":"The private subnet CIDR blocks",
       "Type": "CommaDelimitedList",
       "Default": "",
       "ConstraintDescription": "the list of CIDR blocks for the private part of this VPC"
-    },
-    "DbCIDRBlock": {
-      "Description":"The db subnet CIDR block",
-      "Type": "String",
-      "Default": "",
-      "ConstraintDescription": "CIDR block for the DB subnet in a separate AZ"
     },
     "PrimaryAZ": {
       "Description":"Primary AZ",
@@ -61,14 +55,27 @@
       }
     },
 
-    "PublicSubnet" : {
+    "PublicSubnet1" : {
       "Type" : "AWS::EC2::Subnet",
       "Properties" : {
         "AvailabilityZone": { "Ref": "PrimaryAZ" },
         "VpcId" : { "Ref" : "VPC" },
-        "CidrBlock" : { "Ref": "PublicCIDRBlock" },
+        "CidrBlock" : { "Fn::Select" : [ "0", { "Ref": "PublicCIDRBlocks" } ] },
         "Tags" : [
-          { "Key" : "Name", "Value" : { "Fn::Join" : [ " ", [ { "Ref" : "AWS::StackName" }, "Public Subnet" ] ] } },
+          { "Key" : "Name", "Value" : { "Fn::Join" : [ " ", [ { "Ref" : "AWS::StackName" }, "Public Subnet 1" ] ] } },
+          { "Key" : "Network", "Value" : "Public" }
+        ]
+      }
+    },
+
+    "PublicSubnet2" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "AvailabilityZone": { "Ref": "SecondaryAZ" },
+        "VpcId" : { "Ref" : "VPC" },
+        "CidrBlock" : { "Fn::Select" : [ "1", { "Ref": "PublicCIDRBlocks" } ] },
+        "Tags" : [
+          { "Key" : "Name", "Value" : { "Fn::Join" : [ " ", [ { "Ref" : "AWS::StackName" }, "Public Subnet 2" ] ] } },
           { "Key" : "Network", "Value" : "Public" }
         ]
       }
@@ -111,10 +118,18 @@
       }
     },
 
-    "PublicSubnetRouteTableAssociation" : {
+    "PublicSubnet1RouteTableAssociation" : {
       "Type" : "AWS::EC2::SubnetRouteTableAssociation",
       "Properties" : {
-        "SubnetId" : { "Ref" : "PublicSubnet" },
+        "SubnetId" : { "Ref" : "PublicSubnet1" },
+        "RouteTableId" : { "Ref" : "PublicRouteTable" }
+      }
+    },
+
+    "PublicSubnet2RouteTableAssociation" : {
+      "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties" : {
+        "SubnetId" : { "Ref" : "PublicSubnet2" },
         "RouteTableId" : { "Ref" : "PublicRouteTable" }
       }
     },
@@ -155,23 +170,19 @@
       }
     },
 
-    "PublicSubnetNetworkAclAssociation" : {
+    "PublicSubnet1NetworkAclAssociation" : {
       "Type" : "AWS::EC2::SubnetNetworkAclAssociation",
       "Properties" : {
-        "SubnetId" : { "Ref" : "PublicSubnet" },
+        "SubnetId" : { "Ref" : "PublicSubnet1" },
         "NetworkAclId" : { "Ref" : "PublicNetworkAcl" }
       }
     },
 
-    "DbSubnet" : {
-      "Type" : "AWS::EC2::Subnet",
+    "PublicSubnet2NetworkAclAssociation" : {
+      "Type" : "AWS::EC2::SubnetNetworkAclAssociation",
       "Properties" : {
-        "AvailabilityZone": { "Ref": "SecondaryAZ" },
-        "VpcId" : { "Ref" : "VPC" },
-        "CidrBlock" : { "Ref": "DbCIDRBlock" },
-        "Tags" : [
-          { "Key" : "Name", "Value" : { "Fn::Join" : [ " ", [ { "Ref" : "AWS::StackName" }, "db subnet" ] ] } }
-        ]
+        "SubnetId" : { "Ref" : "PublicSubnet2" },
+        "NetworkAclId" : { "Ref" : "PublicNetworkAcl" }
       }
     },
 
@@ -180,9 +191,10 @@
       "Properties": {
         "DBSubnetGroupDescription": { "Fn::Join" : [ " ", [ { "Ref" : "AWS::StackName" }, "db subnet group" ] ] },
         "SubnetIds": [
-          { "Ref": "DbSubnet" },
           { "Ref": "PrivateSubnet1" },
-          { "Ref": "PrivateSubnet2" }
+          { "Ref": "PrivateSubnet2" },
+          { "Ref": "PrivateSubnet3" },
+          { "Ref": "PrivateSubnet4" }
         ]
       }
     },
@@ -378,7 +390,7 @@
           ]
         },
         "SubnetId" : {
-          "Ref" : "PublicSubnet"
+          "Ref" : "PublicSubnet1"
         }
       }
     },
@@ -550,9 +562,15 @@
       "Value" : {"Ref" : "VPC"}
     },
 
-    "PublicSubnet" : {
-      "Description" : "Public Subnet",
-      "Value" : {"Ref" : "PublicSubnet" }
+    "PublicSubnets" : {
+      "Description" : "Public Subnets",
+      "Value" : {
+        "Fn::Join" : [ ",", [
+          {"Ref" : "PublicSubnet1" },
+          {"Ref" : "PublicSubnet2" }
+          ]
+        ]
+      }
     },
 
     "PrivateSubnets" : {

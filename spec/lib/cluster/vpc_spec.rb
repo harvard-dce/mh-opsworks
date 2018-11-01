@@ -74,8 +74,7 @@ describe Cluster::VPC do
       stub_config_to_include(
           vpc: { cidr_block: existing_cidr_block }
       )
-      expect(Cluster::VPC.get_public_subnet_cidr_block).to eq '10.0.0.0/27'
-      expect(Cluster::VPC.get_db_subnet_cidr_block).to eq '10.0.0.32/27'
+      expect(Cluster::VPC.get_public_subnet_cidr_blocks).to eq ['10.0.0.0/27', '10.0.0.32/27']
 
       private_cidr_blocks = ['10.0.0.64/27','10.0.0.96/27','10.0.0.128/27','10.0.0.160/27']
       expect(Cluster::VPC.get_private_subnet_cidr_blocks).to match_array private_cidr_blocks
