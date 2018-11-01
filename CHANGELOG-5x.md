@@ -1,5 +1,7 @@
 # CHANGELOG
 
+* b/MI-124: redo db subnet group; remove db subnet
+
 * t/MI-118: force cluster names to lowercase
 
 * open iperf3 port from capture agents in common security group

@@ -44,7 +44,7 @@ module Cluster
           # do basic round-robin selection from available subnets
           subnet = subnets[i % subnets.length]
         else
-          public_subnet_cidr_block = Cluster::VPC.get_public_subnet_cidr_block
+          public_subnet_cidr_block = Cluster::VPC.get_public_subnet_cidr_blocks.first
           subnet = vpc.subnets.find{|subnet| subnet.cidr_block == public_subnet_cidr_block }
         end
 
