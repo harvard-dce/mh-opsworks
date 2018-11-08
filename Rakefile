@@ -109,17 +109,17 @@ namespace :admin do
       (instance.public_dns != nil) && instance.hostname.match(/admin/)
     end
 
-    system %Q|ssh -C #{a_public_host.public_dns} 'sudo bash -c "cd /root && tar cvfz - .m2/"' > maven_cache.tgz|
+    system %Q|ssh -C #{a_public_host.public_dns} 'sudo bash -c "cd /root && tar cvfz - .m2/"' > oc_maven_cache.tgz|
 
-    puts %Q|Uploading maven_cache.tgz to #{asset_bucket_name}|
+    puts %Q|Uploading oc_maven_cache.tgz to #{asset_bucket_name}|
     Cluster::Assets.publish_support_asset_to(
       bucket: asset_bucket_name,
-      file_name: 'maven_cache.tgz',
+      file_name: 'oc_maven_cache.tgz',
       permissions: 'public'
     )
     puts 'done.'
 
-    File.unlink('maven_cache.tgz')
+    File.unlink('oc_maven_cache.tgz')
   end
 end
 
