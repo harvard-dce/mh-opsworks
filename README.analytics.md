@@ -25,7 +25,6 @@ to get the new node (which you can then start via the AWS console):
        "oc-opsworks-recipes::fix-raid-mapping",
        "oc-opsworks-recipes::set-bash-as-default-shell",
        "oc-opsworks-recipes::install-utils",
-       "oc-opsworks-recipes::install-crowdstrike",
        "oc-opsworks-recipes::install-oc-base-packages",
        "oc-opsworks-recipes::enable-postfix-smarthost",
        "oc-opsworks-recipes::install-custom-metrics",

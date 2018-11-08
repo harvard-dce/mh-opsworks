@@ -3,6 +3,7 @@
 ## TO BE RELEASED
 
 * MI-125: rename maven cache file
+* MI-127: remove crowdstrike install from runlists
 
 ## 1.17.2 - 10/25/2018
 
