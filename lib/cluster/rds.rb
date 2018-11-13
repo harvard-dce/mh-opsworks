@@ -107,12 +107,14 @@ module Cluster
 
       # restore also doesn't let you set security groups on initial creation, so we have to do that in a follow-up call
       # also, we can now re-enable the backup setting
+      # also, enable performance insights
       modify_params = {
           db_instance_identifier: rds_name,
           backup_retention_period: rds_config[:backup_retention_period],
           vpc_security_group_ids: sg_group_ids,
           # if unset instance will get the default mysql5.6 param group
-          db_parameter_group_name: rds_config[:db_parameter_group_name]
+          db_parameter_group_name: rds_config[:db_parameter_group_name],
+          enable_performance_insights: true
       }
       rds_client.modify_db_instance(modify_params)
 
@@ -129,6 +131,10 @@ module Cluster
 
       # don't set this on initial create as it causes rds to do an immediate backup (which slows us down)
       backup_retention_period = parameters.delete(:backup_retention_period)
+
+      # this can't go in the standard create params because it's not supported when
+      # restoring from a snapshot
+      parameters[:enable_performance_insights] = true
 
       response = rds_client.create_db_instance(parameters)
       wait_until_rds_instance_available(rds_name)
@@ -193,10 +199,10 @@ module Cluster
           copy_tags_to_snapshot: true,
           engine: 'MySQL',
           multi_az: false,
-          engine_version: '5.6.34',
+          engine_version: '5.6.41',
           storage_type: 'gp2',
           preferred_backup_window: "05:02-05:32",
-          preferred_maintenance_window: "thu:09:31-thu:10:01",
+          preferred_maintenance_window: "thu:09:31-thu:10:01"
       }.merge(base_parameters)
     end
 
