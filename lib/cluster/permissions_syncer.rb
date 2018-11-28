@@ -83,7 +83,7 @@ module Cluster
 
     def wait_for_users_to_propagate
       puts 'Waiting for changes (if any) to propagate across the cluster'
-      sleep 10
+      sleep 20
       user_deployment_command = Cluster::Deployment.all.find do |deployment|
         deployment.command.args['recipes'].include?('ssh_users')
       end

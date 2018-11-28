@@ -5,6 +5,7 @@
 * MI-125: rename maven cache file
 * MI-127: remove crowdstrike install from runlists
 * MI-130: `PermissionsSyncer` now compares configured user `ssh_key` value with existing and updates if they differ
+* sleep a little longer waiting for the `ssh_users` deployment to inititate
 
 ## 1.17.2 - 10/25/2018
 
