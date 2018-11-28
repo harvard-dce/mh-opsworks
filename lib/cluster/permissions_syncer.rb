@@ -56,7 +56,7 @@ module Cluster
         if ! user_profile
           create_user_profile(arns_by_username[user_name], ssh_key)
         else
-          if user_profile.ssh_public_key.nil? && (ssh_key != '')
+          if (ssh_key != '') && (user_profile.ssh_public_key != ssh_key)
             update_ssh_key_on_user_profile(user_profile.iam_user_arn, ssh_key)
           end
         end
