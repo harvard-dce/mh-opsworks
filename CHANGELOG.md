@@ -10,6 +10,7 @@
 * include `create-opencast-directories` recipe in local vagrant setup runlists to ensure
   directories are created on first `up` / deployment
 * MI-97: RDS Aurora clusters
+* remove enhanced networking setup recipe from runlists
 
 ## 1.17.2 - 10/25/2018
 

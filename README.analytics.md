@@ -28,7 +28,6 @@ to get the new node (which you can then start via the AWS console):
        "oc-opsworks-recipes::enable-postfix-smarthost",
        "oc-opsworks-recipes::install-custom-metrics",
        "oc-opsworks-recipes::create-alerts-from-opsworks-metrics",
-       "oc-opsworks-recipes::enable-enhanced-networking",
        "oc-opsworks-recipes::install-cwlogs",
        "oc-opsworks-recipes::install-elasticsearch",
        "oc-opsworks-recipes::install-ua-harvester",
