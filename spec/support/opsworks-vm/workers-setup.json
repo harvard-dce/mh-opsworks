@@ -19,6 +19,7 @@
       "recipe[oc-opsworks-recipes::populate-maven-cache]",
       "recipe[oc-opsworks-recipes::install-oc-base-packages]",
       "recipe[oc-opsworks-recipes::create-opencast-user]",
+      "recipe[oc-opsworks-recipes::create-opencast-directories]",
       "recipe[oc-opsworks-recipes::configure-nginx-proxy]",
       "recipe[oc-opsworks-recipes::install-ffmpeg]",
       "recipe[oc-opsworks-recipes::nfs-client]",

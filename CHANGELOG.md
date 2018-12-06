@@ -6,6 +6,8 @@
 * MI-127: remove crowdstrike install from runlists
 * MI-130: `PermissionsSyncer` now compares configured user `ssh_key` value with existing and updates if they differ
 * sleep a little longer waiting for the `ssh_users` deployment to inititate
+* include `create-opencast-directories` recipe in local vagrant setup runlists to ensure
+  directories are created on first `up` / deployment
 
 ## 1.17.2 - 10/25/2018
 
