@@ -45,21 +45,20 @@ Zadara VPSA creation is discussed in more detail
    and refresh the page to ensure you've actually made a change and that it's taken.
 1. Log in to the remote VPSA through an SSH tunnel over your VPC, something
    like `ssh -L 8080:<zadara hostname>:80 <external IP in your cluster>`. The
-   VPSA gui should now be available on `http://localhost:8080`.  The easiest way
-   to do this is to add a throwaway custom layer that contains a single instance
-   with a public IP and the default chef recipes. Start up this instance and it
-   will allow you to access the VPSA GUI from the correct VPC. After you've
-   successfully connected your cluster, you can remove the layer and the
-   throwaway instance.
+   VPSA gui should now be available on `http://localhost:8080`.  
+   * The easiest way to do this is to add a throwaway custom layer that contains a single instance
+     with a public IP and the default chef recipes. Start up this instance and it
+     will allow you to access the VPSA GUI from the correct VPC. After you've
+     successfully connected your cluster, you can remove the layer and the
+     throwaway instance.
+   * Another trick is to use the public IP of a node in a different cluster that also
+     has a vpc -> vgw -> zadara connection set up.
 1. Create a RAID group from your drives that'll be used to populate a pool.
 1. Carve a NAS volume from the pool you previously created. The export name is
    set by the volume, as an NFS server can have multiple exports. Use a name
    that makes sense for your cluster.
 1. Create a server with a CIDR block that matches your VPC and/or relevant
-   subnets. ~~Ensure that "root squash" is enabled.~~. **Note** enabling of "root squash"
-   does not seem to be required. From [the docs](http://guides.zadarastorage.com/vpsa-guide/1605-sp2/managing-volumes-snapshots-and-clones.html):
-   
-    > NFS Root Squash – Select this checkbox to block external root access to this share. If this box is not checked, the system maps requests from uid/gid 0 (root) to the anonymous uid/gid.
+   subnets. Leave the "NFS Root Squash" option disabled. 
 1. Attach the volume you created above to this server.
 1. You should now have the information you need to update your
    cluster configuration for external storage. Return the previous section.
