@@ -17,6 +17,7 @@
       "recipe[oc-opsworks-recipes::fix-raid-mapping]",
       "recipe[oc-opsworks-recipes::set-bash-as-default-shell]",
       "recipe[oc-opsworks-recipes::install-utils]",
+      "recipe[oc-opsworks-recipes::install-aws-kernel]",
       "recipe[oc-opsworks-recipes::create-opencast-user]",
       "recipe[oc-opsworks-recipes::nfs-export]",
       "recipe[oc-opsworks-recipes::clean-up-package-cache]",

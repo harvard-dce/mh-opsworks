@@ -8,7 +8,7 @@ usage() {
   echo
   echo "  Run commands against the local all_in_one node."
   echo "  Valid subcommands:"
-  echo "    * up - bring up the node, including a deployment."
+  echo "    * up - bring up the node, including a deployment. This will also re-run the chef provisioning."
   echo "    * halt - Shutdown the node nicely"
   echo "    * destroy - Destroy the node"
   echo "    * deploy - Deploy the latest changes in your local opencast repo and restart"
@@ -23,9 +23,19 @@ start_timing
 case $action in
   up*)
     echo "Initializing node - hold tight!"
+
+    vagrant status | grep 'all-in-one' | grep -v 'not created' > /dev/null
+    first_up=$?
+
     vagrant up --no-provision all-in-one
 
     vagrant provision all-in-one
+
+    if [ $first_up -eq 1 ]; then
+        echo "First time this node is created; rebooting to ensure proper kernel!"
+        vagrant halt all-in-one
+        vagrant up --no-provision all-in-one
+    fi
     ;;
   deploy*)
     vagrant provision all-in-one --provision-with deployment

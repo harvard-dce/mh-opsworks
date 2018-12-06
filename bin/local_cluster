@@ -8,7 +8,7 @@ usage() {
   echo
   echo "  Run commands against the entire local opsworks cluster."
   echo "  Valid subcommands:"
-  echo "    * up - bring up the cluster, including a deployment."
+  echo "    * up - bring up the cluster, including a deployment. This will also re-run the chef provisioning."
   echo "    * halt - Shutdown all instances in the cluster nicely"
   echo "    * destroy - Destroy all instances in the cluster"
   echo "    * deploy - Deploy the latest changes in your local opencast repo and restart"
