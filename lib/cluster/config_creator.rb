@@ -3,37 +3,6 @@ module Cluster
     DEFAULT_VARIANT = :medium
 
     VARIANTS = {
-      small: {
-        template: './templates/cluster_config_default.json.erb',
-
-        description: 'Only appropriate to smoke-test deployment and process very small videos. Uses a storage layer to export a filesystem.',
-
-        storage_instance_type: 't2.medium',
-        storage_disk_size: '100',
-
-        database_instance_type: 'db.t2.medium',
-        multi_az: false,
-
-        admin_instance_type: 't2.medium',
-
-        workers_instance_type: 't2.medium',
-        workers_instance_count: 2,
-
-        engage_instance_type: 't2.medium',
-
-        ganglia_instance_type: 't2.medium',
-        ganglia_disk_size: '10',
-
-        analytics_instance_type: 't2.large',
-        analytics_disk_size: '20',
-
-        utility_instance_type: 't2.medium',
-
-        opencast_root_size: '20',
-        root_device_size: '8',
-        opencast_workspace_size: '50'
-      },
-
       medium: {
         template: './templates/cluster_config_default.json.erb',
 
@@ -161,7 +130,7 @@ module Cluster
         storage_instance_type: 't2.medium',
         storage_disk_size: '200',
 
-        database_instance_type: 'db.t2.micro',
+        database_instance_type: 'db.r4.large',
         multi_az: false,
 
         admin_instance_type: 't2.medium',

@@ -18,7 +18,7 @@ describe Cluster::ConfigCreator do
   end
 
   it 'has multiple variants' do
-    %i|small medium large|.each do |variant|
+    %i|medium large ami_builder|.each do |variant|
       variant_attributes = described_class::VARIANTS[variant]
       creator = described_class.new(dummy_cluster_attributes.merge(variant: variant))
 
@@ -37,9 +37,9 @@ describe Cluster::ConfigCreator do
   end
 
   it 'casts variants to symbols' do
-    creator = described_class.new(variant: 'small')
+    creator = described_class.new(variant: 'large')
 
-    expect(creator.variant).to eq :small
+    expect(creator.variant).to eq :large
   end
 
   it 'looks for a remote base-secrets.json during creation and integrates it if found' do
