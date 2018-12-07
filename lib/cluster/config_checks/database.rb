@@ -10,7 +10,7 @@ module Cluster
           raise RDSUserInfoNotDefined.new('You need to define a master_user_password and master_username in the RDS configuration')
         end
         if ! rds_config[:db_instance_class] || ! rds_config[:db_instance_class].match(/^db\.r/)
-          raise RDSDatabaseUnsupportedInstanceClass.new('DB instance classes other than r3|r4 are not supported')
+          raise RDSDatabaseUnsupportedInstanceClass.new('DB instance classes other than r3|r4 are not supported for clusters built with this version of mh-opsworks.')
         end
         if ! rds_config[:db_name]
           raise RDSDatabaseNameNotDefined.new('You need to define the database name in the RDS configuration')

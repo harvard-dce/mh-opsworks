@@ -11,6 +11,7 @@
   directories are created on first `up` / deployment
 * MI-97: RDS Aurora clusters
 * remove enhanced networking setup recipe from runlists
+* add mh-opsworks version compatability check
 
 ## 1.17.2 - 10/25/2018
 
