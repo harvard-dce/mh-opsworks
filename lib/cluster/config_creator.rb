@@ -170,11 +170,18 @@ module Cluster
         merge(s3_distribution_bucket_name_from(attributes[:name])).
         merge(s3_file_archive_bucket_name_from(attributes[:name])).
         merge(analytics_layer_content).
-        merge(utility_layer_content)
+        merge(utility_layer_content).
+        merge(sns_email)
       erb.result(all_attributes)
     end
 
     private
+
+    def sns_email
+      {
+          sns_notification_email: attributes[:sns_email]
+      }
+    end
 
     def analytics_layer_content
       {

@@ -9,6 +9,8 @@ namespace :admin do
 
       vpc = Cluster::VPC.find_or_create
 
+      Cluster::SubscribesSnsEndpoints.subscribe
+
       rds_create = Concurrent::Future.execute do
         Cluster::RDS.find_or_create
       end
@@ -125,6 +127,12 @@ namespace :admin do
       Cluster::S3Bucket.create_custom_tags(Cluster::Base.distribution_bucket_name)
       Cluster::S3Bucket.create_custom_tags(Cluster::Base.s3_file_archive_bucket_name)
     end
+
+    desc Cluster::RakeDocs.new('admin:cluster:subscribe').desc
+    task subscribe: ['cluster:configtest', 'cluster:config_sync_check'] do
+      Cluster::SubscribesSnsEndpoints.subscribe
+    end
+
   end
 
   namespace :users do
@@ -156,6 +164,7 @@ namespace :admin do
 
     File.unlink('oc_maven_cache.tgz')
   end
+
 end
 
 task :default do

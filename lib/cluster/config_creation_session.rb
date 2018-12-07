@@ -2,7 +2,7 @@ module Cluster
   class ConfigCreationSession
     attr_accessor :variant, :name, :cidr_block_root, :git_url, :git_revision,
       :export_root, :nfs_server_host, :subnet_azs, :project_tag,
-      :include_analytics, :cookbook_source_type, :include_utility
+      :include_analytics, :cookbook_source_type, :include_utility, :sns_email
 
     def choose_variant
       puts "\nPlease choose the size of the cluster you'd like to deploy.\n\n"
@@ -177,6 +177,14 @@ module Cluster
 
       if include_utility.downcase == 'y'
         @include_utility = true
+      end
+    end
+
+    def sns_email_subscription
+      print "\nEnter an email address for cluster notifications [Enter for none]: "
+      sns_email = STDIN.gets.strip.chomp
+      if ! sns_email.empty?
+        @sns_email = sns_email
       end
     end
 

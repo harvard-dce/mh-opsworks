@@ -193,6 +193,7 @@ namespace :cluster do
     end
 
     session.get_cluster_name
+    session.sns_email_subscription
     session.get_cookbook_source_type
     session.get_git_url
     session.get_git_revision
@@ -217,7 +218,8 @@ namespace :cluster do
       default_users: JSON.pretty_generate(session.compute_default_users),
       include_analytics: session.include_analytics,
       cookbook_source_type: session.cookbook_source_type,
-      include_utility: session.include_utility
+      include_utility: session.include_utility,
+      sns_email: session.sns_email
     )
     rc_file = Cluster::RcFileSwitcher.new(config_file: config_file)
     rc_file.write
@@ -254,4 +256,5 @@ namespace :cluster do
     session.choose_cluster
     Cluster::RemoteConfig.new.sync
   end
+
 end

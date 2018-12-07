@@ -32,6 +32,9 @@
         "local_workspace_root": "/var/opencast-workspace",
         "s3_distribution_bucket_name": "<%= s3_distribution_bucket_name %>",
         "s3_file_archive_bucket_name": "<%= s3_file_archive_bucket_name %>",
+        "sns_endpoints": [
+          { "email": "<%= sns_notification_email %>"}
+        ],
         "storage": {
           "export_root": "/var/opencast",
           "network": "<%= cidr_block_root %>.0/24",

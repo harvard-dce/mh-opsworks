@@ -1,0 +1,4 @@
+Create SNS subscriptions
+
+This will create a SNS subscription for each endpoint listed in the
+custom json's "sns_endpoints".
