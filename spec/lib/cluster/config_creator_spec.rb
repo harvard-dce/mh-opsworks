@@ -76,7 +76,9 @@ describe Cluster::ConfigCreator do
       subnet_azs: subnet_azs,
       include_analytics: true,
       cookbook_source_type: cookbook_source_type,
-      include_utility: true
+      include_utility: true,
+      base_public_ami_id: "ami-12345",
+      base_private_ami_id: "ami-09876"
     }
   end
 end

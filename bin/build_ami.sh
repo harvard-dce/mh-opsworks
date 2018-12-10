@@ -38,9 +38,12 @@ build_ami() {
   echo "Instance prepared. Creating the AMI!"
   echo "It will take a while to build the AMIs. Check in the ec2 console for progress info."
   echo
-  aws ec2 create-image --instance-id=$instance_id --name "${prefix}ocopsworks_base_$date_string" --description "${prefix} AMI for oc-opsworks that contains most base packages" --reboot --profile $profile
+  ami_id=$(aws --profile $profile ec2 create-image --instance-id=$instance_id --name "${prefix}ocopsworks_base_$date_string" --description "${prefix} AMI for oc-opsworks that contains most base packages" --reboot --output text)
+  aws --profile $profile ec2 create-tags --resources $ami_id --tags "Key=mh-opsworks,Value=1" "Key=released,Value=0"
   echo
 }
 
 build_ami 'private-'
 build_ami
+
+echo "AMI creation is initiated. You will need to update the 'released' tags to '1' to enable them for new mh-opsworks clusters"

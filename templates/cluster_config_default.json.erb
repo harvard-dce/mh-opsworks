@@ -32,6 +32,10 @@
         "local_workspace_root": "/var/opencast-workspace",
         "s3_distribution_bucket_name": "<%= s3_distribution_bucket_name %>",
         "s3_file_archive_bucket_name": "<%= s3_file_archive_bucket_name %>",
+        <% if base_public_ami_id %>
+        "base_public_ami_id": "<%= base_public_ami_id %>",
+        "base_private_ami_id": "<%= base_private_ami_id %>",
+        <% end %>
         "sns_endpoints": [
           { "email": "<%= sns_notification_email %>"}
         ],

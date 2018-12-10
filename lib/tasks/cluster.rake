@@ -184,12 +184,15 @@ namespace :cluster do
     session.local_vs_opsworks
     session.get_project_tag
     session.choose_variant
-    session.analytics_node
 
-    if session.zadara_variant?
-      session.include_utility = true
-    else
-      session.utility_node
+    if ! session.ami_builder?
+      session.analytics_node
+
+      if session.zadara_variant?
+        session.include_utility = true
+      else
+        session.utility_node
+      end
     end
 
     session.get_cluster_name

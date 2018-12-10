@@ -1,6 +1,7 @@
 describe Cluster::RemoteConfig do
   include EnvironmentHelpers
   include ClusterCreationHelpers
+  include ClientStubHelpers
 
   context '.create' do
     it 'uses Cluster::ConfigCreator to create the templatted json' do
@@ -24,6 +25,14 @@ describe Cluster::RemoteConfig do
     it 'writes the config to a file named with a calculated version of the cluster name' do
       allow(Cluster::Assets).to receive(:get_support_asset)
       cluster_name = 'A Test Cluster'
+
+      # so that the AmiFinder request gets stubbed
+      stub_ec2_client do |ec2|
+        ec2.stub_responses(
+            :describe_images,
+            { images: [ ] }
+        )
+      end
 
       file_double = double('file handle')
       allow(file_double).to receive(:write)

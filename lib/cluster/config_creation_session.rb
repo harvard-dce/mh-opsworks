@@ -35,6 +35,10 @@ module Cluster
       variant.match(/zadara/)
     end
 
+    def ami_builder?
+      variant.to_s == "ami_builder"
+    end
+
     def get_export_root
       print "\nThe path to the volume you're exporting from zadara: "
       export_root = STDIN.gets.strip.chomp

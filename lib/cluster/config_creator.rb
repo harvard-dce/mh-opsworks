@@ -144,7 +144,7 @@ module Cluster
         ganglia_disk_size: '10',
 
         opencast_root_size: '20',
-        root_device_size: '8',
+        root_device_size: '16',
         opencast_workspace_size: '50'
       }
     }
@@ -171,11 +171,22 @@ module Cluster
         merge(s3_file_archive_bucket_name_from(attributes[:name])).
         merge(analytics_layer_content).
         merge(utility_layer_content).
-        merge(sns_email)
+        merge(sns_email).
+        merge(latest_ami_content || {})
       erb.result(all_attributes)
     end
 
     private
+
+    def latest_ami_content
+      ami_finder = Cluster::AmiFinder.new
+      if ami_finder.private && ami_finder.public
+        {
+            base_private_ami_id: ami_finder.private,
+            base_public_ami_id: ami_finder.public
+        }
+      end
+    end
 
     def sns_email
       {
