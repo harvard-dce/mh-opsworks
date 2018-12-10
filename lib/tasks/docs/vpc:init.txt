@@ -6,9 +6,7 @@ VPC infrastructure. This infrastructure includes:
 * The VPC,
 * Public and private subnets,
 * A NAT instance glued to the private subnet with basic availability
-  monitoring,
-* **deprecated** If we're using EFS, the EFS mount automatically configured to connect to the
-  instances.
+  monitoring.
 
 This is generally done automatically - you'd only use this if you're
 developing new features deployed via cloudformation.

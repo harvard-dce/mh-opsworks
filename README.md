@@ -23,7 +23,7 @@ opencast cluster.
 * Optional newrelic integration,
 * A set of high-level rake tasks designed to make managing your OpsWorks opencast cluster easier,
 * A way to switch between existing clusters to make collaboration easier,
-* A MySQL RDS database that's monitored with cloudwatch alarms, and
+* A MySQL RDS Aurora cluster that's monitored with cloudwatch alarms, and
 * Rake level docs for each task, accessed via "rake -D <task name>".
 
 ## Getting started
@@ -52,8 +52,9 @@ SSH username would be "janesmith".
 
 ### Step 2 - Install oc-opsworks
 
-You must have ruby 2 installed, ideally through something like rbenv or rvm,
-though if your system ruby is >= 2 you should be fine. `./bin/setup` installs
+You must have ruby 2 installed, ideally through something like 
+[rbenv](https://github.com/rbenv/rbenv) or [rvm](https://rvm.io/), though 
+if your system ruby is >= 2 you should be fine. `./bin/setup` installs 
 prerequisites and sets up a template `secrets.json`.
 
 You should fill in the template `secrets.json` with the cluster manager user
@@ -107,23 +108,26 @@ output.
 
     ./bin/rake admin:cluster:init
 
-This will create the VPC, opsworks stack, layers, and instances according to
+This will create the VPC, RDS cluster, opsworks stack, layers, and instances according to
 the parameters and sizes you set in your cluster config. Basic feedback is
 given while the cluster is being created, you can see more information in the
 AWS opsworks console.
 
 At this point your opsworks instances have been initialized but no ec2 instances
-have been created. The RDS instance **has** been created and will be running (and
+have been created. The RDS cluster **has** been created and will be running (and
 incurring AWS costs). If you do not intend to go on to the next step at this time
 you should consider running `./bin/rake rds:stop` which will turn off the RDS cluster. 
-When you are eventually ready to move
-on to step 6, the `stack:instances:start` command will restore the
-RDS cluster from it's stopped state.
+When you are eventually ready to move on to step 6, the `stack:instances:start` 
+command will restore the RDS cluster from it's stopped state.
 
 **Note**: running `rds:stop` immediately after `admin:cluster:init`
 can sometimes return an error that the RDS instance is in a non-modifiable state.
 This is fine; it's just the instance doing it's usual automated backup when it first 
 comes online. Wait 5-10m or so and try again.
+
+**Note**: the rake tasks attempts to run some of the initialization steps in parallel
+to improve performance. This results in the console output sometimes being a bit
+messy. Sorry!
 
 ### Step 6 - Start your ec2 instances
 
@@ -136,7 +140,8 @@ policies](https://docs.aws.amazon.com/opsworks/latest/userguide/workingcookbook-
 
 You can watch the process via `./bin/rake stack:instances:list` or (better) via
 the AWS web console. Starting the entire cluster takes about 30 minutes the
-first time.  Subsequent instance restarts go significantly faster.
+first time as the new instances will apply a dist-upgrade and possilbe reboot. 
+Subsequent instance restarts go significantly faster.
 
 Opencast is started automatically, and instances start in the correct order
 to ensure dependent services are available for a properly provisioned cluster.
@@ -493,13 +498,6 @@ send from multiple `default_email_sender` addresses, though, say to segment
 email communication by cluster, you'll need to verify each address before
 using.
 
-### Experimental EFS support (DEPRECATED)
-
-[Amazon Elastic File System](https://aws.amazon.com/efs/) is currently in
-preview and can only be deployed to the us-west-2 region.  You can create an
-efs-backed cluster by selecting one of the efs variants after running
-`./bin/rake cluster:new`.
-
 ### s3 distribution layer
 
 Clusters by default publish video files to an s3 bucket named after the
@@ -542,11 +540,11 @@ used in the various `deploy-*` recipes.
 ### MySQL backups
 
 The MySQL database is dumped to the `backups/mysql` directory on your nfs mount
-every hour via the `oc-opsworks-recipes::install-mysql-backups` recipe. This
+every day via the `oc-opsworks-recipes::install-mysql-backups` recipe. This
 recipe also adds a cloudwatch metric and alarm to ensure the dumps are
 happening correctly.
 
-You can tweak the minute of the hour the dumps run by setting:
+You can tweak the hour/minute of the hour the dumps run by setting:
 
 
 ```
@@ -554,19 +552,22 @@ You can tweak the minute of the hour the dumps run by setting:
   "stack": {
     "chef": {
       "custom_json": {
-        "run_mysql_dump_on_the": 5
+        "mysql_dump_minute": 5
+        "mysql_dump_hour": 5
       },
     }
   }
 }
 ```
 
-So, like your local radio weatherman, we run the mysql dump on the "5s", or the
-"2s", or the "10s" or whatever. The default is `2`.
+The default is 3:02am.
 
-This means we're not using the default backups provided by RDS - this is to
+This means we're not using the default snapshot backups provided by RDS - this is to
 save money and it make it easier to coordinate a database dump with a
 filesystem snapshot. This may change at some point in the future.
+
+In addition to these self-managed backups, our RDS clusters also maintain a daily, 1-day
+window snapshot backup and a 24-hour [Backtrack](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraMySQL.Managing.Backtrack.html) window.
 
 ### Static ffmpeg installation
 
@@ -624,12 +625,11 @@ DNS and glue everything together for you.
 
 ### Ubuntu 14.04 Enhanced networking
 
-"Enhanced networking" allows your instances to take full advantage of 10Gbps
-networking on aws. Opsworks ubuntu 14.04 instances have enhanced networking
-enabled, but unfortunately use a driver too old to get full networking speed.
+The combination of the latest M5/C5 instances + the `linux-aws` v4 Linux kernel
+gets us optimized networking performance out of the box. (Note: we used to
+have to build a custom kernel module to get this).
 
-The `oc-opsworks-recipes::enable-enhanced-networking` recipe patches and
-installs the correct driver. This doubles multithreaded / multiprocess IO from
+The amazon enhanced networking driver doubles multithreaded / multiprocess IO from
 around 5Gbps to 10Gbps and seems to have no deterimental effect on single
 threaded IO. Note that actually acheiving 10Gbps is dependent on instance
 placement and per AWS can only be guaranteed with the use of Placement Groups.
@@ -642,6 +642,12 @@ We've built tooling to create custom AMIs for faster and more robust green
 instance deploys. This tooling requires the official python aws-cli and that it
 be connected to a user with the appropriate rights.
 
+By default, new clusters will be configured to use the most recent AMIs in
+the respective AWS account that have been tagged thusly:
+
+    mh-opsworks: 1
+    released: 1
+    
 We create 2 amis for each region - a public and private instance AMI.  The
 process is relatively simple:
 
@@ -650,22 +656,20 @@ process is relatively simple:
 * Edit the stack via `cluster:edit` and change the region, if necessary. See
   "Supporting a new region" if you're deploying somewhere other than
   `us-east-1` for the first time before working with custom AMI building.
-* Edit the stack config to remove the pre-existing `base_private_ami_id` and
-  `base_public_ami_id` settings, as we want to start from a clean image.
 * Run `./bin/rake admin:cluster:init stack:instances:start` to provision the
   ami builder stack and build the custom AMI seed instances.
 * Log into each of the instances via `stack:instances:ssh_to` to accept the ssh
   host verification messages and make additional customizations (these should
   be done via chef, obviously).
 * Run the ami builder script included in this repository -
-  `./bin/build_ami.sh`. It uses the python aws-cli and bash to prepare and then
+  `./bin/build_ami.sh [profile]`. It uses the python aws-cli and bash to prepare and then
   create the AMI images. Pass in an aws credential profile if the correct
   access / secret key isn't in the default one.
 * Wait. It takes around 15 minutes to create the AMIs.
 
-Once the AMIs are created in the region of concern, you can deploy other
-clusters using these images. Edit your stack's `custom_json` and include the
-following keys:
+Once the AMIs are created in the region of concern, you should deploy a test
+clusters using these images before "releasing" them. Edit your stack's `custom_json` and update the
+following keys to the ids of your newly created AMIs:
 
 
 ```
@@ -681,36 +685,19 @@ following keys:
 }
 ```
 
-You can include this in your `base-secrets.json` to make all subsequent cluster
-creations use these custom AMIs. If you're deploying multiple clusters in a
+Once you're satisfied update the `released` tag for each AMI to "1" and they will
+be picked up automatically on new cluster creation.
+
+If you're deploying multiple clusters in a
 bunch of different regions you'll need to manually edit the AMI ID when
 switching regions.
 
-### RDS instance configuration
+### RDS Aurora Cluster
 
-You can override default RDS instance creation parameters by adding them to the
-`rds` stanza of your cluster configuration. The attributes you put in there are
-`merge`d into the defaults and passed to the ruby SDK
-[`Aws::RDS::Client#create_db_instance`
-method](https://docs.aws.amazon.com/sdkforruby/api/Aws/RDS/Client.html#create_db_instance-instance_method).
-
-So, by default we create a single-AZ RDS instance for all but "large" clusters.
-If you wanted to create a multi-az instance for a non-large cluster, you'd run
-`cluster:new`, update your cluster configuration to look something like:
-
-
-```
-{
-  "rds": {
-    "db_name": "opencast",
-    "_other stuff . . ": "other stuff",
-    "multi_az": true
-  }
-}
-```
-
-and then create your cluster.  This pattern is similar for other RDS-specific
-attributes.
+Opencast clusters built via `mh-opsworks` utilize an [RDS Aurora Cluster](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/index.html), an AWS-tuned,
+drop-in replacement for standard MySQL (or Postgres). An Aurora cluster consists of
+one or more RDS instances and a shared "cluster volume", which is a virtual storage layer
+that spans multiple availability zones. 
 
 ### Potentially problematic aws resource limits
 
@@ -719,7 +706,8 @@ The default aws resource limits are listed
 
 Every oc-opsworks managed cluster provisions:
 
-* A vpc
+* A vpc (via Cloudformation)
+* A RDS Cluster (via Cloudformation)
 * An opsworks stack,
 * A cloudformation stack, and
 * An internet gateway

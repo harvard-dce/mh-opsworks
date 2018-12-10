@@ -2,8 +2,8 @@ Initialize a opencast cluster using the current cluster config
 
 This:
 
-* Creates the VPC, NAT, and EFS (deprecated) infrastructure via a
-  cloudformation template,
+* Creates the VPC and NAT infrastructure via a cloudformation template,
+* Creates the RDS Aurora cluster infrastructure via a cloudformation template,
 * Creates the opsworks stack, layers, and instances, gluing everything
   together correctly within the VPC, and
 * Creates the opsworks application that'll be deployed.
