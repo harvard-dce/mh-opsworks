@@ -5,12 +5,14 @@ module Cluster
       sns_endpoints = stack_custom_json.fetch(:sns_endpoints, {})
       sns_endpoints.each { |e|
         protocol, endpoint = e.flatten
-        puts "Subscribing #{protocol} #{endpoint} to #{topic_name}; check your inbox for the confiration message."
-        sns_client.subscribe(
-          topic_arn: topic_arn,
-          protocol: protocol,
-          endpoint: endpoint
-        )
+        if ! endpoint.empty?
+          puts "Subscribing #{protocol} #{endpoint} to #{topic_name}; check your inbox for the confiration message."
+          sns_client.subscribe(
+            topic_arn: topic_arn,
+            protocol: protocol,
+            endpoint: endpoint
+          )
+        end
       }
     end
   end

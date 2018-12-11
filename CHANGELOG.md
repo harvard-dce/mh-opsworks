@@ -13,6 +13,7 @@
 * remove enhanced networking setup recipe from runlists
 * add mh-opsworks version compatability check
 * MI-134: find and use latest amis in cluster config
+* fix for empty sns email
 
 ## 1.17.2 - 10/25/2018
 
