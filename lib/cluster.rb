@@ -61,6 +61,7 @@ require './lib/cluster/config_checks/json_format'
 require './lib/cluster/config_checks/bucket_configs'
 require './lib/cluster/config_checks/real_users'
 require './lib/cluster/config_checks/secrets_ips'
+require './lib/cluster/zadara'
 
 module Cluster
   class JSONFormatError < StandardError; end

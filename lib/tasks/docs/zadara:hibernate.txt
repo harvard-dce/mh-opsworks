@@ -1,0 +1,5 @@
+Hibernate the Zadara VPSA attached to this cluster
+
+SEE ALSO:
+
+zadara:restore, zadara:status

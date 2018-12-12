@@ -3,6 +3,7 @@ module Cluster
     require 'uri'
     require 'json'
     require 'concurrent-ruby'
+    require 'net/http'
     include ConfigurationHelpers
     include NamingHelpers
     include ClientHelpers
@@ -33,6 +34,11 @@ module Cluster
 
     def self.external_storage?
       storage_config[:type] == 'external'
+    end
+
+    def self.show_zadara_tasks?
+      stack_name = config.parsed[:stack][:name]
+      external_storage? && ! stack_name.match(/prod|prd/i)
     end
 
     def self.instance_profile_policy_document

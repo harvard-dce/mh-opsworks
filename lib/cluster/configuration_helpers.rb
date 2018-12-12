@@ -95,6 +95,10 @@ module Cluster
         stack_custom_json.fetch(:storage, {})
       end
 
+      def zadara_api_config
+        stack_custom_json.fetch(:zadara_manage_api, {})
+      end
+
       def cluster_config_bucket_name
         stack_secrets[:cluster_config_bucket_name] ||
           config.parsed_secrets[:stack].fetch(:secrets, {})[:cluster_config_bucket_name]

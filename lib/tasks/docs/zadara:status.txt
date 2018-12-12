@@ -1,0 +1,5 @@
+Show the status of the Zadara VPSA attached to this cluster
+
+SEE ALSO:
+
+zadara:hibernate, zadara:restore
