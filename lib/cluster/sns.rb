@@ -65,7 +65,9 @@ module Cluster
         next_token: next_token
       )
       result.subscriptions.each do |subscription|
-        sns_client.unsubscribe(subscription_arn: subscription.subscription_arn)
+        unless subscription.subscription_arn.downcase.start_with?('pending')
+          sns_client.unsubscribe(subscription_arn: subscription.subscription_arn)
+        end
       end
       if result.next_token
         delete_subscriptions_for(topic_arn, result.next_token)
