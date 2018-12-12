@@ -113,7 +113,8 @@ namespace :stack do
 
     desc Cluster::RakeDocs.new('stack:instances:stop').desc
     task stop: ['cluster:configtest', 'cluster:config_sync_check', 'cluster:production_failsafe'] do
-      Cluster::Stack.stop_all
+      stop_rds = ENV.fetch('stop_rds', 'true').strip.downcase == 'true'
+      Cluster::Stack.stop_all(stop_rds)
     end
 
     desc Cluster::RakeDocs.new('stack:instances:start').desc

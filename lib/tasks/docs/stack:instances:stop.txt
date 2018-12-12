@@ -2,6 +2,10 @@ Stops all instances in the current cluster
 
 This shuts down opencast and, stops all instances in the cluster, and stops the RDS cluster.
 
+In the event you do not want the RDS cluster stopped, pass `rds_stop=false` as an option:
+
+    ./bin/rake stack:instances:stop stop_rds=false
+
 SEE ALSO:
 
 stack:instances:init, stack:instances:start
