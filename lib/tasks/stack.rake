@@ -100,7 +100,7 @@ namespace :stack do
         layers.each do |layer|
           puts %Q|Layer: "#{layer.name}" => #{layer.layer_id}, #{layer.shortname}|
           Cluster::Instances.find_in_layer(layer).each do |instance|
-            puts %Q|	Instance: #{instance.hostname} => status: #{instance.status}, ec2_instance_id: #{instance.ec2_instance_id}|
+            puts %Q|	#{instance.hostname} => type: #{instance.instance_type}, status: #{instance.status}, ec2_id: #{instance.ec2_instance_id}, public_ip: #{instance.public_ip}, private_ip: #{instance.private_ip}|
           end
         end
       end
