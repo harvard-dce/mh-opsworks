@@ -1,7 +1,12 @@
 namespace :rds do
   desc Cluster::RakeDocs.new('rds:init').desc
   task init: ['cluster:configtest', 'cluster:config_sync_check', 'cluster:production_failsafe'] do
-    Cluster::RDS.find_or_create
+    from_snapshot = ENV.fetch('from_snapshot', '').strip.downcase
+    if ! from_snapshot.empty?
+      Cluster::RDS.create_from_snapshot(from_snapshot)
+    else
+      Cluster::RDS.find_or_create
+    end
   end
 
   desc Cluster::RakeDocs.new('rds:delete').desc

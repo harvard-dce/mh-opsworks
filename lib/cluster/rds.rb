@@ -1,5 +1,6 @@
 module Cluster
   class RDS < Base
+    class ClusterExists < StandardError; end
     include Waiters
 
     def self.all
@@ -48,6 +49,24 @@ module Cluster
       end
 
       parameters = get_parameters
+      stack = cloudformation_client.create_stack(parameters)
+      wait_until_stack_build_completed(stack.stack_id)
+      find_existing
+    end
+
+    def self.create_from_snapshot(snapshot)
+      if find_existing
+        raise ClusterExists.new("Cluster already exists!")
+      end
+      parameters = get_parameters
+      # these params conflict with creating the db resources via a snapshot
+      parameters[:parameters] = parameters[:parameters].reject do |param|
+        param[:parameter_key].start_with?('DBMaster') || param[:parameter_key] == "DBName"
+      end
+      parameters[:parameters] << {
+        parameter_key: 'DBSnapshotIdentifier',
+        parameter_value: snapshot
+      }
       stack = cloudformation_client.create_stack(parameters)
       wait_until_stack_build_completed(stack.stack_id)
       find_existing

@@ -16,9 +16,11 @@ Parameters:
   DBMasterUser:
     Description: "Database master user"
     Type: "String"
+    Default: ""
   DBMasterUserPassword:
     Description: "Database master user password"
     Type: "String"
+    Default: ""
   PreferredBackupWindow:
     Description: "Time window in which AWS will perform automated backups"
     Type: "String"
@@ -31,6 +33,7 @@ Parameters:
   DBName:
     Description: "Name of the database to create in each instance"
     Type: "String"
+    Default: ""
   MultiAZ:
     Description: "If 'true' a 2nd replica db instance will be created"
     Type: "String"
@@ -43,9 +46,14 @@ Parameters:
   BackupRetentionPeriod:
     Description: "Number of days to keep automated backups"
     Type: "String"
+  DBSnapshotIdentifier:
+    Description: "Snapshot ARN from which to create the db instances"
+    Type: "String"
+    Default: ""
 
 Conditions:
   CreateReplica: !Not [!Equals [!Ref MultiAZ, 'false']]
+  CreateFromSnapshot: !Not [!Equals [!Ref DBSnapshotIdentifier, '']]
 
 Resources:
 
@@ -83,9 +91,26 @@ Resources:
       DBSubnetGroupName: !Ref DBSubnetGroup
       Engine: "aurora"
       EngineMode: provisioned
-      MasterUsername: !Ref DBMasterUser
-      MasterUserPassword: !Ref DBMasterUserPassword
-      DatabaseName: !Ref DBName
+      MasterUsername:
+        Fn::If:
+        - CreateFromSnapshot
+        - Ref: AWS::NoValue
+        - Ref: DBMasterUser
+      MasterUserPassword:
+        Fn::If:
+        - CreateFromSnapshot
+        - Ref: AWS::NoValue
+        - Ref: DBMasterUserPassword
+      DatabaseName:
+        Fn::If:
+        - CreateFromSnapshot
+        - Ref: AWS::NoValue
+        - Ref: DBName
+      SnapshotIdentifier:
+        Fn::If:
+        - CreateFromSnapshot
+        - Ref: DBSnapshotIdentifier
+        - Ref: AWS::NoValue
       PreferredBackupWindow: !Ref PreferredBackupWindow
       PreferredMaintenanceWindow: !Ref PreferredMaintenanceWindow
       EnableCloudwatchLogsExports:
