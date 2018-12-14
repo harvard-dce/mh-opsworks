@@ -27,12 +27,17 @@ module Cluster
       cluster_number = cluster_number_input.to_i
       cluster_name = configs[cluster_number]
       if cluster_number_input.match(/^\d+$/) && cluster_name
-        set_cluster_to(cluster_name)
-        download_latest_cluster_config_for(cluster_name)
-        return
+        cluster_name
+      else
+        puts "Please choose a valid cluster.\n"
+        choose_cluster
       end
-      puts "Please choose a valid cluster.\n"
-      choose_cluster
+    end
+
+    def switch_cluster
+      cluster_name = choose_cluster
+      set_cluster_to(cluster_name)
+      download_latest_cluster_config_for(cluster_name)
     end
 
     def download_latest_cluster_config_for(cluster_name)

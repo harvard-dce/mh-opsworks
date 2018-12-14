@@ -169,6 +169,24 @@ module Cluster
         yield if block_given?
       end
 
+      def wait_until_volume_snapshot_completed(snapshot_id)
+        print "Waiting for volume snapshot to be created: "
+        ec2_client.wait_until(:snapshot_completed, snapshot_ids: [snapshot_id]) do |w|
+          ::Cluster::Instance.apply_wait_options(w)
+        end
+        puts "done!"
+        yield if block_given?
+      end
+
+      def wait_until_volume_available(volume_id)
+        print "Waiting for volume to be created: "
+        ec2_client.wait_until(:volume_available, volume_ids: [volume_id]) do |w|
+          ::Cluster::Instance.apply_wait_options(w)
+        end
+        puts "done!"
+        yield if block_given?
+      end
+
       def apply_wait_options(w)
         w.tap do |w|
           w.max_attempts = 60

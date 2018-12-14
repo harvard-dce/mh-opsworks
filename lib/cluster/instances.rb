@@ -95,14 +95,17 @@ module Cluster
         return
       end
 
-      resource_ids = Stack.find_volume_ids
-      find_existing.each do |instance|
-        resource_ids.push(instance.ec2_instance_id)
+      volume_ids = Cluster::Volumes.all.map do |volume|
+        volume.ec2_volume_id
+      end
+
+      instance_ids = find_existing.map do |instance|
+        instance.ec2_instance_id
       end
 
       ec2_client.create_tags({
           dry_run: false,
-          resources: resource_ids,
+          resources: volume_ids + instance_ids,
           tags: stack_custom_tags
       })
     end

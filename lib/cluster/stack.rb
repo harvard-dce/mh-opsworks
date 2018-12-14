@@ -132,6 +132,12 @@ module Cluster
       end
     end
 
+    def self.find_by_name(name)
+      all.find do |stack|
+        stack.name == name
+      end
+    end
+
     private
 
     def self.stop_all_other_instances
@@ -288,15 +294,5 @@ module Cluster
       Aws::OpsWorks::Stack.new(stack_id, client: opsworks_client)
     end
 
-    def self.find_volume_ids
-      volume_ids = []
-      stack = find_existing
-      resp = opsworks_client.describe_volumes({stack_id: stack.stack_id})
-      resp.volumes.each do |volume|
-        volume_ids.push(volume.ec2_volume_id)
-      end
-
-      volume_ids
-    end
   end
 end

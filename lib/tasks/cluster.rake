@@ -256,8 +256,18 @@ namespace :cluster do
       exit
     end
 
-    session.choose_cluster
+    session.switch_cluster
     Cluster::RemoteConfig.new.sync
   end
 
+  task :migrate do
+    source_name = ENV.fetch('source', '').strip.downcase
+    if source_name.empty?
+      source_config_filename = Cluster::ClusterSwitcherSession.new.choose_cluster
+      source_name = source_config_filename.sub('cluster_config-', '').sub('.json', '')
+    end
+    
+    Cluster::Migrate.migrate(source_name)
+    return
+  end
 end
