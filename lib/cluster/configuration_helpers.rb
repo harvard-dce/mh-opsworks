@@ -51,6 +51,10 @@ module Cluster
         %Q|arn:aws:rds:#{region}:#{get_account_number}:db:#{rds_instance_identifier}|
       end
 
+      def rds_supports_performance_insights?
+        !!(rds_config[:db_instance_class] =~ /db\.r(3|4)/)
+      end
+
       def deployment_config
         app_config[:deployment]
       end

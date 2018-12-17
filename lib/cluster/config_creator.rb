@@ -11,7 +11,7 @@ module Cluster
         storage_instance_type: 'm5.large',
         storage_disk_size: '250',
 
-        database_instance_type: 'db.r4.large',
+        database_instance_type: 'db.t2.medium',
         multi_az: false,
 
         admin_instance_type: 'm5.large',
@@ -70,7 +70,7 @@ module Cluster
 
         description: 'Appropriate for processing small workloads and testing capture agent integration. Uses zadara storage - see README.zadara.md for instructions. ',
 
-        database_instance_type: 'db.r4.large',
+        database_instance_type: 'db.t2.medium',
         multi_az: false,
 
         admin_instance_type: 'm5.large',

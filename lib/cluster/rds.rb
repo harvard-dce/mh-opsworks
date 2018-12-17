@@ -155,7 +155,7 @@ module Cluster
           },
           {
               parameter_key: "EnablePerformanceInsights",
-              parameter_value: base_parameters[:enable_performance_insights].to_s
+              parameter_value: rds_supports_performance_insights?.to_s
           },
           {
               parameter_key: "MultiAZ",

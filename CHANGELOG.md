@@ -17,6 +17,7 @@
 * add additional instance info to `stack:instances:list` output
 * add option to `stack:instances:stop` to prevent stopping rds cluster
 * don't try to unsub pending sns subscriptions
+* Allow db.t2.small/medium RDS types; enable performance insights only for r4/3 types
 
 ## 1.17.2 - 10/25/2018
 
