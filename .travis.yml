@@ -1,6 +1,7 @@
 before_install:
   - "echo '--colour' > ~/.rspec"
   - "echo 'gem: --no-document' > ~/.gemrc"
+  - gem install bundler -v '< 2'
 before_script:
 cache:
   - bundler
