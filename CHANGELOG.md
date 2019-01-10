@@ -19,6 +19,8 @@
 * don't try to unsub pending sns subscriptions
 * Allow db.t2.small/medium RDS types; enable performance insights only for r4/3 types
 * Add newrelic install recipe to OC node runlists.
+* replacing `install-queued-jobs-metric` recipe with expanded `install-opencast-job-metrics`
+  Note: a stub of the old recipe remains in the cookbook for backwards compatibility
 
 ## 1.17.2 - 10/25/2018
 
