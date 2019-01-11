@@ -19,6 +19,9 @@
     "default_ssh_key_name":"",
     "chef": {
       "custom_json": {
+        "opsworks": {
+          "chef_log_level": "info"
+        },
         "aws_custom_tags": [
             { "key": "OU", "value": "DE" },
             { "key": "Project", "value": "<%= project_tag %>" }

@@ -21,6 +21,7 @@
 * Add newrelic install recipe to OC node runlists.
 * replacing `install-queued-jobs-metric` recipe with expanded `install-opencast-job-metrics`
   Note: a stub of the old recipe remains in the cookbook for backwards compatibility
+* zadara cluster config template was missing chef log level setting
 
 ## 1.17.2 - 10/25/2018
 
