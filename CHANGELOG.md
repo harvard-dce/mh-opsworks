@@ -22,6 +22,7 @@
 * replacing `install-queued-jobs-metric` recipe with expanded `install-opencast-job-metrics`
   Note: a stub of the old recipe remains in the cookbook for backwards compatibility
 * zadara cluster config template was missing chef log level setting
+* MI-144: vpn/ca ips are now in `base-secrets.json` so look for them in the custom json instead of local secrets
 
 ## 1.17.2 - 10/25/2018
 

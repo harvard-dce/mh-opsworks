@@ -143,8 +143,8 @@ module Cluster
     def self.get_cf_template
       erb = Erubis::Eruby.new(File.read('./templates/OpsWorksinVPC.template.erb'))
       attributes = {
-          vpn_ips: stack_secrets[:vpn_ips],
-          ca_ips: stack_secrets[:ca_ips],
+          vpn_ips: stack_custom_json.fetch(:vpn_ips, []),
+          ca_ips: stack_custom_json.fetch(:ca_ips, []),
           ibm_watson_ips: ibm_watson_config.fetch(:ips, []),
           nfs_server_host: storage_config.fetch(:nfs_server_host, nil)
       }

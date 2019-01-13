@@ -4,8 +4,11 @@ module Cluster
 
     class VpnCaIpsConfigured < Base
       def self.sane?
-        if stack_secrets.fetch(:vpn_ips, []).empty?
-          raise VpnCaIpsNotConfigured.new('You must set at least the VPN IP ranges in your secrets.json (capture agent IPs are optional).')
+        if stack_custom_json.fetch(:vpn_ips, []).empty?
+          raise VpnCaIpsNotConfigured.new("The VPN IP ranges are missing from your stack's custom_json. These are provided automatically by the `base-secrets.json` for new clusters. For older clusters you can probably get them from your local `secrets.json` file. (Then remove them from `secrets.json`).")
+        end
+        if stack_secrets[:vpn_ips]
+          STDERR.puts "Deprecation notice: VPN and Capture Agent ips are no longer read from `secrets.json` and can be removed.".colorize(:red)
         end
       end
     end
