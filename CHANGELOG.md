@@ -2,6 +2,24 @@
 
 ## TO BE RELEASED
 
+## 2.1.0 - 01/15/2019
+
+* MI-144: vpn/ca ips are now in `base-secrets.json` so look for them in the custom json instead of local secrets
+
+## 2.0.0 - 01/14/2019
+
+These changes all relate or were implemented during the Opencast 1.x -> 5.x migration work
+
+* t/MI-122: update all gems to latest versions
+* b/MI-124: redo db subnet group; remove db subnet
+* b/MI-119: set storage type to general pupose ssd
+* t/MI-118: force cluster names to lowercase
+* open iperf3 port from capture agents in common security group
+* set default cluster cookbook revision to "oc-opsworks-5.x-recipes" (for now)
+* MI-100: add vpc filter to security group finder api call (cherry-picked from main line)
+* MI-98: remove EFS storage support
+* MI-95: use multiple private subnets/AZs so worker spin-up isn't vulnerable to AZ capacity issues
+* Incorporate utility layer/node creation into `cluster:new`
 * enable RDS performance insights
 * MI-125: rename maven cache file
 * MI-127: remove crowdstrike install from runlists
@@ -22,7 +40,6 @@
 * replacing `install-queued-jobs-metric` recipe with expanded `install-opencast-job-metrics`
   Note: a stub of the old recipe remains in the cookbook for backwards compatibility
 * zadara cluster config template was missing chef log level setting
-* MI-144: vpn/ca ips are now in `base-secrets.json` so look for them in the custom json instead of local secrets
 
 ## 1.17.2 - 10/25/2018
 
