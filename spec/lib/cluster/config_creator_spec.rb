@@ -14,7 +14,7 @@ describe Cluster::ConfigCreator do
     expect(output).to include(variant_attributes[:storage_instance_type])
     expect(output).to include(config_attributes[:default_users])
     expect(output).to include(config_attributes[:subnet_azs])
-    expect(output).to include(config_attributes[:cookbook_source_type])
+    expect(output).to include(config_attributes[:cookbook_revision])
   end
 
   it 'has multiple variants' do
@@ -64,7 +64,7 @@ describe Cluster::ConfigCreator do
     app_git_revision = 'unique_revision'
     default_users = 'afoasdf'
     subnet_azs = 'us-east-1a,us-east-1d'
-    cookbook_source_type = 's3'
+    cookbook_revision = 'oc-master'
 
     attributes = {
       name: name,
@@ -75,7 +75,7 @@ describe Cluster::ConfigCreator do
       default_users: default_users,
       subnet_azs: subnet_azs,
       include_analytics: true,
-      cookbook_source_type: cookbook_source_type,
+      cookbook_revision: cookbook_revision,
       include_utility: true,
       base_public_ami_id: "ami-12345",
       base_private_ami_id: "ami-09876"

@@ -56,13 +56,13 @@ describe Cluster::ConfigCreationSession do
     end
   end
 
-  context '#get_cookbook_source_type' do
-    it 'uses "s3" as default source type' do
+  context '#get_cookbook_revision' do
+    it 'sets the cookbook revision' do
       stub_stacks_with_other_stack_name
       session = described_class.new
-      allow(STDIN).to receive(:gets).and_return('')
-      session.get_cookbook_source_type
-      expect(session.cookbook_source_type).to eq 's3'
+      allow(STDIN).to receive(:gets).and_return('foobar')
+      session.get_cookbook_revision
+      expect(session.cookbook_revision).to eq 'foobar'
     end
 
   end

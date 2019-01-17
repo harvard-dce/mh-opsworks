@@ -197,7 +197,7 @@ namespace :cluster do
 
     session.get_cluster_name
     session.sns_email_subscription
-    session.get_cookbook_source_type
+    session.get_cookbook_revision
     session.get_git_url
     session.get_git_revision
     session.compute_cidr_block_root
@@ -220,7 +220,7 @@ namespace :cluster do
       subnet_azs: session.subnet_azs.join(','),
       default_users: JSON.pretty_generate(session.compute_default_users),
       include_analytics: session.include_analytics,
-      cookbook_source_type: session.cookbook_source_type,
+      cookbook_revision: session.cookbook_revision,
       include_utility: session.include_utility,
       sns_email: session.sns_email
     )

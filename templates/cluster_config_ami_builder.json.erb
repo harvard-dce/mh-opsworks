@@ -31,11 +31,9 @@
         }<%= base_secrets_content %>
       },
       "custom_cookbooks_source": {
-        "type": "<%= cookbook_source_type %>",
-        <% if cookbook_source_type == "git" %>
-        "url": "https://github.com/harvard-dce/mh-opsworks-recipes",
-        <% end %>
-        "revision": "oc-opsworks-5.x-recipes"
+        "_comment": "Change 'type' to 'git' and add 'url': 'https://github.com/harvard-dce/mh-opsworks-recipes' to fetch from github vs s3 prepackaged",
+        "type": "s3",
+        "revision": "<%= cookbook_revision %>"
       }
     },
     "layers": [

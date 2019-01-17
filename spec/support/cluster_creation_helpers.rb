@@ -8,7 +8,7 @@ module ClusterCreationHelpers
       default_users: '',
       subnet_azs: ['us-east-1a','us-east-1d','us-east-1f','us-east-1b'],
       include_analytics: true,
-      cookbook_source_type: 's3',
+      cookbook_revision: 'oc-master',
       include_utility: true,
       base_public_ami_id: "ami-12345",
       base_private_ami_id: "ami-09876",

@@ -2,6 +2,8 @@
 
 ## TO BE RELEASED
 
+* MI-150: `cluster:new` asks for cookbook revision, no longer asks for cookbook source type
+
 ## 2.1.0 - 01/15/2019
 
 * MI-144: vpn/ca ips are now in `base-secrets.json` so look for them in the custom json instead of local secrets

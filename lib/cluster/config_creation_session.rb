@@ -2,7 +2,7 @@ module Cluster
   class ConfigCreationSession
     attr_accessor :variant, :name, :cidr_block_root, :git_url, :git_revision,
       :export_root, :nfs_server_host, :subnet_azs, :project_tag,
-      :include_analytics, :cookbook_source_type, :include_utility, :sns_email
+      :include_analytics, :cookbook_revision, :include_utility, :sns_email
 
     def choose_variant
       puts "\nPlease choose the size of the cluster you'd like to deploy.\n\n"
@@ -136,7 +136,7 @@ module Cluster
     end
 
     def get_git_revision
-      print "\nThe branch, tag, or revision to deploy [master]: "
+      print "\nThe Opencast branch, tag, or revision to deploy [master]: "
       git_revision = STDIN.gets.strip.chomp
 
       if git_revision.match(/^\s?$/)
@@ -165,13 +165,14 @@ module Cluster
       end
     end
 
-    def get_cookbook_source_type
-      print "\nChoose the custom cookbook source [git/S3]: "
-      git_vs_s3 = STDIN.gets.strip.chomp
-      if git_vs_s3.downcase == "git"
-        @cookbook_source_type = "git"
+    def get_cookbook_revision
+      print "\nEnter the custom Chef cookbook revision, e.g. 'oc-master': "
+      cookbook_revision = STDIN.gets.strip.chomp
+      unless cookbook_revision == ''
+        @cookbook_revision = cookbook_revision
       else
-        @cookbook_source_type = "s3"
+        puts "You must enter a custom cookbook revision or tag"
+        get_cookbook_revision
       end
     end
 
