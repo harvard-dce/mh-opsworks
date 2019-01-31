@@ -232,6 +232,9 @@ module Cluster
         cookbook_source[:url] = get_cookbook_source_s3_url(cookbook_source[:revision])
       end
 
+      # remove any comments
+      cookbook_source.delete(:_comment)
+
       instance_profile = InstanceProfile.find_or_create
 
       custom_json = stack_custom_json
