@@ -2,6 +2,8 @@
 
 ## TO BE RELEASED
 
+## 2.2.0 - 02/13/2019
+
 * MI-150: `cluster:new` asks for cookbook revision, no longer asks for cookbook source type
 * MI-149: adding tasks to hibernate/restore the dev zadara vpsa
 
