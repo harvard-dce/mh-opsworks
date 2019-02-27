@@ -114,7 +114,26 @@ namespace :stack do
     desc Cluster::RakeDocs.new('stack:instances:stop').desc
     task stop: ['cluster:configtest', 'cluster:config_sync_check', 'cluster:production_failsafe'] do
       stop_rds = ENV.fetch('stop_rds', 'true').strip.downcase == 'true'
+      hibernate_vpsa = Cluster::Base.show_zadara_tasks? and
+        Cluster::Zadara.prompt_to("hibernate")
+
       Cluster::Stack.stop_all(stop_rds)
+
+      if hibernate_vpsa
+        puts "Hibernating vpsa..."
+        begin
+          Cluster::Zadara.hibernate
+          sleep 60
+
+          while !Cluster::Zadara.is_hibernated?
+            sleep 60
+          end
+
+          puts "vpsa is hibernated!"
+        rescue Exception => e
+          puts "Something went wrong hibernating vpsa: #{e}"
+        end
+      end
     end
 
     desc Cluster::RakeDocs.new('stack:instances:start').desc
@@ -123,6 +142,26 @@ namespace :stack do
       unless num_workers.nil?
         num_workers = num_workers.to_i
       end
+
+      if Cluster::Base.show_zadara_tasks? and
+          Cluster::Zadara.prompt_to("restore")
+
+        puts "Restoring vpsa..."
+        begin
+          Cluster::Zadara.restore
+          sleep 60
+
+          while !Cluster::Zadara.is_online?
+            sleep 60
+          end
+
+          puts "vpsa is up!"
+        rescue Exception => e
+          puts "Something went wrong restoring vpsa: #{e}"
+          next unless e.message =~ /already online/
+        end
+      end
+
       Cluster::Stack.start_all(num_workers)
       Cluster::Instances.create_custom_tags
     end
