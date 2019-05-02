@@ -11,7 +11,7 @@ module Cluster
         storage_instance_type: 'm5.large',
         storage_disk_size: '250',
 
-        database_instance_type: 'db.t2.medium',
+        database_instance_type: 'db.t3.medium',
         multi_az: false,
 
         admin_instance_type: 'm5.large',
@@ -21,13 +21,13 @@ module Cluster
 
         engage_instance_type: 'm5.large',
 
-        ganglia_instance_type: 't2.medium',
+        ganglia_instance_type: 't3.medium',
         ganglia_disk_size: '20',
 
         analytics_instance_type: 'm5.large',
         analytics_disk_size: '50',
 
-        utility_instance_type: 't2.medium',
+        utility_instance_type: 't3.medium',
 
         opencast_root_size: '20',
         root_device_size: '8',
@@ -42,7 +42,7 @@ module Cluster
         storage_instance_type: 'm5.2xlarge',
         storage_disk_size: '2000',
 
-        database_instance_type: 'db.r4.xlarge',
+        database_instance_type: 'db.r5.xlarge',
         multi_az: true,
 
         admin_instance_type: 'm5.4xlarge',
@@ -52,13 +52,13 @@ module Cluster
 
         engage_instance_type: 'm5.4xlarge',
 
-        ganglia_instance_type: 't2.medium',
+        ganglia_instance_type: 't3.medium',
         ganglia_disk_size: '100',
 
         analytics_instance_type: 'm5.2xlarge',
         analytics_disk_size: '500',
 
-        utility_instance_type: 't2.large',
+        utility_instance_type: 't3.large',
 
         opencast_root_size: '50',
         root_device_size: '16',
@@ -70,7 +70,7 @@ module Cluster
 
         description: 'Appropriate for processing small workloads and testing capture agent integration. Uses zadara storage - see README.zadara.md for instructions. ',
 
-        database_instance_type: 'db.t2.medium',
+        database_instance_type: 'db.t3.medium',
         multi_az: false,
 
         admin_instance_type: 'm5.large',
@@ -80,7 +80,7 @@ module Cluster
 
         engage_instance_type: 'm5.large',
 
-        ganglia_instance_type: 't2.medium',
+        ganglia_instance_type: 't3.medium',
         ganglia_disk_size: '20',
 
         analytics_instance_type: 'm5.large',
@@ -99,7 +99,7 @@ module Cluster
 
         description: 'Appropriate for large workloads. Uses zadara storage - see README.zadara.md for instructions. ',
 
-        database_instance_type: 'db.r4.xlarge',
+        database_instance_type: 'db.r5.xlarge',
         multi_az: true,
 
         admin_instance_type: 'm5.4xlarge',
@@ -109,7 +109,7 @@ module Cluster
 
         engage_instance_type: 'm5.4xlarge',
 
-        ganglia_instance_type: 't2.medium',
+        ganglia_instance_type: 't3.medium',
         ganglia_disk_size: '100',
 
         analytics_instance_type: 'm5.2xlarge',
@@ -127,20 +127,20 @@ module Cluster
 
         description: 'Use this to build a custom AMI for use by other clusters',
 
-        storage_instance_type: 't2.medium',
+        storage_instance_type: 't3.medium',
         storage_disk_size: '200',
 
-        database_instance_type: 'db.r4.large',
+        database_instance_type: 'db.r5.large',
         multi_az: false,
 
-        admin_instance_type: 't2.medium',
+        admin_instance_type: 't3.medium',
 
-        workers_instance_type: 't2.medium',
+        workers_instance_type: 't3.medium',
         workers_instance_count: 2,
 
-        engage_instance_type: 't2.medium',
+        engage_instance_type: 't3.medium',
 
-        ganglia_instance_type: 't2.medium',
+        ganglia_instance_type: 't3.medium',
         ganglia_disk_size: '10',
 
         opencast_root_size: '20',

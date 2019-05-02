@@ -2,6 +2,8 @@
 
 ## TO BE RELEASED
 
+* MI-167: updates to RDS default instance sizes and monitoring/logging options
+
 ## 2.3.0 - 03/06/2019
 
 * MI-158: hibernate/restore vpsa during `stack:intances:start|stop`

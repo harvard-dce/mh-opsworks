@@ -11,8 +11,8 @@ module Cluster
         end
         if ! rds_config[:db_instance_class] ||
             (! rds_config[:db_instance_class].match(/^db\.r/) &&
-            ! ["db.t2.medium", "db.t2.small"].include?(rds_config[:db_instance_class]))
-          raise RDSDatabaseUnsupportedInstanceClass.new('Invalid db instance class. Supported types include all r3|r4 classes, plus db.t2.small and db.t2.medium.')
+            ! rds_config[:db_instance_class].match(/db\.t(2|3).(small|medium)/))
+          raise RDSDatabaseUnsupportedInstanceClass.new('Invalid db instance class. Supported types include all r3|r4 classes, plus db.t2|3.small and db.t2|3.medium.')
         end
         if ! rds_config[:db_name]
           raise RDSDatabaseNameNotDefined.new('You need to define the database name in the RDS configuration')

@@ -71,6 +71,9 @@ Resources:
       Family: "aurora5.6"
       Parameters:
         slow_query_log: "1"
+        log_output: "FILE"
+        long_query_time: 3
+
 
   DBCluster:
     Type: 'AWS::RDS::DBCluster'
@@ -108,6 +111,8 @@ Resources:
       DBInstanceClass: !Ref DBInstanceClass
       DBParameterGroupName: !Ref DBParameterGroup
       EnablePerformanceInsights: !Ref EnablePerformanceInsights
+      MonitoringInterval: 60
+      MonitoringRoleArn: !Sub "arn:aws:iam::${AWS::AccountId}:role/rds-monitoring-role"
 
   DBInstance2:
     Type: 'AWS::RDS::DBInstance'
@@ -122,6 +127,8 @@ Resources:
       DBInstanceClass: !Ref DBInstanceClass
       DBParameterGroupName: !Ref DBParameterGroup
       EnablePerformanceInsights: !Ref EnablePerformanceInsights
+      MonitoringInterval: 60
+      MonitoringRoleArn: !Sub "arn:aws:iam::${AWS::AccountId}:role/rds-monitoring-role"
 
   DBClusterEventSubscription:
     Type: 'AWS::RDS::EventSubscription'
