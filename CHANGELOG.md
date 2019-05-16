@@ -2,6 +2,8 @@
 
 ## TO BE RELEASED
 
+## 2.3.1 - 03/16/2019
+
 * MI-167: updates to RDS default instance sizes and monitoring/logging options
 
 ## 2.3.0 - 03/06/2019
