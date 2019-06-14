@@ -52,7 +52,7 @@ module Cluster
       end
 
       def rds_supports_performance_insights?
-        !!(rds_config[:db_instance_class] =~ /db\.r(3|4)/)
+        !!(rds_config[:db_instance_class] =~ /db\.r(\d)/)
       end
 
       def deployment_config

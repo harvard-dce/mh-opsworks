@@ -2,6 +2,8 @@
 
 ## TO BE RELEASED
 
+* fix db instance class pattern that controls logic for enabling rds performance insights
+
 ## 2.3.1 - 03/16/2019
 
 * MI-167: updates to RDS default instance sizes and monitoring/logging options
