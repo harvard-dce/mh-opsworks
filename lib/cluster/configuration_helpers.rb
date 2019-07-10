@@ -130,6 +130,10 @@ module Cluster
       def ibm_watson_config
         stack_custom_json[:ibm_watson_service_auth]
       end
+
+      def peer_vpc_config
+        stack_custom_json[:peer_vpcs]
+      end
     end
 
     def self.included(base)

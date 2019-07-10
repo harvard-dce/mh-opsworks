@@ -8,6 +8,7 @@ namespace :admin do
     task init: ['cluster:configtest', 'cluster:config_sync_check'] do
 
       vpc = Cluster::VPC.find_or_create
+      Cluster::VPC.init_peering
 
       Cluster::SubscribesSnsEndpoints.subscribe
 

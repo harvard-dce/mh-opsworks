@@ -51,6 +51,7 @@ module Cluster
                 "sqs:*",
                 "cloudwatch:*",
                 "logs:*",
+                "lambda:InvokeFunction",
                 "sns:CreateTopic",
                 "opsworks:DescribeInstances",
                 "opsworks:DescribeLayers",
