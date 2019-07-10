@@ -9,6 +9,7 @@ namespace :vpc do
   desc Cluster::RakeDocs.new('vpc:init').desc
   task init: ['cluster:configtest', 'cluster:config_sync_check'] do
     Cluster::VPC.find_or_create
+    Cluster::VPC.init_peering
   end
 
   desc Cluster::RakeDocs.new('vpc:update').desc

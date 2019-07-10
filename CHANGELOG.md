@@ -3,6 +3,7 @@
 ## TO BE RELEASED
 
 * fix db instance class pattern that controls logic for enabling rds performance insights
+* establish vpc peering connections; part of MI-170
 
 ## 2.3.1 - 03/16/2019
 

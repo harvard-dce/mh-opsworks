@@ -1,5 +1,6 @@
 require 'pry'
 module Cluster
+  class InvalidPeerVpcId < StandardError; end
   class VPC < Base
     include Cluster::Waiters
 
@@ -17,6 +18,7 @@ module Cluster
       end
 
       if stack
+        delete_peering_connections
         cloudformation_client.delete_stack(
           stack_name: stack.stack_id
         )
@@ -80,6 +82,43 @@ module Cluster
           resource_type: "VPC",
           traffic_type: "ALL"
       })
+    end
+
+    def self.init_peering
+      vpc = find_existing
+      connections = peer_vpc_config.map { |peer_vpc_config|
+        peer_vpc = construct_instance(peer_vpc_config[:id])
+        unless peer_vpc.exists?
+          raise InvalidPeerVpcId("VPC with id #{peer_vpc_config[:id]} does not exist!")
+        end
+        create_peer_connection(vpc, peer_vpc)
+      }
+
+      connections.each do |peer_connection|
+        unless peer_connection.status.code == "active"
+          accept_peer_connection(peer_connection)
+        end
+        create_peer_routes(peer_connection)
+      end
+    end
+
+    def self.delete_peering_connections
+      vpc = find_existing
+      describe_params = {
+        filters: [{
+          name: "requester-vpc-info.vpc-id",
+          values: [vpc.vpc_id]
+        }]
+      }
+      ec2_client.describe_vpc_peering_connections(describe_params).inject([]) {
+        |memo, page| memo + page.vpc_peering_connections
+      }.each do |pc_info|
+        peer_connection = Aws::EC2::VpcPeeringConnection.new(
+          id: pc_info.vpc_peering_connection_id,
+          client: ec2_client
+        )
+        peer_connection.delete
+      end
     end
 
     def self.get_subnet_cidr_blocks(idx, len)
@@ -169,6 +208,69 @@ module Cluster
     def self.configured_vpc_matches_another_on_cidr_block?
       all.any? do |vpc|
         vpc.cidr_block == vpc_config[:cidr_block]
+      end
+    end
+
+    def self.create_peer_connection(vpc, peer_vpc)
+      res = ec2_client.create_vpc_peering_connection({
+        vpc_id: vpc.id,
+        peer_vpc_id: peer_vpc.id
+      })
+      connection_id = res.vpc_peering_connection.vpc_peering_connection_id
+
+      begin
+        peer_vpc_name = peer_vpc.tags.find { |tag| tag.key == "Name" }.value
+      rescue NoMethodError
+        peer_vpc_name = peer_vpc.id
+      end
+
+      ec2_client.create_tags({
+        resources: [ connection_id ],
+        tags: [
+          { key: "Name",
+            value: "#{stack_shortname}-to-#{peer_vpc_name}" },
+          { key: "opsworks:stack",
+            value: stack_shortname }
+        ]
+      })
+      Aws::EC2::VpcPeeringConnection.new(
+        id: connection_id,
+        client: ec2_client
+      )
+    end
+
+    def self.accept_peer_connection(peer_connection)
+      begin
+        # make sure peering connection is in the acceptable state
+        peer_connection.wait_until(max_attempts: 5, delay: 5) { |connection|
+          connection.status.code == "pending-acceptance"
+        }
+        peer_connection.accept
+      rescue Aws::Waiters::Errors::WaiterFailed
+        puts "VPC peering connection failed to enter 'pending-acceptance' state"
+        puts "You may need to manually accept the connection via the web console"
+      end
+    end
+
+    def self.create_peer_routes(peer_connection)
+      accepter = construct_instance(peer_connection.accepter_vpc_info.vpc_id)
+      requester = construct_instance(peer_connection.requester_vpc_info.vpc_id)
+      # accepter route tables must have route to requester and vice versa
+      accepter_routes = accepter.route_tables.map do |rt|
+        { rt: rt, cidr: requester.cidr_block }
+      end
+      requester_routes = requester.route_tables.map do |rt|
+        { rt: rt, cidr: accepter.cidr_block }
+      end
+      accepter_routes.concat(requester_routes).each do |route|
+        begin
+          route[:rt].create_route({
+            destination_cidr_block: route[:cidr],
+            vpc_peering_connection_id: peer_connection.id
+            })
+        rescue Aws::EC2::Errors::RouteAlreadyExists
+          nil
+        end
       end
     end
 

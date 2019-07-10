@@ -807,6 +807,26 @@ manually added to this group.
 
 The **OpsworksLayerSecurityGroupAnalytics** does not at this time open additional ports.
 
+### VPC Peering
+
+The stack's VPC initialization process with establish [VPC peering connections](https://docs.aws.amazon.com/vpc/latest/peering/what-is-vpc-peering.html) with any VPCs configured in the stack's custom json. Peering connections will be created and accepted, and the corresponding route table entries will be created for all subnets in both VPCs. These connections allow instances in the cluster's stack to communicate with private instances/services running in other VPCs, e.g. the transcript indexing service.
+
+Example config:
+```json
+"peer_vpcs": [
+  {
+    "id": "vpc-01bedf8697d350f88",
+    "_comment": "transcript indexer"
+  },
+  {
+    "id": "vpc-0bb7db58996577205",
+    "_comment": "some other vpc"
+  }
+],
+```
+
+To add peering connections to an existing cluster/VPC, add the `peer_vpcs` configuration to the cluster config's custom json and run `./bin/rake vcp:init`
+
 ## TODO
 
 * Automate cloudfront distribution creation
