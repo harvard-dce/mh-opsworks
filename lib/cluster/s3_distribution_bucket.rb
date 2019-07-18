@@ -13,8 +13,8 @@ module Cluster
         bucket: bucket_name,
         cors_configuration: {
           cors_rules: [
-            allowed_headers: ['Authorization'],
-            allowed_methods: ['GET'],
+            allowed_headers: ['*'],
+            allowed_methods: ['GET','HEAD'],
             allowed_origins: ['*'],
             max_age_seconds: 3600
           ]

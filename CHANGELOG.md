@@ -2,6 +2,8 @@
 
 ## TO BE RELEASED
 
+* OPC-357 HLS CORS requires extra headers
+
 ## 2.4.0 - 08/20/2019
 
 * fix db instance class pattern that controls logic for enabling rds performance insights
