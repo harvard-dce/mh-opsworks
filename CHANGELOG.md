@@ -2,6 +2,8 @@
 
 ## TO BE RELEASED
 
+## 2.5.0 - 01/13/2020
+
 * OPC-357 HLS CORS requires extra headers
 * MI-180 don't prompt for vpsa hibernate/restore (just do it)
 
