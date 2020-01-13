@@ -114,12 +114,10 @@ namespace :stack do
     desc Cluster::RakeDocs.new('stack:instances:stop').desc
     task stop: ['cluster:configtest', 'cluster:config_sync_check', 'cluster:production_failsafe'] do
       stop_rds = ENV.fetch('stop_rds', 'true').strip.downcase == 'true'
-      hibernate_vpsa = Cluster::Base.show_zadara_tasks? and
-        Cluster::Zadara.prompt_to("hibernate")
 
       Cluster::Stack.stop_all(stop_rds)
 
-      if hibernate_vpsa
+      if Cluster::Base.show_zadara_tasks?
         puts "Hibernating vpsa..."
         begin
           Cluster::Zadara.hibernate
@@ -143,9 +141,7 @@ namespace :stack do
         num_workers = num_workers.to_i
       end
 
-      if Cluster::Base.show_zadara_tasks? and
-          Cluster::Zadara.prompt_to("restore")
-
+      if Cluster::Base.show_zadara_tasks?
         puts "Restoring vpsa..."
         begin
           Cluster::Zadara.restore

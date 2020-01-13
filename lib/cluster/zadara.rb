@@ -44,16 +44,6 @@ module Cluster
       puts "Success. VPSA '#{vpsa["name"]}' is now being restored."
     end
 
-    def self.prompt_to(action)
-      vpsa = Cluster::Zadara.find_vpsa
-      if vpsa
-        puts "VPSA '#{vpsa["name"]}' status is '#{vpsa["status"]}'"
-        print "\n#{action} the VPSA? [Y/n]: "
-        do_action = STDIN.gets.strip.chomp
-        do_action.downcase != 'n'
-      end
-    end
-
     def self.is_online?
       vpsa = Cluster::Zadara.find_vpsa
       vpsa["status"] == "created"
