@@ -2,6 +2,8 @@
 
 ## TO BE RELEASED
 
+* MI-185: add readonly rds cluster endpoint to deploy config
+
 ## 2.5.0 - 01/13/2020
 
 * OPC-357 HLS CORS requires extra headers
