@@ -254,7 +254,8 @@ module Cluster
         custom_json[:deploy] = {
             app_config[:shortname].to_sym => {
                 :database => {
-                    :host => rds_cluster.endpoint
+                    :host => rds_cluster.endpoint,
+                    :readonly_op_host => rds_cluster.reader_endpoint
                 }
             }
         }
