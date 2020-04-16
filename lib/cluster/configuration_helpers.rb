@@ -52,7 +52,8 @@ module Cluster
       end
 
       def rds_supports_performance_insights?
-        !!(rds_config[:db_instance_class] =~ /db\.r(\d)/)
+        # it's only the t2/t3 class options that don't support this now
+        !(rds_config[:db_instance_class] =~ /db\.t(\d)/)
       end
 
       def deployment_config

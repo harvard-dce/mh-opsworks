@@ -62,6 +62,11 @@ Resources:
       Family: 'aurora5.6'
       Parameters:
         lower_case_table_names: "1"
+        # this just omits some unnecessary data from the replication messages
+        aurora_enable_repl_bin_log_filtering: "1"
+        # this turns on a "zero-downtime reboot" feature
+        # see https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraMySQL.Replication.html#AuroraMySQL.Replication.Availability
+        aurora_enable_zdr: "1"
 
 
   DBParameterGroup:
@@ -77,6 +82,8 @@ Resources:
 
   DBCluster:
     Type: 'AWS::RDS::DBCluster'
+    # This attribute indicates what to do with the resource when the Cfn stack is deleted
+    # default for rds clusters is "Snapshot" but that would interfere with our automated processes
     DeletionPolicy: Delete
     Properties:
       DBClusterIdentifier: !Ref DBClusterIdentifier
@@ -84,6 +91,7 @@ Resources:
       BackupRetentionPeriod: !Ref BackupRetentionPeriod
       DBClusterParameterGroupName: !Ref DBClusterParameterGroup
       DBSubnetGroupName: !Ref DBSubnetGroup
+      DeletionProtection: true
       Engine: "aurora"
       EngineMode: provisioned
       MasterUsername: !Ref DBMasterUser
@@ -91,18 +99,23 @@ Resources:
       DatabaseName: !Ref DBName
       PreferredBackupWindow: !Ref PreferredBackupWindow
       PreferredMaintenanceWindow: !Ref PreferredMaintenanceWindow
+      # these settings only indicate which log types (if/when enabled)
+      # we'd like to have go to cloudwatch logs
       EnableCloudwatchLogsExports:
+          # these are always turned on
         - "error"
+          # these are turned off; turn on only for debugging/diagnosing
         - "general"
+          # these are turned on via the paramter group above
         - "slowquery"
       VpcSecurityGroupIds:
       - {'Fn::ImportValue': !Sub '${ParentVpcStack}-common-sg-id'}
 
   DBInstance1:
     Type: 'AWS::RDS::DBInstance'
+    # See note on the cluster resource
     DeletionPolicy: Delete
     Properties:
-      AllowMajorVersionUpgrade: false
       AutoMinorVersionUpgrade: false
       CopyTagsToSnapshot: true
       Engine: "aurora"
@@ -116,9 +129,10 @@ Resources:
 
   DBInstance2:
     Type: 'AWS::RDS::DBInstance'
+    # See note on the cluster resource
+    DeletionPolicy: Delete
     Condition: CreateReplica
     Properties:
-      AllowMajorVersionUpgrade: false
       AutoMinorVersionUpgrade: false
       CopyTagsToSnapshot: true
       Engine: "aurora"
@@ -131,6 +145,11 @@ Resources:
       MonitoringRoleArn: !Sub "arn:aws:iam::${AWS::AccountId}:role/rds-monitoring-role"
 
   DBClusterEventSubscription:
+    # this adds rds events to our general feed so we can subscribe
+    # to various things and take actions. For instance, in our dev account
+    # there is a lambda function that watches for cases where an
+    # rds cluster was started because it was hibernated for longer than
+    # the 7 day max set by AWS, and then turns them off again
     Type: 'AWS::RDS::EventSubscription'
     Properties:
       EventCategories:

@@ -11,7 +11,8 @@ namespace :rds do
 
   desc Cluster::RakeDocs.new('rds:update').desc
   task update: ['cluster:configtest', 'cluster:config_sync_check', 'cluster:production_failsafe'] do
-    Cluster::RDS.update
+    update_now = ENV.fetch('update_now', 'false').strip.downcase == 'true'
+    Cluster::RDS.update(update_now)
   end
 
   desc Cluster::RakeDocs.new('rds:stop').desc

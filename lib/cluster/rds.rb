@@ -23,13 +23,28 @@ module Cluster
       end
     end
 
-    def self.update
+    def self.update(update_now=false)
       parameters = get_parameters
       parameters.delete(:timeout_in_minutes)
 
       begin
-        stack = cloudformation_client.update_stack(parameters)
-        wait_until_stack_update_completed(stack.stack_id)
+        if update_now
+          stack = cloudformation_client.update_stack(parameters)
+          wait_until_stack_update_completed(stack.stack_id)
+        else
+          parameters[:change_set_name] = "rds-update-#{Time.now.to_i}"
+          resp = cloudformation_client.create_change_set(parameters)
+          change_set = cloudformation_client.describe_change_set({
+             change_set_name: resp.id
+          })
+          if change_set.status == 'FAILED' && change_set.status_reason =~/didn't contain changes/
+            cloudformation_client.delete_change_set({
+              change_set_name: resp.id
+            })
+            raise "No updates"
+          end
+          puts "Change set #{change_set.change_set_name} created. Review and approve via Cloudformation web console."
+        end
       rescue => e
         puts e.message
         unless e.message.start_with? "No updates"
