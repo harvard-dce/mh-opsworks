@@ -2,6 +2,10 @@
 
 ## TO BE RELEASED
 
+## 2.5.3 - 04/22/2020
+
+* Couple of gem version updates (thanks, dependabot!)
+
 ## 2.5.2 - 04/22/2020
 
 * MI-186: RDS Aurora version upgrade prep
