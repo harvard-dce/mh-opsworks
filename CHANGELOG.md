@@ -2,6 +2,12 @@
 
 ## TO BE RELEASED
 
+## 2.5.2 - 04/22/2020
+
+* MI-186: RDS Aurora version upgrade prep
+
+## 2.5.1 - 04/15/2020
+
 * MI-185: add readonly rds cluster endpoint to deploy config
 
 ## 2.5.0 - 01/13/2020
