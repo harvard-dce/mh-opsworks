@@ -14,5 +14,5 @@ gem 'erubis', '~> 2.7.0'
 gem 'diffy', '~> 3.2.1'
 gem 'simplecov', require: false
 gem 'colorize', '~> 0.8.1'
-gem 'netaddr', '~> 2.0.3'
+gem 'netaddr', '~> 2.0.4'
 gem 'concurrent-ruby', '~> 1.1.0'
