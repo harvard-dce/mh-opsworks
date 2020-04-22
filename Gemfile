@@ -2,7 +2,7 @@ source "https://rubygems.org"
 
 gem 'aws-sdk', '~> 2.11.159'
 
-gem 'rake', '~> 12.3.1'
+gem 'rake', '~> 12.3.3'
 
 gem 'rspec-core', '~> 3.8.0'
 gem 'rspec-expectations', '~> 3.8.2'
