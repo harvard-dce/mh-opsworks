@@ -2,6 +2,8 @@
 
 ## TO BE RELEASED
 
+* MI-187: get local opsworks vagrant environment working again + update to base box
+
 ## 2.5.3 - 04/22/2020
 
 * Couple of gem version updates (thanks, dependabot!)
