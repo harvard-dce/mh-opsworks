@@ -24,18 +24,8 @@ case $action in
   up*)
     echo "Initializing node - hold tight!"
 
-    vagrant status | grep 'all-in-one' | grep -v 'not created' > /dev/null
-    first_up=$?
-
     vagrant up --no-provision all-in-one
-
     vagrant provision all-in-one
-
-    if [ $first_up -eq 1 ]; then
-        echo "First time this node is created; rebooting to ensure proper kernel!"
-        vagrant halt all-in-one
-        vagrant up --no-provision all-in-one
-    fi
     ;;
   deploy*)
     vagrant provision all-in-one --provision-with deployment

@@ -18,7 +18,7 @@ We do not currently support all-in-one nodes, but that should be coming soon.
 * Install the required versions of vagrant and virtual box
 * Install the vagrant-hosts plugin:
 
-        vagrant plugin install vagrant-hosts --plugin-version 2.6.2
+        vagrant plugin install vagrant-hosts
 
 * Ensure your repository directory structure looks like this:
 
@@ -29,6 +29,13 @@ We do not currently support all-in-one nodes, but that should be coming soon.
 
 * Ensure dce-opencast and oc-opsworks-recipes are in the state you want
   to test.
+* If you want to enable Ubuntu ESM you can set an environment variable for
+  the token. Ubuntu ESM is free (with registration) for individuals. Sign up
+  at https://ubuntu.com/advantage. If you don't set the environment variable 
+  the initial `up` will prompt you; just hit Enter to skip and not enable ESM.
+  
+        export UBUNTU_ESM_TOKEN=[token]
+        
 * Start your environment! This takes about 20 to 25 minutes on my beefy machine
   with SSD.
 

@@ -6,6 +6,8 @@ Vagrant.require_version(">= 1.7.0")
 Vagrant.configure("2") do |config|
   ram_slice_size = get_ram_slice_size
   config.vm.box = "harvard-dce/local-opsworks-ubuntu1404"
+  config.vm.box_version = "1.2.0"
+
 
   config.vm.provider "virtualbox" do |vb|
     vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
@@ -16,6 +18,18 @@ Vagrant.configure("2") do |config|
   config.vm.provision :shell,
     name: "update apt repo",
     inline: "apt-get update"
+
+  # enable ubuntu esm
+  config.vm.provision "esm", type: "shell" do |s|
+    esm_token = ENV["UBUNTU_ESM_TOKEN"]
+    if esm_token.nil? && provisioning?
+      print "\nEnter your token to enable Ubuntu ESM, or [Enter] to skip: "
+      esm_token = STDIN.gets.strip.chomp
+    end
+    if esm_token
+      s.inline = "apt-get -y install ubuntu-advantage-tools && ua attach #{esm_token} && apt-get update && apt-get -y upgrade"
+    end
+  end
 
   config.vm.provision :shell,
     name: "kill agent updater",
@@ -168,4 +182,8 @@ def get_ram_slice_size
   # 3 units of RAM each to admin, engage, and the worker.
   # So split 40% the ram into eleven pieces.
   (get_ram_in_meg * 0.4).to_i / 11
+end
+
+def provisioning?
+  (ARGV.include?("reload") && ARGV.include?("--provision")) || (ARGV.include?("up") && !ARGV.include?("--no-provision"))
 end
