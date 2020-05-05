@@ -1,6 +1,0 @@
-Tags resources in cluster with custom tags
-
-Resources include instances, their volumes, rds instances, s3 buckets,
-and vpcs.
-
-Custom tags are defined in the custom_json in the cluster config.

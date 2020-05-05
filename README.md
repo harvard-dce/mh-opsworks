@@ -6,6 +6,7 @@ opencast cluster.
 ## Requirements
 
 * Ruby 2
+* Git
 * Appropriately configured aws rights linked to an access key
 * A POSIX operating system
 
@@ -728,9 +729,7 @@ other) UIs.
 
 ### Custom Tags
 
-When you create a new cluster you are prompted to input a value for the
-`Project` tag, the default value is `MH`. You can also do `rake cluster:edit`
-to add or change tags in the custom json section.
+You can run `rake cluster:edit` to add or change tags in the custom json section.
 
 ```
 {
@@ -755,14 +754,10 @@ to add or change tags in the custom json section.
 
 Tags are applied to VPCs, RDS instance, and S3 buckets, when you do `rake
 admin:cluster:init` (when these resources are created). EC2 instances and EBS
-volumes have tags applied every time you do `rake stack:instances:start`. Note
-that if you start the instance for the first time from the AWS Opsworks
-console, the instance will not be tagged.
+volumes have tags applied when the Opsworks stack is first brought up as the
+instances and volumes don't actually exist prior to that. 
 
-Tags can also be applied to the cluster via command `rake admin:cluster:tag`.
-This will tag VPCs, RDS instance, S3 buckets, EC2 instances, and EBS volumes.
-Note that applying tags will update or create new tags, but will not remove existing
-tags.
+For bulk management of tags or re-tagging please use the AWS [Tag Editor](https://console.aws.amazon.com/resource-groups/tag-editor/find-resources) console.
 
 ### Configtest Override
 

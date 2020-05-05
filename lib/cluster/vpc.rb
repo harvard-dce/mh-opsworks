@@ -280,17 +280,5 @@ module Cluster
         name_tag.value
       end
     end
-
-    def self.create_custom_tags
-      if stack_custom_tags.empty?
-        return
-      end
-
-      vpc = find_existing
-      vpc.create_tags({
-          dry_run: false,
-          tags: stack_custom_tags
-      })
-    end
   end
 end

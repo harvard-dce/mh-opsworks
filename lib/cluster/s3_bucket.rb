@@ -50,18 +50,5 @@ module Cluster
     def self.construct_bucket(name)
       Aws::S3::Bucket.new(name, client: s3_client)
     end
-
-    def self.create_custom_tags(name)
-      if stack_custom_tags.empty?
-        return
-      end
-
-      s3_client.put_bucket_tagging({
-        bucket: "#{name}",
-        tagging: {tag_set: stack_custom_tags},
-        use_accelerate_endpoint: false
-      })
-
-    end
   end
 end

@@ -122,7 +122,17 @@ module Cluster
 
       User.reset_stack_user_permissions_for(stack.stack_id)
 
-      construct_instance(stack.stack_id)
+      stack_instance = construct_instance(stack.stack_id)
+
+      stack_tags = stack_custom_tags.each_with_object({}) do |tag, memo|
+        memo[tag[:key]] = tag[:value]
+      end
+      opsworks_client.tag_resource({
+        resource_arn: stack_instance.arn,
+        tags: stack_tags
+      })
+
+      stack_instance
     end
 
     def self.find_existing_in(vpc)
@@ -290,17 +300,6 @@ module Cluster
 
     def self.construct_instance(stack_id)
       Aws::OpsWorks::Stack.new(stack_id, client: opsworks_client)
-    end
-
-    def self.find_volume_ids
-      volume_ids = []
-      stack = find_existing
-      resp = opsworks_client.describe_volumes({stack_id: stack.stack_id})
-      resp.volumes.each do |volume|
-        volume_ids.push(volume.ec2_volume_id)
-      end
-
-      volume_ids
     end
   end
 end

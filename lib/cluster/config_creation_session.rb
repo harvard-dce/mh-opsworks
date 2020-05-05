@@ -1,7 +1,7 @@
 module Cluster
   class ConfigCreationSession
     attr_accessor :variant, :name, :cidr_block_root, :git_url, :git_revision,
-      :export_root, :nfs_server_host, :subnet_azs, :project_tag,
+      :export_root, :nfs_server_host, :subnet_azs,
       :include_analytics, :cookbook_revision, :include_utility, :sns_email
 
     def choose_variant
@@ -20,15 +20,6 @@ module Cluster
       return choose_variant unless keys.include?(variant_choice)
 
       @variant = variant_choice
-    end
-
-    def get_project_tag
-      print "\nWhat value for Project Tag? [MH]: "
-      project_tag = STDIN.gets.strip.chomp
-
-      # the default is set in the template mainly because, in tests, this isn't
-      # run and project_tag doesnt' get a default value
-      @project_tag = project_tag
     end
 
     def zadara_variant?

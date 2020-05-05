@@ -164,7 +164,6 @@ module Cluster
       base_secrets = %Q|, #{get_base_secrets_content}|
 
       all_attributes = attributes.merge(variant_attributes).
-        merge(project_tag).
         merge(base_secrets_content: base_secrets).
         merge(database_user_info).
         merge(s3_distribution_bucket_name_from(attributes[:name])).
@@ -203,17 +202,6 @@ module Cluster
     def utility_layer_content
       {
         utility_layer_template: File.read('templates/utility_layer.json.erb')
-      }
-    end
-
-    def project_tag
-      if attributes[:project_tag].nil? || attributes[:project_tag].empty?
-        tag = "MH"
-      else
-        tag = attributes[:project_tag]
-      end
-      {
-        project_tag: tag
       }
     end
 

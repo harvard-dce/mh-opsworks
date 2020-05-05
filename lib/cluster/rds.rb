@@ -118,17 +118,6 @@ module Cluster
       Aws::RDS::DBInstance.new(rds.db_instance_identifier, client: rds_client)
     end
 
-    def self.create_custom_tags
-      if stack_custom_tags.empty?
-        return
-      end
-
-      rds_client.add_tags_to_resource({
-        resource_name: rds_db_cluster_arn,
-        tags: stack_custom_tags
-      })
-    end
-
     def self.get_parameters
       base_parameters = rds_config
       parameters = [

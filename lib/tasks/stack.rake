@@ -159,7 +159,6 @@ namespace :stack do
       end
 
       Cluster::Stack.start_all(num_workers)
-      Cluster::Instances.create_custom_tags
     end
   end
 

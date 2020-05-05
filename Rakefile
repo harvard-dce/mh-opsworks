@@ -48,7 +48,7 @@ namespace :admin do
       puts
       puts %Q|Initializing the cluster does not start instances. To start them, use "./bin/rake stack:instances:start"|
       puts
-      puts %Q|Initializing the cluster starts your RDS cluster! Please run 'rds:cluster' if you're not starting the opsworks cluster right away!|.yellow
+      puts %Q|Initializing the cluster starts your RDS cluster! Please run 'rds:stop' if you're not starting the opsworks cluster right away!|.yellow
     end
 
     desc Cluster::RakeDocs.new('admin:cluster:delete').desc
@@ -111,22 +111,6 @@ namespace :admin do
 
       puts 'deleting configuration files'
       Cluster::RemoteConfig.new.delete
-    end
-
-    desc Cluster::RakeDocs.new('admin:cluster:tag').desc
-    task tag: ['cluster:configtest', 'cluster:config_sync_check'] do
-      puts 'tagging instances and volumes'
-      Cluster::Instances.create_custom_tags
-
-      puts 'tagging vpc'
-      Cluster::VPC.create_custom_tags
-
-      puts 'tagging rds instance'
-      Cluster::RDS.create_custom_tags
-
-      puts 'tagging s3 buckets'
-      Cluster::S3Bucket.create_custom_tags(Cluster::Base.distribution_bucket_name)
-      Cluster::S3Bucket.create_custom_tags(Cluster::Base.s3_file_archive_bucket_name)
     end
 
     desc Cluster::RakeDocs.new('admin:cluster:subscribe').desc
