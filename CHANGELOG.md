@@ -2,6 +2,9 @@
 
 ## TO BE RELEASED
 
+## 2.6.0 - 05/07/2020
+
+* OPC-528: update tagging to match HUIT schema
 * MI-187: get local opsworks vagrant environment working again + update to base box
 
 ## 2.5.3 - 04/22/2020
