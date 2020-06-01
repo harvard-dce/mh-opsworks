@@ -20,15 +20,15 @@ Vagrant.configure("2") do |config|
     inline: "apt-get update"
 
   # enable ubuntu esm
-  config.vm.provision "esm", type: "shell" do |s|
-    esm_token = ENV["UBUNTU_ESM_TOKEN"]
-    if esm_token.nil? && provisioning?
-      print "\nEnter your token to enable Ubuntu ESM, or [Enter] to skip: "
-      esm_token = STDIN.gets.strip.chomp
-    end
-    if esm_token
-      s.inline = "apt-get -y install ubuntu-advantage-tools && ua attach #{esm_token} && apt-get update && apt-get -y upgrade"
-    end
+  esm_token = ENV["UBUNTU_ESM_TOKEN"]
+  if esm_token.nil? && provisioning?
+    print "\nEnter your token to enable Ubuntu ESM, or [Enter] to skip: "
+    esm_token = STDIN.gets.strip.chomp
+  end
+  if esm_token
+    config.vm.provision :shell,
+      name: "enable Ubuntu ESM"
+      inline = "apt-get -y install ubuntu-advantage-tools && ua attach #{esm_token} && apt-get update && apt-get -y upgrade"
   end
 
   config.vm.provision :shell,

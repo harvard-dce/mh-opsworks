@@ -2,6 +2,8 @@
 
 ## TO BE RELEASED
 
+* MI-187: additional Vagrant file fix
+
 ## 2.6.0 - 05/07/2020
 
 * OPC-528: update tagging to match HUIT schema
