@@ -7,8 +7,8 @@ We do not currently support all-in-one nodes, but that should be coming soon.
 
 ## Requirements
 
-* virtualbox 5.0.x
-* vagrant 1.8.x
+* virtualbox (Update to latest, as of June 2021, it's v6.1)
+* vagrant (Update to latestm as of June 2021, it's v2.2.16)
 * [vagrant-hosts plugin](https://github.com/oscar-stack/vagrant-hosts)
 * oc-opsworks-recipes and dce-opencast must be checked out as sibling
   directories of this repository.
