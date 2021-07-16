@@ -2,6 +2,7 @@
 
 ## TO BE RELEASED
 
+* deletion process needs to unset deletion protection from the rds cluster
 * MI-187: additional Vagrant file fix
 
 ## 2.6.0 - 05/07/2020

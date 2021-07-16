@@ -16,6 +16,16 @@ module Cluster
       end
 
       if stack
+        cluster = find_existing
+        if cluster
+          rds_client.modify_db_cluster({
+            db_cluster_identifier: cluster.db_cluster_identifier,
+            apply_immediately: true,
+            deletion_protection: false
+          })
+          wait_until_rds_cluster_available(cluster)
+        end
+
         cloudformation_client.delete_stack(
             stack_name: stack.stack_id
         )

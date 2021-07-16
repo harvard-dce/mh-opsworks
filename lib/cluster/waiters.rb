@@ -12,7 +12,7 @@ module Cluster
         puts " #{db_instance_identifier} is available!"
       end
 
-      def wait_for_rds_cluster_modification(db_instance_identifier)
+      def wait_for_rds_instance_modification(db_instance_identifier)
         puts "Waiting for RDS instance modification to complete..."
         sleep(30)
         rds_client.wait_until(
