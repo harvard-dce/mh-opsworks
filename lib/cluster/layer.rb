@@ -2,6 +2,47 @@ module Cluster
   class Layer < Base
     attr_reader :stack, :params
 
+    CW_LOG_GROUPS = {
+      syslog: {
+        layers: ["all"],
+        format: "%b %d %H:%M:%S",
+        file: "/var/log/messages"
+      },
+      nginx_access: {
+        layers: ["admin", "engage", "analytics"],
+        format: "%d/%b/%Y:%H:%M:%S %z",
+        file: "/var/log/nginx/access.log"
+      },
+      nginx_error: {
+        layers: ["admin", "engage", "analytics"],
+        format: "%d/%b/%Y:%H:%M:%S %z",
+        file: "/var/log/nginx/error.log"
+      },
+      elasticsearch: {
+        layers: ["analytics"],
+        format: "%Y-%m-%d %H:%M:%S",
+        file: "/var/log/elasticsearch/*.log"
+      },
+      mail: {
+        layers: ["admin"],
+        format: "%b %d %H:%M:%S",
+        file: "/var/log/maillog"
+      },
+      squid: {
+        layers: ["utility"],
+        format: "",
+        file: "/var/log/squid3/access.log"
+      },
+      opencast: {
+        layers: ["admin", "engage", "workers"],
+        format: "%Y-%m-%d %H:%M:%S",
+        file: "/opt/opencast/log/opencast.log",
+        multi_line_start_pattern: %q(^[\d\-]{10}T[\d\:]{8})
+      }
+      # TODO: figure out how to get activemq in here as its logfile path
+      # is dependent on the installation path and unknown at provision time
+    }
+
     def initialize(stack, params)
       @stack = stack
       @params = params
@@ -30,14 +71,39 @@ module Cluster
         auto_assign_public_ips: params.fetch(:auto_assign_public_ips, false),
         custom_recipes: params.fetch(:custom_recipes, {}),
         volume_configurations: params.fetch(:volume_configurations, {}),
-        use_ebs_optimized_instances: params.fetch(:use_ebs_optimized_instances, false),
+        use_ebs_optimized_instances: params.fetch(:use_ebs_optimized_instances, true),
         custom_security_group_ids: custom_security_group_ids.compact,
+        cloud_watch_logs_configuration: {
+          enabled: true,
+          log_streams: construct_log_stream_parameters(params[:shortname])
+        },
         lifecycle_event_configuration: {
           shutdown: {
             execution_timeout: 60 * 2 # 2 minutes
           }
         }
       }
+    end
+
+    def construct_log_stream_parameters(layer_name)
+      log_streams = []
+      CW_LOG_GROUPS.each {|log_type, log_config|
+        # checks if this layer is among those listed for this log group
+        # by seeing if the intersection of the two arrays is empty
+        if (log_config[:layers] & [layer_name, "all"]).any?
+          log_stream_params = {
+            log_group_name: "/oc-opsworks/#{stack.name}/#{layer_name}/#{log_type}",
+            datetime_format: log_config[:format],
+            file: log_config[:file],
+            time_zone: 'UTC'
+          }
+          if log_config.has_key?(:multi_line_start_pattern)
+            log_stream_params[:multi_line_start_pattern] = log_config[:multi_line_start_pattern]
+          end
+          log_streams.push(log_stream_params)
+        end
+      }
+      log_streams
     end
 
     def create

@@ -21,7 +21,6 @@ opencast cluster.
 * Automated opencast git deployments via OpsWorks built-ins,
 * The ability to create and destroy opencast clusters completely, including all attached resources,
 * Optional tagged opencast logging to [loggly](http://loggly.com),
-* Optional newrelic integration,
 * A set of high-level rake tasks designed to make managing your OpsWorks opencast cluster easier,
 * A way to switch between existing clusters to make collaboration easier,
 * A MySQL RDS Aurora cluster that's monitored with cloudwatch alarms, and
@@ -53,9 +52,9 @@ SSH username would be "janesmith".
 
 ### Step 2 - Install oc-opsworks
 
-You must have ruby 2 installed, ideally through something like 
-[rbenv](https://github.com/rbenv/rbenv) or [rvm](https://rvm.io/), though 
-if your system ruby is >= 2 you should be fine. `./bin/setup` installs 
+You must have ruby 2 installed, ideally through something like
+[rbenv](https://github.com/rbenv/rbenv) or [rvm](https://rvm.io/), though
+if your system ruby is >= 2 you should be fine. `./bin/setup` installs
 prerequisites and sets up a template `secrets.json`.
 
 You should fill in the template `secrets.json` with the cluster manager user
@@ -117,13 +116,13 @@ AWS opsworks console.
 At this point your opsworks instances have been initialized but no ec2 instances
 have been created. The RDS cluster **has** been created and will be running (and
 incurring AWS costs). If you do not intend to go on to the next step at this time
-you should consider running `./bin/rake rds:stop` which will turn off the RDS cluster. 
-When you are eventually ready to move on to step 6, the `stack:instances:start` 
+you should consider running `./bin/rake rds:stop` which will turn off the RDS cluster.
+When you are eventually ready to move on to step 6, the `stack:instances:start`
 command will restore the RDS cluster from it's stopped state.
 
 **Note**: running `rds:stop` immediately after `admin:cluster:init`
 can sometimes return an error that the RDS instance is in a non-modifiable state.
-This is fine; it's just the instance doing it's usual automated backup when it first 
+This is fine; it's just the instance doing it's usual automated backup when it first
 comes online. Wait 5-10m or so and try again.
 
 **Note**: the rake tasks attempts to run some of the initialization steps in parallel
@@ -141,7 +140,7 @@ policies](https://docs.aws.amazon.com/opsworks/latest/userguide/workingcookbook-
 
 You can watch the process via `./bin/rake stack:instances:list` or (better) via
 the AWS web console. Starting the entire cluster takes about 30 minutes the
-first time as the new instances will apply a dist-upgrade and possilbe reboot. 
+first time as the new instances will apply a dist-upgrade and possilbe reboot.
 Subsequent instance restarts go significantly faster.
 
 Opencast is started automatically, and instances start in the correct order
@@ -245,8 +244,8 @@ make your life difficult in a thousand little ways. Don't do it, via
 
 ### Chef
 
-OpsWorks uses [chef](https://chef.io).  You configure the source of the custom 
-recipes in the stack section of your active cluster configuration file. 
+OpsWorks uses [chef](https://chef.io).  You configure the source of the custom
+recipes in the stack section of your active cluster configuration file.
 These options are pretty much passed through to
 the `opsworks` ruby client. [Details
 here](http://docs.aws.amazon.com/sdkforruby/api/Aws/OpsWorks/Client.html#create_stack-instance_method)
@@ -255,13 +254,13 @@ revision of the custom cookbook that you'd like to use.
 
 There are two options for the custom cookbook source, "s3" (the default) and "git",
 and the choice of which source type to use is presented during the `cluster:new`
-prompt session. The default type of "s3" means your opsworks stack will look for a 
+prompt session. The default type of "s3" means your opsworks stack will look for a
 prepackaged tar.gz archive in the cluster's shared assets bucket. The archive
 must be named named according to the recipe repo tag or branch specified in the
 "revision" setting. The archive is assumed to be the result of running the
 Berkshelf `package` command. [More info here](http://docs.aws.amazon.com/opsworks/latest/userguide/best-practices-packaging-cookbooks-locally.html).
 
-For example the following configuration will look for the cookbook source 
+For example the following configuration will look for the cookbook source
 at "https://s3.amazonaws.com/shared-assets-bucket/mh-opsworks-recipes-develop.tar.gz":
 ```
 {
@@ -275,7 +274,7 @@ at "https://s3.amazonaws.com/shared-assets-bucket/mh-opsworks-recipes-develop.ta
   }
 }
 ```
-In this case the stack creation code will assemble the s3 archive url based on the 
+In this case the stack creation code will assemble the s3 archive url based on the
 revision and the shared assets bucket name. If your configuration includes a custom
 url for the archive that will be used instead.
 
@@ -425,39 +424,6 @@ different region:
 1. Change the `region` via `./bin/rake cluster:edit`.
 
 You must do this before creating your cluster via `./bin/rake admin:cluster:init`.
-
-### New Relic
-
-You can enable newrelic integration by including a newrelic key in your
-cluster's `custom_json`.
-
-```
-{
-  "stack": {
-    "chef": {
-      "custom_json": {
-        "admin": { "newrelic": { "key": "your new relic API key for admin layer" }},
-        "engage": { "newrelic": { "key": "your new relic API key for engage layer" }},
-        "workers": { "newrelic": { "key": "your new relic API key for workers layer" }}
-      },
-    }
-  }
-}
-```
-
-If you omit the layer name or the "newrelic" key for a layer, newrelic isn't enabled for that layer.
-All nodes in the layer will use the same key.
-
-Chef enables newrelic app monitoring on the admin, worker and engage nodes.
-Each node is monitored separately and under an aggregate app named after your
-stack.
-
-This feature requires that your maven build downloads and unpacks the correct
-newrelic agent jar - this is done by default in the DCE opencast
-distribution.
-
-Instance-level new relic logs are stored in the same directory as your
-opencast logs.
 
 ### Loggly
 
@@ -648,7 +614,7 @@ the respective AWS account that have been tagged thusly:
 
     mh-opsworks: 1
     released: 1
-    
+
 We create 2 amis for each region - a public and private instance AMI.  The
 process is relatively simple:
 
@@ -693,12 +659,14 @@ If you're deploying multiple clusters in a
 bunch of different regions you'll need to manually edit the AMI ID when
 switching regions.
 
+The `./bin/build_ami.sh` performs some destructive actions and so can be run only once. To redo or reuse the cluster in the future you must delete the instances and run `./bin/rake stack:instances:init` to create new ones. You can then proceed as above with the `stack:instances:start` command.
+
 ### RDS Aurora Cluster
 
 Opencast clusters built via `mh-opsworks` utilize an [RDS Aurora Cluster](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/index.html), an AWS-tuned,
 drop-in replacement for standard MySQL (or Postgres). An Aurora cluster consists of
 one or more RDS instances and a shared "cluster volume", which is a virtual storage layer
-that spans multiple availability zones. 
+that spans multiple availability zones.
 
 ### Potentially problematic aws resource limits
 
@@ -755,7 +723,7 @@ You can run `rake cluster:edit` to add or change tags in the custom json section
 Tags are applied to VPCs, RDS instance, and S3 buckets, when you do `rake
 admin:cluster:init` (when these resources are created). EC2 instances and EBS
 volumes have tags applied when the Opsworks stack is first brought up as the
-instances and volumes don't actually exist prior to that. 
+instances and volumes don't actually exist prior to that.
 
 For bulk management of tags or re-tagging please use the AWS [Tag Editor](https://console.aws.amazon.com/resource-groups/tag-editor/find-resources) console.
 
@@ -766,7 +734,7 @@ the automatic cluter config sanity checking by adding the following to your cust
 json block:
 
     "skip_configtest": true
-    
+
 This would be useful in a situation where, for example, you wanted to create a stack
 that contained only an **Analytics** node. Without this setting the rake task will fail,
 complaining about a missing Admin layer.
@@ -788,7 +756,7 @@ The list of generated security groups is:
 
 The **OpsworksLayerSecurityGroupCommon** group will be attached to all instances in the
 cluster and opens all traffic on ports 0-65535 from internal IPs and the IPs listed in
-your `secrets.json` `vpn_ips` setting. This group is also attached to the RDS instance to 
+your `secrets.json` `vpn_ips` setting. This group is also attached to the RDS instance to
 indicate that all instances with the common group are allowed to access RDS.
 
 The **OpsworksLayerSecurityGroupAdmin** group additionally opens ports 80, 443 and 8080 to IPs listed
@@ -796,8 +764,8 @@ in your `secrets.json` `ca_ips` setting (capture agent IPs).
 
 The **OpsworksLayerSecurityGroupEngage** group opens ports 80 and 443 to the world.
 
-The **OpsworksLayerSecurityGroupUtility** group opens port 3128 (squid) to internal IPs. 
-If the cluster is using a [zadara](README.zadara.md) vpsa, the IP of the vpsa must be 
+The **OpsworksLayerSecurityGroupUtility** group opens port 3128 (squid) to internal IPs.
+If the cluster is using a [zadara](README.zadara.md) vpsa, the IP of the vpsa must be
 manually added to this group.
 
 The **OpsworksLayerSecurityGroupAnalytics** does not at this time open additional ports.

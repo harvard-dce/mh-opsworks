@@ -39,6 +39,11 @@ module Cluster
           policy_name: "#{instance_profile_name}-policy",
           policy_document: instance_profile_policy_document
         )
+        # this is necessary for the cloudwatch logs integration
+        iam_client.attach_role_policy(
+          role_name: instance_profile_name,
+          policy_arn: "arn:aws:iam::aws:policy/AWSOpsWorksCloudWatchLogs"
+        )
         iam_client.add_role_to_instance_profile(
           role_name: instance_profile_name,
           instance_profile_name: instance_profile_name
@@ -60,6 +65,13 @@ module Cluster
         instance_profile_name,
         client: iam_client
       )
+      # this detatches any aws managed policies, e.g. access to cloudwatch logs
+      instance_profile_role_client.attached_policies.each do |policy|
+        instance_profile_role_client.detach_policy({
+          policy_arn: policy.arn
+        })
+      end
+      # this deletes any homebrew policies we've attached
       instance_profile_role_client.policies.map(&:delete)
       instance_profile_role_client.delete
     end

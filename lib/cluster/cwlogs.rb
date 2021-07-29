@@ -1,5 +1,8 @@
 module Cluster
   class CWLogs < Base
+
+
+
     def self.delete
       delete_log_groups
     end

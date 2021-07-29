@@ -26,6 +26,12 @@ namespace :stack do
     puts "App: #{app.name} created"
   end
 
+  desc Cluster::RakeDocs.new('stack:id').desc
+  task id: ['cluster:configtest'] do
+    stack = Cluster::Stack.find_or_create
+    puts stack.stack_id
+  end
+
   namespace :users do
     desc Cluster::RakeDocs.new('stack:users:list').desc
     task list: ['cluster:configtest', 'cluster:config_sync_check'] do

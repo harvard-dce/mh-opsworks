@@ -90,7 +90,9 @@ module Cluster
             puts e.backtrace
           end
         end
-        start_all_other_instances(include_workers = num_workers.nil?)
+        start_all_in_layers(['analytics', 'utility'])
+        # if this is an ami-builder cluster all the previous calls will no-op
+        start_all_in_layers(['ami-builder', 'private-ami-builder'])
       end
     end
 
@@ -288,7 +290,7 @@ module Cluster
         custom_json: json_encode(
           custom_json
         ),
-        default_os: 'Ubuntu 14.04 LTS',
+        default_os: 'Amazon Linux 2018.03',
         service_role_arn: service_role.arn,
         default_instance_profile_arn: instance_profile.arn,
         default_subnet_id: vpc.subnets.first.id,

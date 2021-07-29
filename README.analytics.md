@@ -28,7 +28,6 @@ to get the new node (which you can then start via the AWS console):
        "oc-opsworks-recipes::enable-postfix-smarthost",
        "oc-opsworks-recipes::install-custom-metrics",
        "oc-opsworks-recipes::create-alerts-from-opsworks-metrics",
-       "oc-opsworks-recipes::install-cwlogs",
        "oc-opsworks-recipes::install-elasticsearch",
        "oc-opsworks-recipes::install-ua-harvester",
        "oc-opsworks-recipes::install-logstash-kibana",
@@ -71,7 +70,7 @@ to get the new node (which you can then start via the AWS console):
     }
 ```
 * re: *instance_type*, anything from `t2.medium` to `m4.large` is sufficient for development. If you're planning
-to generate and query a large volume of user data during development, `m4.large` is recommended. 
+to generate and query a large volume of user data during development, `m4.large` is recommended.
 For prod, or If you're doing any intensive bulk operations, `m4.xlarge` should be preferred.
 * For a list of settings and defaults for the `"elk"` custom config, see the
   `get_elk_info` [recipe helper](https://github.com/harvard-dce/mh-opsworks-recipes/blob/master/libraries/default.rb) method.
@@ -127,5 +126,3 @@ to `false` in your cluster config's `"elk"` stanza.
 
 Manual create/restore of snapshots can be done via the Kopf interface. Click the
 "more" tab and choose "snapshot".
-
-

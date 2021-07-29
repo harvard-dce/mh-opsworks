@@ -7,7 +7,7 @@ connect a cluster to zadara (or perhaps other) external storage.
 
 1. Run './bin/rake cluster:new' and choose one of the zadara variants. If you
    don't know the path to volume you're exporting or the IP to the zadara NFS
-   server, that's fine. Our standard path is `/var/matterhorn`.
+   server, that's fine. Our standard path is `/var/opencast`.
    Enter anything that looks like a path or IP address and
    you can use `./bin/rake cluster:edit` to fix it later.
 1. Create your VPC via `./bin/rake vpc:init`
@@ -45,7 +45,7 @@ Zadara VPSA creation is discussed in more detail
    and refresh the page to ensure you've actually made a change and that it's taken.
 1. Log in to the remote VPSA through an SSH tunnel over your VPC, something
    like `ssh -L 8080:<zadara hostname>:80 <external IP in your cluster>`. The
-   VPSA gui should now be available on `http://localhost:8080`.  
+   VPSA gui should now be available on `http://localhost:8080`.
    * The easiest way to do this is to add a throwaway custom layer that contains a single instance
      with a public IP and the default chef recipes. Start up this instance and it
      will allow you to access the VPSA GUI from the correct VPC. After you've
@@ -58,7 +58,7 @@ Zadara VPSA creation is discussed in more detail
    set by the volume, as an NFS server can have multiple exports. Use a name
    that makes sense for your cluster.
 1. Create a server with a CIDR block that matches your VPC and/or relevant
-   subnets. Leave the "NFS Root Squash" option disabled. 
+   subnets. Leave the "NFS Root Squash" option disabled.
 1. Attach the volume you created above to this server.
 1. You should now have the information you need to update your
    cluster configuration for external storage. Return the previous section.
@@ -128,4 +128,3 @@ buckets and add them to the list in the IAM user's inline policy (below).
 * Hit "create" under "Data Protection" -> "Backup to Object Storage". Glue your
   volume, snapshot policy and remote connection together and save it.
 * You now have s3 backed snapshots.
-

@@ -90,11 +90,11 @@ namespace :admin do
       puts 'deleting analytics buckets'
       Cluster::S3AnalyticsBuckets.delete
 
-      puts 'deleting cloudwatch log groups'
-      Cluster::CWLogs.delete
-
       puts 'deleting SQS queues'
       Cluster::SQS.delete_queue(Cluster::Base.useractions_queue_name)
+
+      puts 'deleting CloudWatch log groups'
+      Cluster::Layers.delete_log_groups
 
       begin
         rds_delete.value!
@@ -159,4 +159,3 @@ task :default do
   puts
   puts 'Run "./bin/rake -T" for full task output'
 end
-
