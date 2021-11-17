@@ -2,6 +2,10 @@
 
 ## TO BE RELEASED
 
+## 2.6.2 - 11/22/2021
+
+* DEPLOY-54: don't hibernate zadara if the vpsa is shared and another cluster using it is online
+
 ## 2.6.1 - 07/20/2021
 
 * deletion process needs to unset deletion protection from the rds cluster
@@ -146,10 +150,10 @@ These changes all relate or were implemented during the Opencast 1.x -> 5.x migr
 ## 1.10.0 - 10/19/2016
 
 * don't use the `--binstubs` flag in `bin/setup`
-* Include new `install-cwlogs` recipe in cluster config templates. 
-  Add IAM policy permissions for managing cloudwatch log groups. 
-  On rollout the "oc-opsworks-cluster-managers" IAM group will need to be manually updated to 
-  include the new "logs:*" and "sqs:*" permissions. Existing clusters will need to run 
+* Include new `install-cwlogs` recipe in cluster config templates.
+  Add IAM policy permissions for managing cloudwatch log groups.
+  On rollout the "oc-opsworks-cluster-managers" IAM group will need to be manually updated to
+  include the new "logs:*" and "sqs:*" permissions. Existing clusters will need to run
   `./bin/rake stack:users:init` to sync their respective cluster manager user.
   Add deletion of additional cluster artifacts, including cloudwatch log groups
   and sqs queues & buckets related to the analytics node.
@@ -177,7 +181,7 @@ These changes all relate or were implemented during the Opencast 1.x -> 5.x migr
 
 * Configure waiters to do "exponential backoff" when waiting for resources
   to become available/deleted.
-* increase `retry_limit` on AWS client objects to alleviate failures due to 
+* increase `retry_limit` on AWS client objects to alleviate failures due to
   API throttling errors
 * Rename of moscaler install recipe in cluster config templates &
   updates to horizontal scaling docs
@@ -262,7 +266,7 @@ These changes all relate or were implemented during the Opencast 1.x -> 5.x migr
 ## 1.0.11 - 2/25/2016
 
 * Open the squid proxy port for rfc 1918 addresses. Document how to set up
-  zadara s3 object backups. This has essentially no effect for clusters that 
+  zadara s3 object backups. This has essentially no effect for clusters that
   don't use zadara object backups (not enabled by default). See README.zadara.md
   for more information.
 

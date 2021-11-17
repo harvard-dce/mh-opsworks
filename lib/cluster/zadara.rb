@@ -54,6 +54,28 @@ module Cluster
       vpsa["status"] == "hibernated"
     end
 
+    def self.check_if_shared_with_another_online_cluster
+      return if !storage_config[:nfs_server_host]
+      current_stack = Cluster::Stack.find_existing
+
+      # find other stacks configured to use the same nfs_server_host
+      shared_with_stacks = Cluster::Stack.all.find_all do |stack|
+        if current_stack.id != stack.id
+          custom_json = JSON.parse(stack.custom_json)
+          custom_json["storage"]["nfs_server_host"] == storage_config[:nfs_server_host]
+        end
+      end
+
+      # check if those stacks have any online instances
+      shared_with_stacks.any? do |stack|
+        instances = opsworks_client.describe_instances(stack_id: stack.stack_id).inject([]){ |memo, page| memo + page.instances }
+        if instances.any?{|instance| instance.status == "online"}
+          puts "The VPSA at #{storage_config[:nfs_server_host]} is shared with stack #{stack.name} which appears to be online"
+          true
+        end
+      end
+    end
+
     private
 
     def self.api_request(method, path)

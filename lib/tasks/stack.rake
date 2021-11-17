@@ -118,18 +118,23 @@ namespace :stack do
       Cluster::Stack.stop_all(stop_rds)
 
       if Cluster::Base.show_zadara_tasks?
-        puts "Hibernating vpsa..."
-        begin
-          Cluster::Zadara.hibernate
-          sleep 60
-
-          while !Cluster::Zadara.is_hibernated?
+        # don't hibernate if another online cluster is using the vpsa
+        if Cluster::Zadara.check_if_shared_with_another_online_cluster
+          puts "Not hibernating vpsa"
+        else
+          puts "Hibernating vpsa..."
+          begin
+            Cluster::Zadara.hibernate
             sleep 60
-          end
 
-          puts "vpsa is hibernated!"
-        rescue Exception => e
-          puts "Something went wrong hibernating vpsa: #{e}"
+            while !Cluster::Zadara.is_hibernated?
+              sleep 60
+            end
+
+            puts "vpsa is hibernated!"
+          rescue Exception => e
+            puts "Something went wrong hibernating vpsa: #{e}"
+          end
         end
       end
     end
