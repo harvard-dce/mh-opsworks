@@ -2,6 +2,25 @@
 
 ## TO BE RELEASED
 
+## 3.0.0 - 01/10/2022
+
+* DEPLOY-20: Transition to AWS Linux 2018.03
+  Backwards compatible with existing clusters.
+  Be sure to use ruby > v2.3.0.
+  You will need to run `gem update bundler` and `./bin/setup` after updating
+  Includes:
+  - update to bundler 2 & lots of gem updates
+  - reworking the ami builder script
+  - added `stack:id` task; outputs the opsworks stack id which is used by the ami builder script
+  - using builtin opsworks cloudwatch log groups and removing all references to the previous cwlogs agent install recipe
+  - remove references to newrelic
+  - removing ubuntu-specific and obsolete recipes from setup lists
+  - tweaks to stack deletion process
+  - use ebs-optimized instances; idk why this was ever default false
+  - modified `stack:instances:start` process to Only start specifically named layers, allowing us to "hide"
+    instances in custom layers so they don't get automatically started
+
+
 ## 2.6.2 - 11/22/2021
 
 * DEPLOY-54: don't hibernate zadara if the vpsa is shared and another cluster using it is online
