@@ -5,7 +5,7 @@ opencast cluster.
 
 ## Requirements
 
-* Ruby 2
+* Ruby 2.3+
 * Git
 * Appropriately configured aws rights linked to an access key
 * A POSIX operating system
@@ -52,10 +52,14 @@ SSH username would be "janesmith".
 
 ### Step 2 - Install oc-opsworks
 
-You must have ruby 2 installed, ideally through something like
+You must have ruby 2.3 or later installed, ideally through something like
 [rbenv](https://github.com/rbenv/rbenv) or [rvm](https://rvm.io/), though
-if your system ruby is >= 2 you should be fine. `./bin/setup` installs
-prerequisites and sets up a template `secrets.json`.
+if your system ruby is >= 2.3 you should be fine.
+
+You must also have [bundler]() version 2+ installed or `./bin/setup` will complain.
+You can run `gem install bundler` to install it or `gem update bundler` if you have an older version.
+
+`./bin/setup` installs prerequisites and sets up a template `secrets.json`.
 
 You should fill in the template `secrets.json` with the cluster manager user
 credentials you created previously and a `cluster_config_bucket_name` you'll
