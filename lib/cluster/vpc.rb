@@ -117,6 +117,13 @@ module Cluster
           id: pc_info.vpc_peering_connection_id,
           client: ec2_client
         )
+        # delete the route table entries we created
+        peer_connection.accepter_vpc.route_tables.each do |rt|
+          routes = rt.routes.filter { |r| !r.nil? && r.destination_cidr_block == vpc.cidr_block }
+          routes.each do |route|
+            route.delete
+          end
+        end
         peer_connection.delete
       end
     end

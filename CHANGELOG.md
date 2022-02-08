@@ -2,6 +2,8 @@
 
 ## TO BE RELEASED
 
+- DEPLOY-68: clean up vpc peering route table entries on cluster deletion
+
 ## 3.0.0 - 01/10/2022
 
 * DEPLOY-20: Transition to AWS Linux 2018.03
