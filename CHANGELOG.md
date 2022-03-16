@@ -2,6 +2,8 @@
 
 ## TO BE RELEASED
 
+## 3.0.1 - 03/16/2022
+
 - DEPLOY-68: clean up vpc peering route table entries on cluster deletion
 
 ## 3.0.0 - 01/10/2022
