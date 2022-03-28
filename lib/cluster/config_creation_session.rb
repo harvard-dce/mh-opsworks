@@ -2,7 +2,8 @@ module Cluster
   class ConfigCreationSession
     attr_accessor :variant, :name, :cidr_block_root, :git_url, :git_revision,
       :export_root, :nfs_server_host, :subnet_azs,
-      :include_analytics, :cookbook_revision, :include_utility, :sns_email
+      :include_analytics, :cookbook_revision, :include_utility, :sns_email,
+      :use_prebuilt_artifacts, :prebuilt_artifacts_bucket
 
     def choose_variant
       puts "\nPlease choose the size of the cluster you'd like to deploy.\n\n"
@@ -134,6 +135,29 @@ module Cluster
         @git_revision = 'master'
       else
         @git_revision = git_revision
+      end
+    end
+
+    def get_prebuilt_artifact_bucket
+      print "\nName of the s3 bucket where prebuilt Opencast artifacts are stored: "
+      bucket = STDIN.gets.strip.chomp
+      unless bucket.empty?
+        @prebuilt_artifacts_bucket = bucket
+      else
+        puts "You must enter a bucket name"
+        get_prebuilt_artifact_bucket
+      end
+    end
+
+    def get_use_prebuilt_artifacts
+      print "\nUse prebuilt Opencast? [y/N]: "
+      use_prebuilt_artifacts = STDIN.gets.strip.chomp
+
+      if use_prebuilt_artifacts.downcase == 'y'
+        @use_prebuilt_artifacts = true
+        get_prebuilt_artifact_bucket
+      else
+        @use_prebuilt_artifacts = false
       end
     end
 

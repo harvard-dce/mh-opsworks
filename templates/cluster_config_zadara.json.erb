@@ -31,6 +31,10 @@
         "base_public_ami_id": "<%= base_public_ami_id %>",
         "base_private_ami_id": "<%= base_private_ami_id %>",
         <% end %>
+        "oc_prebuilt_artifacts": {
+          "enable": "<%= use_prebuilt_artifacts %>",
+          "bucket": "<%= prebuilt_artifact_bucket %>"
+        },
         "sns_endpoints": [
           { "email": "<%= sns_notification_email %>"}
         ],

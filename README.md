@@ -794,6 +794,26 @@ Example config:
 
 To add peering connections to an existing cluster/VPC, add the `peer_vpcs` configuration to the cluster config's custom json and run `./bin/rake vcp:init`
 
+### Deploying pre-built Opencast
+
+By default the Opsworks deployment of the Opencast "app" will check out the revision specified in your cluster config (`app.app_source.revision`) and run the `mvn` command to built from source. It is also possible to deploy pre-built artifacts (e.g. created by an AWS CodeBuild project) from an s3 bucket. This option is not only faster, it also removes the reliance on maven fetching the various dependencies during deployment, and is therefore recommended for a production environment.
+
+A valid configuration for using prebuilt artifacts looks like this:
+```
+"oc_prebuilt_artifacts": {
+  "enable": "true",
+  "bucket": "my-prebuilt-oc-artifacts-bucket"
+},
+```
+
+If `oc_prebuilt_artifacts.enable` is "true" the cluster config sanity checking will validate this configuration by verifying the bucket and necessary artifacts exist. The artifacts are expected to exist at an s3 location like
+
+`s3://[bucket name]/[branch or tag]/[node profile].tgz`
+
+where `node_profile` is one of "admin", "presentation" or "worker". The config check will complain with a WARNING if the bucket or any expected objects are missing.
+
+If use of prebuilt artifacts is enabled, at deploy time the deployment recipes in mh-opsworks-recipes will fetch and extract the gzipped tar archives into the `current_deploy_root` location instead of running maven. The archives contain the complete distribution, including compiled jar files. Everything else works the same, e.g. the `current` symlink will point to the new release path, configuration files and templates will be processed, etc.
+
 ## TODO
 
 * Automate cloudfront distribution creation

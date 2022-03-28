@@ -21,7 +21,7 @@ namespace :cluster do
       puts
       puts "You're trying to create or apply a cluster seed and we're not certain"
       puts "if you're on a development or testing cluster or not."
-      puts 
+      puts
       puts 'If you are, Please set "cluster_env" to "development" or "test" in your'
       puts "cluster configuration's custom_json and try again."
       puts
@@ -197,8 +197,11 @@ namespace :cluster do
     session.get_cluster_name
     session.sns_email_subscription
     session.get_cookbook_revision
+
     session.get_git_url
+
     session.get_git_revision
+    session.get_use_prebuilt_artifacts
     session.compute_cidr_block_root
     session.compute_azs
 
@@ -220,7 +223,9 @@ namespace :cluster do
       include_analytics: session.include_analytics,
       cookbook_revision: session.cookbook_revision,
       include_utility: session.include_utility,
-      sns_email: session.sns_email
+      sns_email: session.sns_email,
+      use_prebuilt_artifacts: session.use_prebuilt_artifacts,
+      prebuilt_artifact_bucket: session.prebuilt_artifacts_bucket || ""
     )
     rc_file = Cluster::RcFileSwitcher.new(config_file: config_file)
     rc_file.write

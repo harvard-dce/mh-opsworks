@@ -2,6 +2,8 @@
 
 ## TO BE RELEASED
 
+- DEPLOY-76: Support cluster configuration for prebuilt opencast deployments
+
 ## 3.0.1 - 03/16/2022
 
 - DEPLOY-68: clean up vpc peering route table entries on cluster deletion

@@ -135,6 +135,10 @@ module Cluster
       def peer_vpc_config
         stack_custom_json[:peer_vpcs]
       end
+
+      def is_truthy(val)
+        return ['true', '1'].include? val.to_s.downcase
+      end
     end
 
     def self.included(base)
