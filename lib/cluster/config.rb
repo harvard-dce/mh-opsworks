@@ -36,11 +36,16 @@ module Cluster
       JSON.parse(secrets_content, symbolize_names: true)
     end
 
-    def sane?
+    def sane?(verify_prebuilt_artifacts)
       errors = []
       begin
         self.class.check_registry.each do |klass|
           klass.sane?
+        end
+        if verify_prebuilt_artifacts
+          self.class.prebuilt_artifacts_check_registry.each do |klass|
+            klass.sane?
+          end
         end
       rescue => e
         errors << e
@@ -61,6 +66,14 @@ module Cluster
 
     def self.check_registry
       @@check_registry ||= []
+    end
+
+    def self.append_to_prebuilt_artifacts_check_registry(klass)
+      prebuilt_artifacts_check_registry << klass
+    end
+
+    def self.prebuilt_artifacts_check_registry
+      @@prebuilt_artifacts_check_registry ||= []
     end
 
     private

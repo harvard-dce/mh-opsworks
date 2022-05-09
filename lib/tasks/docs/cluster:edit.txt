@@ -13,6 +13,7 @@ make changes.
 After you save and exit, it:
 
 * Runs 'cluster:configtest' to sanity check your config changes,
+* Verifies the existence of any prebuilt opencast and/or cookbook objects in s3
 * Shows you a diff of the changes, allowing you to confirm them,
 * Syncs the cluster config to the shared s3 bucket, and then
 * Syncs the configuration to the connected AWS environment

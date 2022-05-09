@@ -125,7 +125,15 @@ module Cluster
 
       def get_cookbook_source_s3_url(revision)
         revision_file_label = revision.gsub("/", "-")
-        %Q|https://s3.amazonaws.com/#{shared_asset_bucket_name}/cookbooks/mh-opsworks-recipes-#{revision_file_label}.tar.gz|
+        prebuilt_artifacts_config = stack_custom_json.fetch(:oc_prebuilt_artifacts, {})
+
+        use_new_artifacts_bucket = !prebuilt_artifacts_config.empty?
+        if use_new_artifacts_bucket
+          prebuilt_artifacts_bucket = prebuilt_artifacts_config[:bucket]
+          %Q|https://#{prebuilt_artifacts_bucket}.s3.amazonaws.com/cookbook/#{revision_file_label}/mh-opsworks-recipes-#{revision_file_label}.tar.gz|
+        else
+          %Q|https://#{shared_asset_bucket_name}.s3.amazonaws.com/cookbooks/mh-opsworks-recipes-#{revision_file_label}.tar.gz|
+        end
       end
 
       def ibm_watson_config

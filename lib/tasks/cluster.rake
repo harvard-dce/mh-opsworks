@@ -30,7 +30,7 @@ namespace :cluster do
   end
 
   desc Cluster::RakeDocs.new('cluster:configtest').desc
-  task :configtest do
+  task :configtest, [:verify_prebuilt_artifacts] do |t, args|
     config = Cluster::Config.new
     if config.active_config == 'templates/minimal_cluster_config.json'
       puts "\nYou don't have a valid cluster active. You have two options:
@@ -40,8 +40,10 @@ namespace :cluster do
 "
       exit 1
     end
+
+    verify_prebuilt_artifacts = args[:verify_prebuilt_artifacts] || false
     unless Cluster::Base.skip_configtest?
-      config.sane?
+      config.sane?(verify_prebuilt_artifacts)
     else
       puts "Skipping cluster config sanity check!"
       true
@@ -59,7 +61,7 @@ namespace :cluster do
     remote_config = Cluster::RemoteConfig.new
     system %Q|$EDITOR #{remote_config.active_cluster_config_name}|
 
-    Rake::Task['cluster:configtest'].execute
+    Rake::Task['cluster:configtest'].execute :verify_prebuilt_artifacts => true
     Rake::Task['cluster:config_sync_check'].execute
   end
 
@@ -201,7 +203,6 @@ namespace :cluster do
     session.get_git_url
 
     session.get_git_revision
-    session.get_use_prebuilt_artifacts
     session.compute_cidr_block_root
     session.compute_azs
 
@@ -223,9 +224,7 @@ namespace :cluster do
       include_analytics: session.include_analytics,
       cookbook_revision: session.cookbook_revision,
       include_utility: session.include_utility,
-      sns_email: session.sns_email,
-      use_prebuilt_artifacts: session.use_prebuilt_artifacts,
-      prebuilt_artifact_bucket: session.prebuilt_artifacts_bucket || ""
+      sns_email: session.sns_email
     )
     rc_file = Cluster::RcFileSwitcher.new(config_file: config_file)
     rc_file.write

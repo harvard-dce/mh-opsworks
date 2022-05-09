@@ -258,41 +258,19 @@ revision of the custom cookbook that you'd like to use.
 
 There are two options for the custom cookbook source, "s3" (the default) and "git",
 and the choice of which source type to use is presented during the `cluster:new`
-prompt session. The default type of "s3" means your opsworks stack will look for a
-prepackaged tar.gz archive in the cluster's shared assets bucket. The archive
-must be named named according to the recipe repo tag or branch specified in the
-"revision" setting. The archive is assumed to be the result of running the
-Berkshelf `package` command. [More info here](http://docs.aws.amazon.com/opsworks/latest/userguide/best-practices-packaging-cookbooks-locally.html).
+prompt session. See the "Deploying with pre-built cookbook and/or Opencast" section below for
+details on the s3 method.
 
-For example the following configuration will look for the cookbook source
-at "https://s3.amazonaws.com/shared-assets-bucket/mh-opsworks-recipes-develop.tar.gz":
-```
-{
-  "stack": {
-    "chef": {
-      "custom_cookbooks_source": {
-        "type": "s3",
-        "revision": "develop",
-      }
-    }
-  }
-}
-```
-In this case the stack creation code will assemble the s3 archive url based on the
-revision and the shared assets bucket name. If your configuration includes a custom
-url for the archive that will be used instead.
-
-Using prepackaged archives from s3 allows you to decouple from github and
+Using the default (prepackaged cookbook from s3) allows you to decouple from github and
 [supermarket.chef.io](https://supermarket.chef.io), which could help your
-deployments be more robust because you're eliminating third party dependencies.
-
-A cookbook source type of "git", on the other hand, would look like this:
+deployments be more robust because you're eliminating third party dependencies. If you still want to
+fetch directly from git, you can use a cookbook source type of "git" which looks like this:
 
 ```
 {
   "stack": {
     "chef": {
-      "custom_json": {},
+      "custom_json": {...},
       "custom_cookbooks_source": {
         "type": "git",
         "url": "https://github.com/harvard-dce/mh-opsworks-recipes",
@@ -303,9 +281,7 @@ A cookbook source type of "git", on the other hand, would look like this:
 }
 ```
 
-DCE uses a combination of AWS services, including Lambda and CodeBuild, and a Github
-webhook to provide an automated build pipeline for our [mh-opsworks-recipes](https://github.com/harvard-dce/mh-opsworks-recipes) cookbook.
-That project can be found at [harvard-dce/mh-opsworks-builder](https://github.com/harvard-dce/mh-opsworks-builder).
+##### Chef log levels
 
 To enable additional debug-level log output from chef, change the `chef_log_level` setting
 in your stack's custom json to "debug".
@@ -794,25 +770,59 @@ Example config:
 
 To add peering connections to an existing cluster/VPC, add the `peer_vpcs` configuration to the cluster config's custom json and run `./bin/rake vcp:init`
 
-### Deploying pre-built Opencast
+### Deploying with pre-built cookbook and/or Opencast
 
-By default the Opsworks deployment of the Opencast "app" will check out the revision specified in your cluster config (`app.app_source.revision`) and run the `mvn` command to built from source. It is also possible to deploy pre-built artifacts (e.g. created by an AWS CodeBuild project) from an s3 bucket. This option is not only faster, it also removes the reliance on maven fetching the various dependencies during deployment, and is therefore recommended for a production environment.
+By default the Opsworks deployment of the Opencast "app" will check out the revision specified in your cluster config (`app.app_source.revision`) and run the `mvn` command to build the jars from source. This can result in deployment failures if the maven build has trouble fetching dependencies. As an alternative, we can deploy pre-built artifacts created by an AWS CodeBuild project from an s3 bucket.
 
-A valid configuration for using prebuilt artifacts looks like this:
+A valid configuration for using the prebuilt Opencast artifacts looks like this:
+
 ```
-"oc_prebuilt_artifacts": {
-  "enable": "true",
-  "bucket": "my-prebuilt-oc-artifacts-bucket"
-},
+{
+  "stack": {
+    "chef": {
+      "custom_json": {
+        ...
+        "oc_prebuilt_artifacts": {
+          "enable": "true",
+          "bucket": "opencast-codebuild-artifacts"
+        },
+        ...
+      },
+    }
+  }
+}
 ```
 
-If `oc_prebuilt_artifacts.enable` is "true" the cluster config sanity checking will validate this configuration by verifying the bucket and necessary artifacts exist. The artifacts are expected to exist at an s3 location like
+The `oc_prebuilt_artifacts` settings need to be a part of your `custom_json` block.
 
-`s3://[bucket name]/[branch or tag]/[node profile].tgz`
+- `enable` turns on the use of prebuilt Opencast
+- `bucket` is the name of the bucket where all the artifacts are created
 
-where `node_profile` is one of "admin", "presentation" or "worker". The config check will complain with a WARNING if the bucket or any expected objects are missing.
+If `oc_prebuilt_artifacts.enable` is "true", when you save+exit from a `cluster:edit` command, the cluster config sanity checking will verify that your configured bucket and the necessary artifacts exist. The artifacts are expected to exist at an s3 location like
+
+`s3://[bucket name]/opencast/[branch or tag]/[node profile].tgz`
+
+where `node_profile` is one of "admin", "presentation" or "worker". The validation check will complain with a WARNING if the bucket or any expected objects are missing.
 
 If use of prebuilt artifacts is enabled, at deploy time the deployment recipes in mh-opsworks-recipes will fetch and extract the gzipped tar archives into the `current_deploy_root` location instead of running maven. The archives contain the complete distribution, including compiled jar files. Everything else works the same, e.g. the `current` symlink will point to the new release path, configuration files and templates will be processed, etc.
+
+##### Pre-built cookbook
+
+If the following are true...
+
+- Your `custom_cookbooks_source.type` is set to "s3"
+- Your `oc_prebuilt_artifacts.bucket` value is set
+
+then your Opsworks stack wil look for the prepackaged cookbook in the `bucket` defined in the `oc_prebuilt_artifacts` settings.
+
+If only the cookbook source type is set to "s3" then the stack will look for the prepackaged cookbook in the cluster's shared assets bucket. In both cases the archive
+must be named named according to the recipe repo tag or branch specified in the
+"revision" setting. The archive is assumed to be the result of running the
+Berkshelf `package` command. [More info here](http://docs.aws.amazon.com/opsworks/latest/userguide/best-practices-packaging-cookbooks-locally.html).
+
+DCE uses a combination of AWS services, including Lambda and CodeBuild, and a Github
+webhook to provide an automated build pipeline for our [mh-opsworks-recipes](https://github.com/harvard-dce/mh-opsworks-recipes) cookbook.
+That project can be found at [harvard-dce/mh-opsworks-builder](https://github.com/harvard-dce/mh-opsworks-builder).
 
 ## TODO
 

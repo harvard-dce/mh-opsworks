@@ -4,33 +4,54 @@ module Cluster
 
     class PrebuiltOcSettings < Base
       def self.sane?
-        oc_prebuilt_artifacts = stack_custom_json.fetch(:oc_prebuilt_artifacts, {})
+        prebuilt_artifacts = stack_custom_json.fetch(:oc_prebuilt_artifacts, {})
+        bucket = prebuilt_artifacts[:bucket]
+        bucket_configured = !bucket.nil? && !bucket.empty?
+        enable_opencast = is_truthy(prebuilt_artifacts[:enable])
 
-        if !oc_prebuilt_artifacts.empty? && is_truthy(oc_prebuilt_artifacts[:enable])
-          if oc_prebuilt_artifacts[:bucket].nil? || oc_prebuilt_artifacts[:bucket].empty?
-            raise MisconfiguredPrebuiltOcSettings.new("oc_prebuilt_artifacts misconfigured: missing a `bucket` value")
-          end
-
-          app_revision = app_config[:app_source][:revision]
-          bucket = oc_prebuilt_artifacts[:bucket]
-
+        if bucket_configured
           begin
             bucket_exists = s3_client.head_bucket({
               bucket: bucket
             })
           rescue
-            STDERR.puts "WARNING: oc_prebuilt_artifacts misconfigured: bucket '#{bucket}' not found!".colorize(:background => :red)
+            STDERR.puts "WARNING: prebuilt_artifacts misconfigured: bucket '#{bucket}' not found!".colorize(:background => :red)
           end
 
-          ['admin', 'presentation', 'worker'].each do |node_profile|
-            key = "#{app_revision.gsub(/\//, "-")}/#{node_profile}.tgz"
-            begin
-              artifact_object = s3_client.head_object({
-                bucket: bucket,
-                key: key
-              })
-            rescue
-            STDERR.puts "oc_prebuild_artifacts misconfigured: prebuild artifact '#{key}' not found in bucket '#{bucket}'!".colorize(:background => :red)
+          # verify the prebuilt opencast artifats are there
+          if enable_opencast
+            app_revision = app_config[:app_source][:revision]
+
+            puts "Checking for prebuilt artifacts"
+            ['admin', 'presentation', 'worker'].each do |node_profile|
+              key = "opencast/#{app_revision.gsub(/\//, "-")}/#{node_profile}.tgz"
+              begin
+                artifact_object = s3_client.head_object({
+                  bucket: bucket,
+                  key: key
+                })
+                puts " \u2713 ".encode("utf-8").colorize(:background => :green) + " #{key} found in #{bucket}"
+              rescue
+                STDERR.puts "WARNING: prebuild opencast artifact '#{key}' not found in bucket '#{bucket}'!".colorize(:background => :red)
+              end
+            end
+          end
+
+          # verify the prebuilt cookbook is there
+          if bucket_configured
+            cookbook_source = stack_chef_config.fetch(:custom_cookbooks_source, {})
+            if cookbook_source[:type] == "s3"
+              cookbook_revision = cookbook_source[:revision].gsub(/\//, "-")
+              cookbook_object_key = %Q|cookbook/#{cookbook_revision}/mh-opsworks-recipes-#{cookbook_revision}.tar.gz|
+              begin
+                cookbook_object = s3_client.head_object({
+                  bucket: bucket,
+                  key: cookbook_object_key
+                })
+                puts " \u2713 ".encode("utf-8").colorize(:background => :green) + " #{cookbook_object_key} found in #{bucket}"
+              rescue
+                STDERR.puts "WARNING: prebuild cookbook '#{cookbook_object_key}' not found in bucket '#{bucket}'!".colorize(:background => :red)
+              end
             end
           end
         end
@@ -39,4 +60,4 @@ module Cluster
   end
 end
 
-Cluster::Config.append_to_check_registry(Cluster::ConfigChecks::PrebuiltOcSettings)
+Cluster::Config.append_to_prebuilt_artifacts_check_registry(Cluster::ConfigChecks::PrebuiltOcSettings)
