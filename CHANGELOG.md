@@ -2,6 +2,10 @@
 
 ## TO BE RELEASED
 
+## 3.2.0 - 05/26/2022
+
+- DEPLOY-77: consolidate prebuilt opencast cookbook and software builds
+
 ## 3.1.0 - 04/28/2022
 
 - DEPLOY-76: Support cluster configuration for prebuilt opencast deployments
