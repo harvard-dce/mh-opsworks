@@ -1,23 +1,31 @@
 require 'rbconfig'
 
-Vagrant.require_version(">= 1.7.0")
+Vagrant.require_version(">= 2.2.6")
 
 
 Vagrant.configure("2") do |config|
   ram_slice_size = get_ram_slice_size
   config.vm.box = "harvard-dce/local-opsworks-ubuntu1404"
   config.vm.box_version = "1.2.0"
+  # config.vbguest.iso_path = "https://download.virtualbox.org/virtualbox/6.1.6/VBoxGuestAdditions_6.1.6.iso"
 
+  # Prevents vbguest version mismatch with the host
+  if Vagrant.has_plugin? "vagrant-vbguest"
+    config.vbguest.no_install  = true
+    config.vbguest.auto_update = false
+    config.vbguest.no_remote   = true
+  end
 
   config.vm.provider "virtualbox" do |vb|
+    #  vb.gui = true
     vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
     vb.customize ["modifyvm", :id, "--cableconnected1", "on"]
   end
 
-  # Ensure the repo is up-to-date on the first provisioning run
+  # Ensure the repo is up-to-date on the first provisioning run, and virtual headers are installed
   config.vm.provision :shell,
     name: "update apt repo",
-    inline: "apt-get update"
+    inline: "apt-get -y update && apt-get -y install virtualbox-guest-dkms && apt-get -y install linux-headers-virtual"
 
   # enable ubuntu esm
   esm_token = ENV["UBUNTU_ESM_TOKEN"]
@@ -28,7 +36,7 @@ Vagrant.configure("2") do |config|
   if esm_token
     config.vm.provision :shell,
       name: "enable Ubuntu ESM"
-      inline = "apt-get -y install ubuntu-advantage-tools && ua attach #{esm_token} && apt-get update && apt-get -y upgrade"
+      inline = "apt-get -y install ubuntu-advantage-tools && ua attach #{esm_token} && apt-get -y update && apt-get -y upgrade"
   end
 
   config.vm.provision :shell,
@@ -63,7 +71,7 @@ Vagrant.configure("2") do |config|
       'spec/support/opsworks-vm/all-in-one-deploy.json'
     ]
 
-    layer.vm.network "private_network", ip: "10.10.10.50"
+    layer.vm.network "private_network", ip: "192.168.56.15"
   end
 
   config.vm.define "local-support" do |layer|
@@ -85,7 +93,7 @@ Vagrant.configure("2") do |config|
       'spec/support/opsworks-vm/local-support-deploy.json'
     ]
 
-    layer.vm.network "private_network", ip: "10.10.10.2"
+    layer.vm.network "private_network", ip: "192.168.56.2"
   end
 
   config.vm.define "admin" do |layer|
@@ -107,7 +115,7 @@ Vagrant.configure("2") do |config|
       'spec/support/opsworks-vm/admin-deploy.json'
     ]
 
-    layer.vm.network "private_network", ip: "10.10.10.10"
+    layer.vm.network "private_network", ip: "192.168.56.11"
   end
 
   config.vm.define "engage" do |layer|
@@ -130,7 +138,7 @@ Vagrant.configure("2") do |config|
     ]
 
     layer.vm.network "forwarded_port", guest: 80, host: 8020
-    layer.vm.network "private_network", ip: "10.10.10.20"
+    layer.vm.network "private_network", ip: "192.168.56.12"
   end
 
   config.vm.define "workers" do |layer|
@@ -151,16 +159,16 @@ Vagrant.configure("2") do |config|
       'spec/support/opsworks-vm/workers-deploy.json'
     ]
     layer.vm.network "forwarded_port", guest: 80, host: 8030
-    layer.vm.network "private_network", ip: "10.10.10.30"
+    layer.vm.network "private_network", ip: "192.168.56.13"
   end
 end
 
 def register_multi_hosts(layer)
   layer.vm.provision :hosts do |provisioner|
-    provisioner.add_host '10.10.10.2', ['local-support1.localdomain', 'local-support1']
-    provisioner.add_host '10.10.10.10', ['admin1.localdomain', 'admin1']
-    provisioner.add_host '10.10.10.20', ['engage1.localdomain', 'engage1']
-    provisioner.add_host '10.10.10.30', ['workers1.localdomain', 'workers1']
+    provisioner.add_host '192.168.56.2', ['local-support1.localdomain', 'local-support1']
+    provisioner.add_host '192.168.56.11', ['admin1.localdomain', 'admin1']
+    provisioner.add_host '192.168.56.12', ['engage1.localdomain', 'engage1']
+    provisioner.add_host '192.168.56.13', ['workers1.localdomain', 'workers1']
   end
 end
 

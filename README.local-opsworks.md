@@ -38,10 +38,12 @@ We do not currently support all-in-one nodes, but that should be coming soon.
         
 * Start your environment! This takes about 20 to 25 minutes on my beefy machine
   with SSD.
+* The 192.168.56.0/21 range is allowed for vagrant boxes on mac and linux hosts (as of 2022)
+* Reference: https://www.virtualbox.org/manual/ch06.html#network_hostonly
 
-        # Start an all-in-one node on http://10.10.10.50/
+        # Start an all-in-one node on http://192.168.56.15/
         ./bin/all_in_one up
-        # Start a multi-node cluster on http://10.10.10.10/
+        # Start a multi-node cluster on http://192.168.56.11/
         ./bin/local_cluster up
 
 * Access your environment by pointing your web browser to the ip address above.
@@ -79,14 +81,14 @@ cluster it parallelizes some processes for speed.
 
 By default we set up 4 nodes in a multi-node cluster:
 
-* 10.10.10.2: local-support1 - the nfs share and database server
-* 10.10.10.10: admin1
-* 10.10.10.20: engage1
-* 10.10.10.30: workers1
+* 192.168.56.2: local-support1 - the nfs share and database server
+* 192.168.56.11: admin1
+* 192.168.56.12: engage1
+* 192.168.56.13: workers1
 
 For an all-in-one cluster, we set up a single node:
 
-* 10.10.10.50: all-in-one1
+* 192.168.56.15: all-in-one1
 
 * We take 40% of your system RAM and allocate it to vagrant.  This will
   hopefully be enough RAM to run opencast with acceptable performance. If it

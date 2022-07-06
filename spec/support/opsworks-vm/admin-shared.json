@@ -2,8 +2,8 @@
   "opsworks": {
     "instance": {
       "hostname": "admin1",
-      "private_dns_name": "10.10.10.10",
-      "public_dns_name": "10.10.10.10"
+      "private_dns_name": "192.168.56.11",
+      "public_dns_name": "192.168.56.11"
     }
   }
 }

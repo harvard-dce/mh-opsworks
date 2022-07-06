@@ -2,8 +2,8 @@
   "opsworks": {
     "instance": {
       "hostname": "all-in-one1",
-      "private_dns_name": "10.10.10.50",
-      "public_dns_name": "10.10.10.50"
+      "private_dns_name": "192.168.56.15",
+      "public_dns_name": "192.168.56.15"
     }
   }
 }

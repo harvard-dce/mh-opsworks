@@ -4,9 +4,9 @@
       "admin": {
         "instances": {
           "all-in-one1": {
-            "private_ip": "10.10.10.50",
-            "private_dns_name": "10.10.10.50",
-            "public_dns_name": "10.10.10.50"
+            "private_ip": "192.168.56.15",
+            "private_dns_name": "192.168.56.15",
+            "public_dns_name": "192.168.56.15"
           }
         }
       }
@@ -19,7 +19,7 @@
         "repository": "dce-opencast/"
       },
       "database": {
-        "host": "10.10.10.50",
+        "host": "192.168.56.15",
         "database": "opencast",
         "username": "root",
         "password": "correcthorsebatterystaple"
@@ -44,7 +44,7 @@
   "capture_agent_query_url": "http://example.com",
   "user_tracking_authhost": "example.com",
   "shared_asset_bucket_name": "mh-opsworks-shared-assets",
-  "activemq_bind_host": "10.10.10.50",
+  "activemq_bind_host": "192.168.56.15",
   "deploy_action": "force_deploy",
   "db_seed_file": "dce-config/docs/scripts/ddl/mysql5.sql",
   "rest_auth": {

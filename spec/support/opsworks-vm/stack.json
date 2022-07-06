@@ -4,35 +4,35 @@
       "local-support": {
         "instances": {
           "local-support1": {
-            "private_ip": "10.10.10.2",
-            "private_dns_name": "10.10.10.2"
+            "private_ip": "192.168.56.2",
+            "private_dns_name": "192.168.56.2"
           }
         }
       },
       "admin": {
         "instances": {
           "admin1": {
-            "private_ip": "10.10.10.10",
-            "private_dns_name": "10.10.10.10",
-            "public_dns_name": "10.10.10.10"
+            "private_ip": "192.168.56.11",
+            "private_dns_name": "192.168.56.11",
+            "public_dns_name": "192.168.56.11"
           }
         }
       },
       "engage": {
         "instances": {
           "engage1": {
-            "private_ip": "10.10.10.20",
-            "private_dns_name": "10.10.10.20",
-            "public_dns_name": "10.10.10.20"
+            "private_ip": "192.168.56.12",
+            "private_dns_name": "192.168.56.12",
+            "public_dns_name": "192.168.56.12"
           }
         }
       },
       "workers": {
         "instances": {
           "workers1": {
-            "private_ip": "10.10.10.30",
-            "private_dns_name": "10.10.10.30",
-            "public_dns_name": "10.10.10.30"
+            "private_ip": "192.168.56.13",
+            "private_dns_name": "192.168.56.13",
+            "public_dns_name": "192.168.56.13"
           }
         }
       }
@@ -45,7 +45,7 @@
         "repository": "dce-opencast/"
       },
       "database": {
-        "host": "10.10.10.2",
+        "host": "192.168.56.2",
         "database": "opencast",
         "username": "root",
         "password": "correcthorsebatterystaple"
@@ -69,7 +69,7 @@
   "local_workspace_root": "/var/opencast-workspace",
   "storage": {
     "export_root": "/var/opencast",
-    "network": "10.10.10.0/24",
+    "network": "192.168.56.0/21",
     "layer_shortname": "local-support"
   },
   "capture_agent_query_url": "http://example.com",

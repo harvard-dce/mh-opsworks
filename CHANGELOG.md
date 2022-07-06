@@ -2,6 +2,8 @@
 
 ## TO BE RELEASED
 
+- OPC-605 update existing Vagrant local all-in-one deploy, compatible with OCv5 and OCv11, but has companion OCv11 recipe
+
 ## 3.2.0 - 05/26/2022
 
 - DEPLOY-77: consolidate prebuilt opencast cookbook and software builds

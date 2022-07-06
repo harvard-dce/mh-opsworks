@@ -7,20 +7,16 @@
       "recipe[mysql::client]",
       "recipe[dependencies]",
       "recipe[ebs]",
-      "recipe[opsworks_ganglia::client]",
       "recipe[mysql::server]",
       "recipe[deploy::mysql]",
       "recipe[deploy::default]",
-      "recipe[opsworks_ganglia::configure-client]",
       "recipe[agent_version]",
 
       "recipe[oc-opsworks-recipes::set-timezone]",
-      "recipe[oc-opsworks-recipes::fix-raid-mapping]",
-      "recipe[oc-opsworks-recipes::set-bash-as-default-shell]",
       "recipe[oc-opsworks-recipes::install-utils]",
       "recipe[oc-opsworks-recipes::populate-maven-cache]",
-      "recipe[oc-opsworks-recipes::install-oc-base-packages]",
       "recipe[oc-opsworks-recipes::create-opencast-user]",
+      "recipe[oc-opsworks-recipes::install-oc-base-packages]",
       "recipe[oc-opsworks-recipes::create-opencast-directories]",
       "recipe[oc-opsworks-recipes::configure-nginx-proxy]",
       "recipe[oc-opsworks-recipes::install-ffmpeg]",
@@ -30,4 +26,3 @@
     ]
   }
 }
-

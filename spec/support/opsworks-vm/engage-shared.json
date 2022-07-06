@@ -2,8 +2,8 @@
   "opsworks": {
     "instance": {
       "hostname": "engage1",
-      "private_dns_name": "10.10.10.20",
-      "public_dns_name": "10.10.10.20"
+      "private_dns_name": "192.168.56.12",
+      "public_dns_name": "192.168.56.12"
     }
   }
 }

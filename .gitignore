@@ -7,3 +7,6 @@ tmp/
 coverage/
 .vagrant/
 log/
+
+# while testing
+.kitchen/
