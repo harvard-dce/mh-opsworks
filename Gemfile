@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
-gem 'aws-sdk', '~> 2.11.180'
-gem 'aws-sigv4', '~> 1.2.4'
+gem 'aws-sdk', '~> 3'
+#gem 'aws-sigv4', '~> 1.0'
 
 gem 'rake', '~> 13.0.6'
 

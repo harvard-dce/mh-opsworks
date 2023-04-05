@@ -290,7 +290,7 @@ module Cluster
         custom_json: json_encode(
           custom_json
         ),
-        default_os: 'Amazon Linux 2018.03',
+        default_os: 'Red Hat Enterprise Linux 7',
         service_role_arn: service_role.arn,
         default_instance_profile_arn: instance_profile.arn,
         default_subnet_id: vpc.subnets.first.id,

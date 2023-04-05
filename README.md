@@ -251,7 +251,7 @@ OpsWorks uses [chef](https://chef.io).  You configure the source of the custom
 recipes in the stack section of your active cluster configuration file.
 These options are pretty much passed through to
 the `opsworks` ruby client. [Details
-here](http://docs.aws.amazon.com/sdkforruby/api/Aws/OpsWorks/Client.html#create_stack-instance_method)
+here](https://docs.aws.amazon.com/sdk-for-ruby/v3/api/Aws/OpsWorks/Client.html#create_stack-instance_method)
 about what options you can pass through to, say, control security or the
 revision of the custom cookbook that you'd like to use.
 
@@ -816,7 +816,7 @@ That project can be found at [harvard-dce/mh-opsworks-builder](https://github.co
 ## See Also
 
 * [OpsWorks API reference](http://docs.aws.amazon.com/opsworks/latest/APIReference/Welcome.html)
-* [Aws ruby sdk](http://docs.aws.amazon.com/sdkforruby/api/Aws.html)
+* [Aws ruby sdk](https://docs.aws.amazon.com/sdk-for-ruby/v3/api/index.html)
 * [OpsWorks docs](http://docs.aws.amazon.com/opsworks/latest/userguide/welcome.html)
 * Just starting out with ruby? [Just enough ruby for chef](https://docs.chef.io/ruby.html) | [try ruby](http://tryruby.org) | [beginners guide to ruby](https://hackhands.com/beginners-guide-ruby/)
 * See the [chef overview](http://docs.chef.io/chef_overview.html)
@@ -830,7 +830,7 @@ That project can be found at [harvard-dce/mh-opsworks-builder](https://github.co
 ## License
 
 This project is licensed under the same terms as [the ruby aws-sdk
-itself](https://github.com/aws/aws-sdk-ruby/tree/master#license).
+itself](https://github.com/aws/aws-sdk-ruby/blob/version-3/LICENSE.txt).
 
 ## Copyright
 

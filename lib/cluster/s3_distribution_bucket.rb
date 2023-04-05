@@ -5,6 +5,12 @@ module Cluster
       return bucket if bucket
 
       S3Bucket.create(name: bucket_name)
+      s3_client.put_public_access_block({
+        bucket: bucket_name,
+        public_access_block_configuration: {
+          block_public_policy: false
+        }
+      })
       s3_client.put_bucket_policy(
         bucket: bucket_name,
         policy: default_bucket_policy_for(bucket_name)

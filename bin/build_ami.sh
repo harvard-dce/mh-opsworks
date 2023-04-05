@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+set -x
 
 if [ -z "$AWS_PROFILE" ]; then
   echo '$AWS_PROFILE not set'
@@ -27,11 +28,11 @@ build_ami() {
   ssh_connection=$3
 
   # See https://docs.aws.amazon.com/opsworks/latest/userguide/workinginstances-custom-ami.html
-  $ssh_connection sudo /etc/init.d/monit stop &&
-    $ssh_connection sudo /etc/init.d/opsworks-agent stop &&
-    $ssh_connection sudo rm -rf /etc/aws/opsworks/ /opt/aws/opsworks/ /var/log/aws/opsworks/ /var/lib/aws/opsworks/ /etc/monit.d/opsworks-agent.monitrc /etc/monit/conf.d/opsworks-agent.monitrc /var/lib/cloud/ /etc/chef &&
-    $ssh_connection sudo yum erase -y opsworks-agent-ruby chef
-  $ssh_connection sudo yum clean all &&
+  $ssh_connection sudo systemctl stop monit &&
+    $ssh_connection sudo systemctl stop opsworks-agent &&
+    $ssh_connection sudo rm -rf /etc/aws/opsworks/ /opt/aws/opsworks/ /var/log/aws/opsworks/ /var/lib/aws/opsworks/ /etc/monit.d/opsworks-agent.monitrc /etc/monit/conf.d/opsworks-agent.monitrc /var/lib/cloud/ /etc/chef /var/chef &&
+    $ssh_connection sudo yum erase -y opsworks-agent-ruby chef &&
+    $ssh_connection sudo yum clean all &&
     $ssh_connection sudo rm -rf /var/cache/yum
 
   if [[ $(id -u) != 0 ]]; then
@@ -57,7 +58,7 @@ build_ami() {
   )
   aws ec2 create-tags \
     --resources $ami_id \
-    --tags "Key=mh-opsworks,Value=1" "Key=released,Value=0" "Key=os,Value=amazonlinux.2018.03"
+    --tags "Key=mh-opsworks,Value=1" "Key=released,Value=0" "Key=os,Value=RHEL7"
   echo
 }
 
