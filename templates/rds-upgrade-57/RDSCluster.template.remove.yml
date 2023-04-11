@@ -1,0 +1,79 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: 'Creates RDS Aurora cluster and associated resources'
+
+Parameters:
+  DBClusterIdentifier:
+    Description: 'Name of the RDS cluster'
+    Type: 'String'
+  DBInstancePrefix:
+    Description: 'Name of the RDS intance(s)'
+    Type: 'String'
+  ParentVpcStack:
+    Description: 'VPC Cloudformation stack this RDS cluster will associated with'
+    Type: 'String'
+  DBMasterUser:
+    Description: 'Database master user'
+    Type: 'String'
+  DBMasterUserPassword:
+    Description: 'Database master user password'
+    Type: 'String'
+  PreferredBackupWindow:
+    Description: 'Time window in which AWS will perform automated backups'
+    Type: 'String'
+  PreferredMaintenanceWindow:
+    Description: 'Time window in which AWS will perform automated maintenance'
+    Type: 'String'
+  DBInstanceClass:
+    Description: 'Instance type of database instances'
+    Type: 'String'
+  DBName:
+    Description: 'Name of the database to create in each instance'
+    Type: 'String'
+  MultiAZ:
+    Description: "If 'true' a 2nd replica db instance will be created"
+    Type: 'String'
+  EnablePerformanceInsights:
+    Description: 'Turn on the extra performance insights interface'
+    Type: 'String'
+  SnsTopicArn:
+    Description: 'ARN of the SNS topic the cluster will send events to'
+    Type: 'String'
+  BackupRetentionPeriod:
+    Description: 'Number of days to keep automated backups'
+    Type: 'String'
+
+Conditions:
+  CreateReplica: !Not [!Equals [!Ref MultiAZ, 'false']]
+
+Resources:
+  DBSubnetGroup:
+    Type: 'AWS::RDS::DBSubnetGroup'
+    Properties:
+      DBSubnetGroupDescription: !Sub '${AWS::StackName} db subnet group'
+      SubnetIds:
+        !Split [
+          ',',
+          { 'Fn::ImportValue': !Sub '${ParentVpcStack}-private-subnet-ids' },
+        ]
+
+  DBClusterParameterGroup57:
+    Type: 'AWS::RDS::DBClusterParameterGroup'
+    Properties:
+      Description: !Sub '${AWS::StackName} cluster-level settings'
+      Family: 'aurora-mysql5.7'
+      Parameters:
+        binlog_format: 'MIXED'
+        lower_case_table_names: '1'
+        # this just omits some unnecessary data from the replication messages
+        aurora_enable_repl_bin_log_filtering: '1'
+
+  DBParameterGroup57:
+    Type: 'AWS::RDS::DBParameterGroup'
+    Properties:
+      Description: !Sub '${AWS::StackName} instance-level settings'
+      Family: 'aurora-mysql5.7'
+      Parameters:
+        slow_query_log: '1'
+        log_output: 'FILE'
+        long_query_time: 3

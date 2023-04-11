@@ -125,23 +125,6 @@ Resources:
       MonitoringInterval: 60
       MonitoringRoleArn: !Sub 'arn:aws:iam::${AWS::AccountId}:role/rds-monitoring-role'
 
-  DBInstance2:
-    Type: 'AWS::RDS::DBInstance'
-    # See note on the cluster resource
-    DeletionPolicy: Retain
-    Condition: CreateReplica
-    Properties:
-      AutoMinorVersionUpgrade: false
-      CopyTagsToSnapshot: true
-      Engine: 'aurora-mysql'
-      DBClusterIdentifier: !Ref DBCluster
-      DBInstanceIdentifier: !Join ['-', [!Ref DBInstancePrefix, '2']]
-      DBInstanceClass: !Ref DBInstanceClass
-      DBParameterGroupName: !Ref DBParameterGroup57
-      EnablePerformanceInsights: !Ref EnablePerformanceInsights
-      MonitoringInterval: 60
-      MonitoringRoleArn: !Sub 'arn:aws:iam::${AWS::AccountId}:role/rds-monitoring-role'
-
   DBClusterEventSubscription:
     # this adds rds events to our general feed so we can subscribe
     # to various things and take actions. For instance, in our dev account
@@ -158,31 +141,3 @@ Resources:
       SnsTopicArn: !Ref SnsTopicArn
       SourceIds: [!Ref DBCluster]
       SourceType: 'db-cluster'
-
-Outputs:
-  ClusterName:
-    Description: 'The name of the cluster'
-    Value: !Ref DBCluster
-    Export:
-      Name: !Sub '${AWS::StackName}-cluster-name'
-  InstanceName:
-    Description: 'The name of the instance'
-    Value: !Ref DBInstance1
-    Export:
-      Name: !Sub '${AWS::StackName}-instance-name'
-  ReplicaName:
-    Description: 'The name of the replica instance'
-    Value: !Ref DBInstance2
-    Condition: CreateReplica
-    Export:
-      Name: !Sub '${AWS::StackName}-replica-name'
-  DBSubnetGroupId:
-    Description: 'The name of the db subnet group'
-    Value: !Ref DBSubnetGroup
-    Export:
-      Name: !Sub '${AWS::StackName}-subnet-group'
-  EventSubscription:
-    Description: 'RDS event subscription name'
-    Value: !Ref DBClusterEventSubscription
-    Export:
-      Name: !Sub '${AWS::StackName}-rds-event-subscription'

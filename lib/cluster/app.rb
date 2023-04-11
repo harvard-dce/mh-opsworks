@@ -49,7 +49,15 @@ module Cluster
     def self.app_parameters
       stack = Stack.find_existing
       app_source = app_config[:app_source]
-      rds_arn = Cluster::RDS.writer_instance_arn
+      begin
+        rds_arn = Cluster::RDS.writer_instance_arn
+      rescue => e
+        unless e.message.include? "db_cluster_members"
+          raise
+        end
+        puts "rds missing or contains no instances"
+        rds_arn = ''
+      end
 
       if deployment_private_ssh_key
         app_source[:ssh_key] = deployment_private_ssh_key

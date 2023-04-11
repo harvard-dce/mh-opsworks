@@ -1,3 +1,5 @@
+require 'json'
+
 module Cluster
   class RDS < Base
     include Waiters
@@ -34,26 +36,13 @@ module Cluster
     end
 
     def self.update(update_now=false)
-      parameters = get_parameters
-      parameters.delete(:timeout_in_minutes)
-
+      parameters = get_update_parameters
       begin
         if update_now
           stack = cloudformation_client.update_stack(parameters)
           wait_until_stack_update_completed(stack.stack_id)
         else
-          parameters[:change_set_name] = "rds-update-#{Time.now.to_i}"
-          resp = cloudformation_client.create_change_set(parameters)
-          change_set = cloudformation_client.describe_change_set({
-             change_set_name: resp.id
-          })
-          if change_set.status == 'FAILED' && change_set.status_reason =~/didn't contain changes/
-            cloudformation_client.delete_change_set({
-              change_set_name: resp.id
-            })
-            raise "No updates"
-          end
-          puts "Change set #{change_set.change_set_name} created. Review and approve via Cloudformation web console."
+          create_change_set(parameters)
         end
       rescue => e
         puts e.message
@@ -63,6 +52,31 @@ module Cluster
       end
 
       find_existing
+    end
+
+    def self.upgrade57(upgrade_step)
+      case upgrade_step
+      when "pre"
+        parameters = get_update_parameters
+        parameters[:template_body] = File.read("./templates/rds-upgrade-57/RDSCluster.template.pre.yml")
+        create_change_set(parameters)
+      when "remove"
+        parameters = get_update_parameters
+        parameters[:template_body] = File.read("./templates/rds-upgrade-57/RDSCluster.template.remove.yml")
+        create_change_set(parameters)
+      when "ids"
+        cluster = find_existing
+        instance_ids = cluster.members.collect { |x| x.db_instance_identifier }
+        event_subscription = rds_client.describe_event_subscriptions.inject([]){ |memo, page| memo + page.event_subscriptions_list }.find do |subscription|
+          subscription.sns_topic_arn == get_topic_arn
+        end
+        h = {
+          "db_cluster_identifier" => cluster.db_cluster_identifier,
+          "db_instance_identifiers" => instance_ids,
+          "event_subscription_identifier" => event_subscription.cust_subscription_id
+        }
+        puts JSON.pretty_generate(h)
+      end
     end
 
     def self.find_or_create
@@ -199,5 +213,25 @@ module Cluster
       }
     end
 
+    def self.get_update_parameters
+      parameters = get_parameters
+      parameters.delete(:timeout_in_minutes)
+      parameters
+    end
+
+    def self.create_change_set(parameters)
+      parameters[:change_set_name] = "rds-update-#{Time.now.to_i}"
+      resp = cloudformation_client.create_change_set(parameters)
+      change_set = cloudformation_client.describe_change_set({
+        change_set_name: resp.id
+      })
+      if change_set.status == 'FAILED' && change_set.status_reason =~/didn't contain changes/
+        cloudformation_client.delete_change_set({
+          change_set_name: resp.id
+        })
+        raise "No updates"
+      end
+      puts "Change set #{change_set.change_set_name} created. Review and approve via Cloudformation web console."
+    end
   end
 end

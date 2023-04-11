@@ -158,31 +158,3 @@ Resources:
       SnsTopicArn: !Ref SnsTopicArn
       SourceIds: [!Ref DBCluster]
       SourceType: 'db-cluster'
-
-Outputs:
-  ClusterName:
-    Description: 'The name of the cluster'
-    Value: !Ref DBCluster
-    Export:
-      Name: !Sub '${AWS::StackName}-cluster-name'
-  InstanceName:
-    Description: 'The name of the instance'
-    Value: !Ref DBInstance1
-    Export:
-      Name: !Sub '${AWS::StackName}-instance-name'
-  ReplicaName:
-    Description: 'The name of the replica instance'
-    Value: !Ref DBInstance2
-    Condition: CreateReplica
-    Export:
-      Name: !Sub '${AWS::StackName}-replica-name'
-  DBSubnetGroupId:
-    Description: 'The name of the db subnet group'
-    Value: !Ref DBSubnetGroup
-    Export:
-      Name: !Sub '${AWS::StackName}-subnet-group'
-  EventSubscription:
-    Description: 'RDS event subscription name'
-    Value: !Ref DBClusterEventSubscription
-    Export:
-      Name: !Sub '${AWS::StackName}-rds-event-subscription'

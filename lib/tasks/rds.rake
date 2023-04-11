@@ -24,4 +24,14 @@ namespace :rds do
   task start: ['cluster:configtest', 'cluster:config_sync_check', 'cluster:production_failsafe'] do
     Cluster::RDS.start
   end
+
+  desc Cluster::RakeDocs.new('rds:upgrade57').desc
+  task upgrade57: ['cluster:configtest', 'cluster:config_sync_check', 'cluster:production_failsafe'] do
+    upgrade_step = ENV.fetch('upgrade_step', 'pre').strip.downcase
+    unless ['pre','remove', 'ids'].include?(upgrade_step)
+      puts %Q|`upgrade_step` argument must be one of "pre", "remove" or "ids"|
+      exit 1
+    end
+    Cluster::RDS.upgrade57(upgrade_step)
+  end
 end

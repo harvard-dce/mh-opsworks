@@ -57,6 +57,29 @@ Resources:
           { 'Fn::ImportValue': !Sub '${ParentVpcStack}-private-subnet-ids' },
         ]
 
+  DBClusterParameterGroup:
+    Type: 'AWS::RDS::DBClusterParameterGroup'
+    Properties:
+      Description: !Sub '${AWS::StackName} cluster-level settings'
+      Family: 'aurora5.6'
+      Parameters:
+        lower_case_table_names: '1'
+        # this just omits some unnecessary data from the replication messages
+        aurora_enable_repl_bin_log_filtering: '1'
+        # this turns on a "zero-downtime reboot" feature
+        # see https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraMySQL.Replication.html#AuroraMySQL.Replication.Availability
+        aurora_enable_zdr: '1'
+
+  DBParameterGroup:
+    Type: 'AWS::RDS::DBParameterGroup'
+    Properties:
+      Description: !Sub '${AWS::StackName} instance-level settings'
+      Family: 'aurora5.6'
+      Parameters:
+        slow_query_log: '1'
+        log_output: 'FILE'
+        long_query_time: 3
+
   DBClusterParameterGroup57:
     Type: 'AWS::RDS::DBClusterParameterGroup'
     Properties:
@@ -85,13 +108,13 @@ Resources:
     DeletionPolicy: Retain
     Properties:
       DBClusterIdentifier: !Ref DBClusterIdentifier
+      BacktrackWindow: 86400 # one day
       BackupRetentionPeriod: !Ref BackupRetentionPeriod
-      DBClusterParameterGroupName: !Ref DBClusterParameterGroup57
+      DBClusterParameterGroupName: !Ref DBClusterParameterGroup
       DBSubnetGroupName: !Ref DBSubnetGroup
       DeletionProtection: true
-      Engine: 'aurora-mysql'
+      Engine: 'aurora'
       EngineMode: provisioned
-      EngineVersion: 5.7.mysql_aurora.2.11.2
       MasterUsername: !Ref DBMasterUser
       MasterUserPassword: !Ref DBMasterUserPassword
       DatabaseName: !Ref DBName
@@ -116,11 +139,11 @@ Resources:
     Properties:
       AutoMinorVersionUpgrade: false
       CopyTagsToSnapshot: true
-      Engine: 'aurora-mysql'
+      Engine: 'aurora'
       DBClusterIdentifier: !Ref DBCluster
       DBInstanceIdentifier: !Join ['-', [!Ref DBInstancePrefix, '1']]
       DBInstanceClass: !Ref DBInstanceClass
-      DBParameterGroupName: !Ref DBParameterGroup57
+      DBParameterGroupName: !Ref DBParameterGroup
       EnablePerformanceInsights: !Ref EnablePerformanceInsights
       MonitoringInterval: 60
       MonitoringRoleArn: !Sub 'arn:aws:iam::${AWS::AccountId}:role/rds-monitoring-role'
@@ -133,11 +156,11 @@ Resources:
     Properties:
       AutoMinorVersionUpgrade: false
       CopyTagsToSnapshot: true
-      Engine: 'aurora-mysql'
+      Engine: 'aurora'
       DBClusterIdentifier: !Ref DBCluster
       DBInstanceIdentifier: !Join ['-', [!Ref DBInstancePrefix, '2']]
       DBInstanceClass: !Ref DBInstanceClass
-      DBParameterGroupName: !Ref DBParameterGroup57
+      DBParameterGroupName: !Ref DBParameterGroup
       EnablePerformanceInsights: !Ref EnablePerformanceInsights
       MonitoringInterval: 60
       MonitoringRoleArn: !Sub 'arn:aws:iam::${AWS::AccountId}:role/rds-monitoring-role'
