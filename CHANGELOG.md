@@ -2,6 +2,10 @@
 
 ## TO BE RELEASED
 
+## 3.3.0 - 05/25/2023
+
+- Cloudformation templates and `Cluster::RDS` methods for handling the migration from Aurora MySQL 5.6 -> 5.7
+
 ## 3.2.0 - 05/26/2022
 
 - DEPLOY-77: consolidate prebuilt opencast cookbook and software builds
