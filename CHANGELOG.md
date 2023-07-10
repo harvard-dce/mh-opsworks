@@ -2,6 +2,8 @@
 
 ## TO BE RELEASED
 
+- update nginx proxy recipe used for admin setup
+
 ## 3.3.0 - 05/25/2023
 
 - Cloudformation templates and `Cluster::RDS` methods for handling the migration from Aurora MySQL 5.6 -> 5.7
