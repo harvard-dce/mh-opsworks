@@ -20,7 +20,6 @@ opencast cluster.
 * Security out of the box - instances can only be accessed via ssh keys and most instances are isolated to a private network,
 * Automated opencast git deployments via OpsWorks built-ins,
 * The ability to create and destroy opencast clusters completely, including all attached resources,
-* Optional tagged opencast logging to [loggly](http://loggly.com),
 * A set of high-level rake tasks designed to make managing your OpsWorks opencast cluster easier,
 * A way to switch between existing clusters to make collaboration easier,
 * A MySQL RDS Aurora cluster that's monitored with cloudwatch alarms, and
@@ -404,28 +403,6 @@ different region:
 1. Change the `region` via `./bin/rake cluster:edit`.
 
 You must do this before creating your cluster via `./bin/rake admin:cluster:init`.
-
-### Loggly
-
-The Admin, Engage, and Workers layers include a chef recipe to add an rsyslog
-drain to loggly for opencast logs. Update the stack's `custom_json` section
-of your cluster configuration to add your loggly URL and token, and ensure
-opencast is logging to syslog.
-
-If you are using your cluster for dev work but you still wish to log to loggly,
-consider setting up a separate ["free tier"](https://www.loggly.com/plans-and-pricing/)
-loggly account.
-
-Log entries are tagged with:
-
-* Stack name,
-* Hostname,
-* Layer name, and
-* A single string comprising stack and hostname.
-
-If you don't want to log to loggly, remove the
-`oc-opsworks-recipes::rsyslog-to-loggly` recipe from your cluster config and
-remove the "loggly" stanza from your stack's `custom_json`.
 
 ### SMTP via amazon SES
 
