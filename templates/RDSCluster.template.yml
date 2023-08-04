@@ -67,6 +67,10 @@ Resources:
         lower_case_table_names: '1'
         # this just omits some unnecessary data from the replication messages
         aurora_enable_repl_bin_log_filtering: '1'
+        character_set_client: 'utf8mb4'
+        character_set_connection: 'utf8mb4'
+        character_set_results: 'utf8mb4'
+        character_set_server: 'utf8mb4'
 
   DBParameterGroup57:
     Type: 'AWS::RDS::DBParameterGroup'

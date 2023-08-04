@@ -3,6 +3,7 @@
 ## TO BE RELEASED
 
 - update nginx proxy recipe used for admin setup
+- add 'utf8mb4' character set properties to RDS parameter group in CFn template
 
 ## 3.3.0 - 05/25/2023
 
