@@ -2,6 +2,19 @@
 
 ## TO BE RELEASED
 
+## 4.0.0 - 08/21/2023
+
+Updates related to moving to RHEL7, including:
+    
+- update to v3 of ruby aws sdk
+- updated instance OS specifier when creating opsworks stack
+- Wait for VPC peering connection to exist before tagging
+- toggle the distribution bucket's public policy block during creation
+- add missing `&&` in the ami building instance prep commands
+- separate deletion of peering connection routes no longer necessary
+
+Additional miscellaneous updates
+
 - update nginx proxy recipe used for admin setup
 - add 'utf8mb4' character set properties to RDS parameter group in CFn template
 
