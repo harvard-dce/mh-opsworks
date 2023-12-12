@@ -53,6 +53,10 @@ module Cluster
         stack_custom_json[:s3_file_archive_bucket_name]
       end
 
+      def s3_cold_archive_bucket_name
+        stack_custom_json[:s3_cold_archive_bucket_name]
+      end
+
       def analytics_es_snapshots_bucket_name
         %Q|#{stack_shortname}-snapshots|
       end
