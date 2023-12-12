@@ -168,6 +168,7 @@ module Cluster
         merge(database_user_info).
         merge(s3_distribution_bucket_name_from(attributes[:name])).
         merge(s3_file_archive_bucket_name_from(attributes[:name])).
+        merge(s3_cold_archive_bucket_name_from(attributes[:name])).
         merge(analytics_layer_content).
         merge(utility_layer_content).
         merge(sns_email).
@@ -214,6 +215,12 @@ module Cluster
     def s3_file_archive_bucket_name_from(name)
       {
         s3_file_archive_bucket_name: %Q|#{Cluster::Base.calculate_name(name)}-file-archive|
+      }
+    end
+
+    def s3_cold_archive_bucket_name_from(name)
+      {
+        s3_cold_archive_bucket_name: %Q|#{Cluster::Base.calculate_name(name)}-cold-archive|
       }
     end
 

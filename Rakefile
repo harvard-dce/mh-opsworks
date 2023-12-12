@@ -4,6 +4,7 @@ Dir['./lib/tasks/*.rake'].each { |file| load file }
 
 namespace :admin do
   namespace :cluster do
+
     desc Cluster::RakeDocs.new('admin:cluster:init').desc
     task init: ['cluster:configtest', 'cluster:config_sync_check'] do
 
@@ -24,6 +25,7 @@ namespace :admin do
       Cluster::Instances.find_or_create
       Cluster::S3DistributionBucket.find_or_create(Cluster::Base.distribution_bucket_name)
       Cluster::S3ArchiveBucket.find_or_create(Cluster::Base.s3_file_archive_bucket_name)
+      Cluster::S3ColdArchiveBucket.find_or_create(Cluster::Base.s3_cold_archive_bucket_name)
 
       layers.each do |layer|
         puts %Q|Layer: "#{layer.name}" => #{layer.layer_id}|
@@ -83,9 +85,10 @@ namespace :admin do
       puts 'deleting service role'
       Cluster::ServiceRole.delete
 
-      puts 'deleting S3 distribution and file archive buckets and assets'
+      puts 'deleting S3 distribution, file archive, and cold archive buckets and assets'
       Cluster::S3DistributionBucket.delete(Cluster::Base.distribution_bucket_name)
       Cluster::S3ArchiveBucket.delete(Cluster::Base.s3_file_archive_bucket_name)
+      Cluster::S3ColdArchiveBucket.delete(Cluster::Base.s3_cold_archive_bucket_name)
 
       puts 'deleting analytics buckets'
       Cluster::S3AnalyticsBuckets.delete
