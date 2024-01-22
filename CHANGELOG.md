@@ -2,6 +2,10 @@
 
 ## TO BE RELEASED
 
+## 4.1.0 - 01/22/2024
+
+- add creation of cold-archive bucket
+
 ## 4.0.0 - 08/21/2023
 
 Updates related to moving to RHEL7, including:
