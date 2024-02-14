@@ -23,7 +23,6 @@
       "recipe[oc-opsworks-recipes::create-opencast-directories]",
       "recipe[oc-opsworks-recipes::configure-nginx-proxy]",
       "recipe[oc-opsworks-recipes::install-ffmpeg]",
-      "recipe[oc-opsworks-recipes::configure-activemq]",
       "recipe[oc-opsworks-recipes::nfs-client]",
       "recipe[oc-opsworks-recipes::clean-up-package-cache]"
     ]
