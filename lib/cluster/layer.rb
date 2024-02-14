@@ -39,8 +39,6 @@ module Cluster
         file: "/opt/opencast/log/opencast.log",
         multi_line_start_pattern: %q(^[\d\-]{10}T[\d\:]{8})
       }
-      # TODO: figure out how to get activemq in here as its logfile path
-      # is dependent on the installation path and unknown at provision time
     }
 
     def initialize(stack, params)
