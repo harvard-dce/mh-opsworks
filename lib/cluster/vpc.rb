@@ -1,4 +1,3 @@
-require 'pry'
 module Cluster
   class InvalidPeerVpcId < StandardError; end
   class VPC < Base
@@ -117,6 +116,7 @@ module Cluster
           id: pc_info.vpc_peering_connection_id,
           client: ec2_client
         )
+        delete_peer_routes(peer_connection)
         peer_connection.delete
       end
     end
@@ -274,6 +274,26 @@ module Cluster
             vpc_peering_connection_id: peer_connection.id
             })
         rescue Aws::EC2::Errors::RouteAlreadyExists
+          nil
+        end
+      end
+    end
+
+    def self.delete_peer_routes(peer_connection)
+      # we only need to do the accepter routes since the requester
+      # and all its routes are getting deleted anyway
+      accepter = construct_instance(peer_connection.accepter_vpc_info.vpc_id)
+
+      # still need the requester vpc to get its cidr block
+      requester = construct_instance(peer_connection.requester_vpc_info.vpc_id)
+
+      accepter.route_tables.each do |route_table|
+        begin
+          deleted = ec2_client.delete_route({
+            route_table_id: route_table.id,
+            destination_cidr_block: requester.cidr_block,
+          })
+        rescue Aws::EC2::Errors::InvalidRouteNotFound
           nil
         end
       end
