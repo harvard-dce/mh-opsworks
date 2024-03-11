@@ -2,6 +2,8 @@
 
 ## TO BE RELEASED
 
+- properly delete vpc peering route table entries
+
 ## 4.1.0 - 01/22/2024
 
 - add creation of cold-archive bucket
