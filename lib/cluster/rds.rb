@@ -196,6 +196,10 @@ module Cluster
           {
               parameter_key: "SnsTopicArn",
               parameter_value: get_topic_arn
+          },
+          {
+            parameter_key: "DBDeletionPolicy",
+            parameter_value: db_deletion_policy
           }
       ]
 

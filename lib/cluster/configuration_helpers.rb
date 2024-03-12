@@ -147,6 +147,18 @@ module Cluster
       def is_truthy(val)
         return ['true', '1'].include? val.to_s.downcase
       end
+
+      def stage_cluster?
+        stack_shortname.match?(/stage|staging|stg/i)
+      end
+
+      def retain_db?
+        rds_config.fetch('retain_on_delete', false)
+      end
+
+      def db_deletion_policy
+        (prod_cluster? or stage_cluster? or retain_db?) ? "Retain" : "Delete"
+      end
     end
 
     def self.included(base)
