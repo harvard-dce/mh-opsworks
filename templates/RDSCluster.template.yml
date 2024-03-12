@@ -42,6 +42,9 @@ Parameters:
   BackupRetentionPeriod:
     Description: 'Number of days to keep automated backups'
     Type: 'String'
+  DBDeletionPolicy:
+    Description: 'Retain or Delete DB resources during stack deletion (Retain for prod & staging only)'
+    Type: 'String'
 
 Conditions:
   CreateReplica: !Not [!Equals [!Ref MultiAZ, 'false']]
@@ -49,6 +52,7 @@ Conditions:
 Resources:
   DBSubnetGroup:
     Type: 'AWS::RDS::DBSubnetGroup'
+    DeletionPolicy: !Ref DBDeletionPolicy
     Properties:
       DBSubnetGroupDescription: !Sub '${AWS::StackName} db subnet group'
       SubnetIds:
@@ -59,6 +63,7 @@ Resources:
 
   DBClusterParameterGroup57:
     Type: 'AWS::RDS::DBClusterParameterGroup'
+    DeletionPolicy: !Ref DBDeletionPolicy
     Properties:
       Description: !Sub '${AWS::StackName} cluster-level settings'
       Family: 'aurora-mysql5.7'
@@ -74,6 +79,7 @@ Resources:
 
   DBParameterGroup57:
     Type: 'AWS::RDS::DBParameterGroup'
+    DeletionPolicy: !Ref DBDeletionPolicy
     Properties:
       Description: !Sub '${AWS::StackName} instance-level settings'
       Family: 'aurora-mysql5.7'
@@ -86,7 +92,8 @@ Resources:
     Type: 'AWS::RDS::DBCluster'
     # This attribute indicates what to do with the resource when the Cfn stack is deleted
     # default for rds clusters is "Snapshot" but that would interfere with our automated processes
-    DeletionPolicy: Retain
+    DeletionPolicy: !Ref DBDeletionPolicy
+    DependsOn: [DBParameterGroup57, DBClusterParameterGroup57, DBSubnetGroup]
     Properties:
       DBClusterIdentifier: !Ref DBClusterIdentifier
       BackupRetentionPeriod: !Ref BackupRetentionPeriod
@@ -116,7 +123,8 @@ Resources:
   DBInstance1:
     Type: 'AWS::RDS::DBInstance'
     # See note on the cluster resource
-    DeletionPolicy: Retain
+    DeletionPolicy: !Ref DBDeletionPolicy
+    DependsOn: [DBParameterGroup57, DBClusterParameterGroup57, DBSubnetGroup]
     Properties:
       AutoMinorVersionUpgrade: false
       CopyTagsToSnapshot: true
@@ -132,7 +140,8 @@ Resources:
   DBInstance2:
     Type: 'AWS::RDS::DBInstance'
     # See note on the cluster resource
-    DeletionPolicy: Retain
+    DeletionPolicy: !Ref DBDeletionPolicy
+    DependsOn: [DBParameterGroup57, DBClusterParameterGroup57, DBSubnetGroup]
     Condition: CreateReplica
     Properties:
       AutoMinorVersionUpgrade: false
@@ -153,7 +162,7 @@ Resources:
     # rds cluster was started because it was hibernated for longer than
     # the 7 day max set by AWS, and then turns them off again
     Type: 'AWS::RDS::EventSubscription'
-    DeletionPolicy: Retain
+    DeletionPolicy: !Ref DBDeletionPolicy
     Properties:
       EventCategories:
         - failover
@@ -190,3 +199,8 @@ Outputs:
     Value: !Ref DBClusterEventSubscription
     Export:
       Name: !Sub '${AWS::StackName}-rds-event-subscription'
+  DBDeletionPolicy:
+    Description: 'Deletion policy for db resources'
+    Value: !Ref DBDeletionPolicy
+    Export:
+      Name: !Sub '${AWS::StackName}-rds-deletion-policy'
