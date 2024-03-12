@@ -2,6 +2,9 @@
 
 ## TO BE RELEASED
 
+- properly delete vpc peering route table entries
+- set a consistent DeletionPolicy for RDS resources based on stack type (dev, stage, or prod)
+
 ## 4.1.0 - 01/22/2024
 
 - add creation of cold-archive bucket
