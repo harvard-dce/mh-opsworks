@@ -1,3 +1,4 @@
+require 'pry'
 module Cluster
   class Console < Base
     def self.run
