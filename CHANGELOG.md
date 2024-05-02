@@ -2,6 +2,8 @@
 
 ## TO BE RELEASED
 
+## 4.2.0 - 05/02/2024
+
 - set a consistent DeletionPolicy for RDS resources based on stack type (dev, stage, or prod)
 - properly delete vpc peering route table entries
 
