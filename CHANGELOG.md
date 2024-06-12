@@ -2,6 +2,12 @@
 
 ## TO BE RELEASED
 
+## 4.3.0 - 06/12/2024
+
+Changes for Opencast 15:
+
+- remove activemq
+
 ## 4.2.0 - 05/02/2024
 
 - set a consistent DeletionPolicy for RDS resources based on stack type (dev, stage, or prod)
