@@ -2,6 +2,10 @@
 
 ## TO BE RELEASED
 
+## 4.3.1 - 07/24/2024
+
+- zadara tasks aren't shown/executed if zadara api config not present
+
 ## 4.3.0 - 06/12/2024
 
 Changes for Opencast 15:

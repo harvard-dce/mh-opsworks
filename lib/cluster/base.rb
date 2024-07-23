@@ -38,7 +38,7 @@ module Cluster
 
     def self.show_zadara_tasks?
       stack_name = config.parsed[:stack][:name]
-      external_storage? && ! stack_name.match(/prod|prd/i)
+      !zadara_api_config.empty? && external_storage? && ! stack_name.match(/prod|prd/i)
     end
 
     def self.instance_profile_policy_document
