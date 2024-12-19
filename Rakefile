@@ -85,10 +85,11 @@ namespace :admin do
       puts 'deleting service role'
       Cluster::ServiceRole.delete
 
-      puts 'deleting S3 distribution, file archive, and cold archive buckets and assets'
-      Cluster::S3DistributionBucket.delete(Cluster::Base.distribution_bucket_name)
-      Cluster::S3ArchiveBucket.delete(Cluster::Base.s3_file_archive_bucket_name)
-      Cluster::S3ColdArchiveBucket.delete(Cluster::Base.s3_cold_archive_bucket_name)
+      puts 'skip deleting S3 distribution, file archive, and cold archive buckets and assets'
+      # puts 'deleting S3 distribution, file archive, and cold archive buckets and assets'
+      # Cluster::S3DistributionBucket.delete(Cluster::Base.distribution_bucket_name)
+      # Cluster::S3ArchiveBucket.delete(Cluster::Base.s3_file_archive_bucket_name)
+      # Cluster::S3ColdArchiveBucket.delete(Cluster::Base.s3_cold_archive_bucket_name)
 
       puts 'deleting analytics buckets'
       Cluster::S3AnalyticsBuckets.delete
